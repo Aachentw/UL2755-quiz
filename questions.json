@@ -4,342 +4,342 @@
     "source": "UL2755 §1.1 Scope",
     "category": "Scope",
     "difficulty": "basic",
-    "question_zh": "UL2755 適用的 MDC 主要以下列何者作為外殼？",
-    "options": ["鋼構建築", "ISO 貨櫃 (ISO containers)", "玻璃帷幕模組", "不限定"],
+    "question": "UL2755 primarily uses which of the following as the enclosure for an MDC?",
+    "options": ["Steel-framed building", "ISO containers", "Glass curtain-wall modules", "No specific requirement"],
     "answer_index": 1,
-    "explanation_zh": "§1.1：MDC 以 ISO containers 為外殼，內含 ITE 或 NEC 認證的配電元件、UPS、空調系統。"
+    "explanation": "Per §1.1, an MDC uses ISO containers as the enclosure, housing ITE or NEC-certified power distribution components, UPS, and HVAC systems."
   },
   {
     "id": "ul2755-6.1.6-001",
     "source": "UL2755 §6.1.6",
     "category": "Electrical",
     "difficulty": "intermediate",
-    "question_zh": "在 service access area，AC/DC 主電路的裸露帶電部件 (bare parts) 必須？",
+    "question": "In service access areas, bare live parts of AC or DC main circuits must be?",
     "options": [
-      "以彩色標示即可",
-      "加裝防護 (guarded)，避免短路或接觸 SELV",
-      "用絕緣漆塗布",
-      "保持距地 2m 以上"
+      "Color-coded only",
+      "Guarded to prevent shorting or contact with SELV circuits",
+      "Coated with insulating paint",
+      "Kept at least 2 meters above floor"
     ],
     "answer_index": 1,
-    "explanation_zh": "§6.1.6：service access area 的 bare live parts 須 guarded，防止短路或誤觸 SELV 電路。"
+    "explanation": "Per §6.1.6, bare live parts in service access areas must be guarded to prevent shorting or contact with SELV circuits."
   },
   {
     "id": "ul2755-6.2.3-001",
     "source": "UL2755 §6.2.3",
     "category": "Transformers",
     "difficulty": "basic",
-    "question_zh": "MDC 內的 premise transformer 可使用哪幾類？",
+    "question": "Which types of premise transformers are permitted inside an MDC?",
     "options": [
-      "任何油浸式變壓器",
-      "乾式 (dry-type) 或填充非燃性介質 (noncombustible dielectric)",
-      "僅乾式",
-      "僅油浸式"
+      "Any oil-filled transformer",
+      "Dry-type, or filled with a noncombustible dielectric medium",
+      "Dry-type only",
+      "Oil-filled only"
     ],
     "answer_index": 1,
-    "explanation_zh": "§6.2.3：premise transformer 須為 dry-type 或填 noncombustible dielectric medium，依 NEC + NFPA 70 安裝。"
+    "explanation": "Per §6.2.3, premise transformers must be dry-type or filled with a noncombustible dielectric medium, installed per NEC and NFPA 70."
   },
   {
     "id": "ul2755-6.2.4-001",
     "source": "UL2755 §6.2.4",
     "category": "Transformers",
     "difficulty": "basic",
-    "question_zh": "下列何者在 MDC 內部「不被允許」安裝？",
+    "question": "Which of the following is NOT permitted to be installed inside an MDC?",
     "options": [
-      "乾式變壓器 (dry-type transformer)",
-      "Service entrance 變壓器 (OC: IV)",
-      "分路過電流保護裝置",
-      "緊急照明 UPS"
+      "Dry-type transformer",
+      "Service entrance transformer, OC: IV",
+      "Branch circuit overcurrent protection",
+      "Emergency lighting UPS"
     ],
     "answer_index": 1,
-    "explanation_zh": "§6.2.4 明文禁止 service entrance transformers (OC: IV) 裝在 MDC 內。"
+    "explanation": "§6.2.4 explicitly prohibits service entrance transformers (OC: IV) from being installed inside an MDC."
   },
   {
     "id": "ul2755-6.2.5-001",
     "source": "UL2755 §6.2.5",
     "category": "Electrical",
     "difficulty": "basic",
-    "question_zh": "MDC 的 lightning surge protection 須依循哪些標準？",
-    "options": ["NFPA 75", "NEC + NFPA 70", "IEC 62305", "UL 1449 單獨"],
+    "question": "Lightning surge protection for an MDC must comply with which standards?",
+    "options": ["NFPA 75 only", "NEC and NFPA 70", "IEC 62305 only", "UL 1449 alone"],
     "answer_index": 1,
-    "explanation_zh": "§6.2.5：雷擊 surge protection 須符合 NEC 與 NFPA 70。"
+    "explanation": "Per §6.2.5, lightning surge protection must comply with NEC and NFPA 70."
   },
   {
     "id": "ul2755-6.2.6-001",
     "source": "UL2755 §6.2.6",
     "category": "Electrical",
     "difficulty": "basic",
-    "question_zh": "Junction box 在 MDC 中須符合哪些條件（複合）？",
+    "question": "Junction boxes in an MDC must meet which combined requirements?",
     "options": [
-      "approved、fully enclosed、fastened、accessible、grounded",
-      "僅須 grounded",
-      "僅須 accessible",
-      "可暴露帶電端子以便檢修"
+      "Approved, fully enclosed, fastened, accessible, and grounded",
+      "Grounded only",
+      "Accessible only",
+      "May expose live terminals for easier inspection"
     ],
     "answer_index": 0,
-    "explanation_zh": "§6.2.6：junction box 五要件 — approved、fully enclosed、fastened、accessible、grounded。"
+    "explanation": "Per §6.2.6, junction boxes must satisfy five criteria: approved, fully enclosed, fastened, accessible, and grounded."
   },
   {
     "id": "ul2755-6.4.2-001",
     "source": "UL2755 §6.4.2",
     "category": "Wiring Methods",
     "difficulty": "intermediate",
-    "question_zh": "以下哪種 wiring method 在 MDC 內「被禁止」？",
+    "question": "Which of the following wiring methods is PROHIBITED inside an MDC?",
     "options": [
       "Type MC cable",
       "Rigid Metal Conduit (RMC)",
-      "Integrated Gas Spacer Cable (NEC Art. 326)",
+      "Integrated Gas Spacer Cable, NEC Article 326",
       "Electrical Metallic Tubing (EMT)"
     ],
     "answer_index": 2,
-    "explanation_zh": "§6.4.2 禁止清單：IGS (Art.326)、Knob-and-Tube (394)、Messenger-Supported (396)、Open Wiring (398)。"
+    "explanation": "§6.4.2 prohibits: Integrated Gas Spacer Cable (Art. 326), Knob-and-Tube (Art. 394), Messenger-Supported Wiring (Art. 396), and Open Wiring (Art. 398)."
   },
   {
     "id": "ul2755-6.4.2-002",
     "source": "UL2755 §6.4.2",
     "category": "Wiring Methods",
     "difficulty": "intermediate",
-    "question_zh": "下列四種 wiring methods 中，哪一項「不在」UL2755 禁止清單？",
+    "question": "Which of the following wiring methods is NOT on the UL2755 prohibited list?",
     "options": [
-      "Concealed Knob-and-Tube Wiring (Art. 394)",
-      "Messenger-Supported Wiring (Art. 396)",
-      "Open Wiring on Insulators (Art. 398)",
-      "Metal-Clad Cable Type MC (Art. 330)"
+      "Concealed Knob-and-Tube Wiring, Article 394",
+      "Messenger-Supported Wiring, Article 396",
+      "Open Wiring on Insulators, Article 398",
+      "Metal-Clad Cable Type MC, Article 330"
     ],
     "answer_index": 3,
-    "explanation_zh": "Type MC 是標準允許的方法；其餘三項屬 §6.4.2 禁止清單。"
+    "explanation": "Type MC is a standard permitted method; the other three are all on the §6.4.2 prohibited list."
   },
   {
     "id": "nec646-1-001",
-    "source": "NEC §646.1 範圍",
+    "source": "NEC §646.1 Scope",
     "category": "Scope",
     "difficulty": "basic",
-    "question_zh": "NEC 第 646 條涵蓋 MDC 內哪些元素？",
+    "question": "What does NEC Article 646 cover inside an MDC?",
     "options": [
-      "僅 ITE 伺服器",
-      "ITE、支援設備、電力供應與分配、配線保護、工作空間、接地、HVAC",
-      "僅電力系統",
-      "僅防火系統"
+      "ITE servers only",
+      "ITE, support equipment, power supply and distribution, wiring protection, workspace, grounding, and HVAC",
+      "Power systems only",
+      "Fire protection only"
     ],
     "answer_index": 1,
-    "explanation_zh": "§646.1：涵蓋 ITE、支援設備、電力供應與分配、配線保護、工作空間、接地、HVAC 等全部位於外殼內者。"
+    "explanation": "Per §646.1, Article 646 covers all components located inside the enclosure: ITE, support equipment, power supply and distribution, wiring protection, workspace, grounding, and HVAC."
   },
   {
     "id": "nec646-4-001",
     "source": "NEC §646.4",
     "category": "Listing",
     "difficulty": "basic",
-    "question_zh": "MDC 需經哪個組織列名 (listed) 並附標籤？（例）",
-    "options": ["UL 2755", "UL 1973", "UL 60950", "NEC 專屬列名"],
+    "question": "An MDC must be listed by which type of organization, and labeled? Example:",
+    "options": ["UL 2755", "UL 1973", "UL 60950", "NEC's own listing"],
     "answer_index": 0,
-    "explanation_zh": "§646.4：MDC 需列名，以 UL 2755 為例，且需標籤，符合 646.3(M) 與 646.5–646.9。"
+    "explanation": "Per §646.4, an MDC must be listed (UL 2755 is an example) and labeled, complying with 646.3(M) and 646.5 through 646.9."
   },
   {
     "id": "nec646-5-001",
-    "source": "NEC §646.5 名牌資料",
+    "source": "NEC §646.5 Nameplate",
     "category": "Nameplate",
     "difficulty": "intermediate",
-    "question_zh": "MDC 名牌標示的滿載電流 (full-load current) 不得低於多少百分比的負載？",
-    "options": ["100%", "110%", "125%", "150%"],
+    "question": "The nameplate full-load current on an MDC must not be less than what percentage of the load?",
+    "options": ["100 percent", "110 percent", "125 percent", "150 percent"],
     "answer_index": 2,
-    "explanation_zh": "§646.5：nameplate 滿載電流不低於 125% 負載；含電壓、SCCR。"
+    "explanation": "Per §646.5, nameplate full-load current must be at least 125 percent of the load, and must also show voltage and short-circuit current rating."
   },
   {
     "id": "nec646-6-001",
-    "source": "NEC §646.6 供應導體",
+    "source": "NEC §646.6 Supply Conductors",
     "category": "Conductor Sizing",
     "difficulty": "intermediate",
-    "question_zh": "MDC 供應導體 (supply conductors) 容量須達滿載電流的多少倍？",
-    "options": ["100%", "115%", "125%", "200%"],
+    "question": "Supply conductors for an MDC must have an ampacity of at least what multiple of the full-load current?",
+    "options": ["100 percent", "115 percent", "125 percent", "200 percent"],
     "answer_index": 2,
-    "explanation_zh": "§646.6：導體容量 ≥ 125% 滿載電流；過電流保護依 NEC 230.90–230.95。"
+    "explanation": "Per §646.6, conductor ampacity must be at least 125 percent of full-load current; overcurrent protection follows NEC 230.90 through 230.95."
   },
   {
     "id": "nec646-7-001",
     "source": "NEC §646.7 SCCR",
     "category": "Short Circuit",
     "difficulty": "intermediate",
-    "question_zh": "MDC 的 short-circuit current rating (SCCR) 需？",
+    "question": "The short-circuit current rating of an MDC must?",
     "options": [
-      "固定為 10 kA",
-      "匹配 (match) 現場可用故障電流 (available fault current)",
-      "大於 100 kA",
-      "與 MDC 容量無關"
+      "Be fixed at 10 kA",
+      "Match the available fault current at the point of connection",
+      "Exceed 100 kA",
+      "Be independent of MDC capacity"
     ],
     "answer_index": 1,
-    "explanation_zh": "§646.7：SCCR 必須匹配 service 及分支電路連接處的 available fault current。"
+    "explanation": "Per §646.7, the SCCR must match the available fault current at both the service and the branch-circuit connections to the MDC."
   },
   {
     "id": "nec646-9-001",
-    "source": "NEC §646.9 可繞電源線",
+    "source": "NEC §646.9 Flexible Cord",
     "category": "Flexible Cord",
     "difficulty": "intermediate",
-    "question_zh": "戶外 MDC 使用的 flexible cord 需具備哪兩項列名特性？",
+    "question": "Flexible cord used in outdoor MDCs must be listed for which two characteristics?",
     "options": [
-      "輕型使用 + 耐高溫",
-      "硬性使用 (hard usage) + 耐陽光 (sunlight resistant)",
-      "低煙無鹵 + 防鼠咬",
-      "僅耐陽光即可"
+      "Light-duty and heat-resistant",
+      "Hard usage and sunlight resistant",
+      "Low-smoke halogen-free and rodent-resistant",
+      "Sunlight resistant only"
     ],
     "answer_index": 1,
-    "explanation_zh": "§646.9：戶外 flexible cord 需列名為 hard usage 且 sunlight-resistant。"
+    "explanation": "Per §646.9, flexible cord for outdoor MDCs must be listed for hard usage and be sunlight-resistant."
   },
   {
     "id": "nec646-11-001",
-    "source": "NEC §646.11 變壓器",
+    "source": "NEC §646.11 Transformers",
     "category": "Transformers",
     "difficulty": "intermediate",
-    "question_zh": "公用事業 (utility) 變壓器是否可安裝於 MDC 外殼內？",
+    "question": "Can a utility transformer be installed inside an MDC enclosure?",
     "options": [
-      "可，依 NEC 第450條即可",
-      "不可，僅 dry-type premise transformer 允許裝在外殼內",
-      "可，但需加裝耐燃隔板",
-      "視 MDC 容量決定"
+      "Yes, per NEC Article 450 only",
+      "No. Only a dry-type premise transformer is allowed inside the enclosure",
+      "Yes, with a fire-resistant barrier",
+      "It depends on the MDC capacity"
     ],
     "answer_index": 1,
-    "explanation_zh": "§646.11：utility 及場所 transformer 不得置於 MDC 內；僅乾式 premise transformer 可依第450條裝在外殼內。"
+    "explanation": "Per §646.11, utility and premises transformers are not permitted inside the MDC. Only a dry-type premise transformer may be installed inside the enclosure, in accordance with Article 450."
   },
   {
     "id": "nec646-12-001",
-    "source": "NEC §646.12 插座",
+    "source": "NEC §646.12 Receptacles",
     "category": "Receptacles",
     "difficulty": "basic",
-    "question_zh": "依 NEC §646.12，MDC 每個工作區至少需配置幾個 125V、15/20A 雙工插座？",
-    "options": ["1 個", "2 個", "依工作區面積計算", "不強制要求"],
+    "question": "Per NEC §646.12, how many 125-volt, 15- or 20-ampere duplex receptacles are required in each work area of an MDC, at minimum?",
+    "options": ["1", "2", "Calculated by work-area size", "Not required"],
     "answer_index": 0,
-    "explanation_zh": "§646.12：每工作區至少一個 125V、15/20A duplex receptacle。"
+    "explanation": "Per §646.12, at least one 125-volt, 15- or 20-ampere duplex receptacle is required in each work area."
   },
   {
     "id": "nec646-15-001",
-    "source": "NEC §646.15 一般照明",
+    "source": "NEC §646.15 General Lighting",
     "category": "Lighting",
     "difficulty": "intermediate",
-    "question_zh": "MDC 一般照明設計的「單一故障」原則是什麼？",
+    "question": "What is the single-fault principle for general lighting design in an MDC?",
     "options": [
-      "單一故障可使空間完全變暗",
-      "單一故障不致使工作空間與出口通道全暗",
-      "需配備備用發電機",
-      "所有燈具需連接 UPS"
+      "A single fault may cause total darkness",
+      "A single fault shall not cause total loss of lighting in work spaces and egress paths",
+      "A backup generator is required",
+      "All luminaires must be on a UPS"
     ],
     "answer_index": 1,
-    "explanation_zh": "§646.15：單一 fault 不得造成工作空間與出口通道完全失去照明（分路冗餘設計）。"
+    "explanation": "Per §646.15, a single fault must not cause total loss of lighting in work spaces and egress paths. This typically requires circuit redundancy."
   },
   {
     "id": "nec646-16-001",
-    "source": "NEC §646.16 緊急照明",
+    "source": "NEC §646.16 Emergency Lighting",
     "category": "Emergency Lighting",
     "difficulty": "basic",
-    "question_zh": "MDC 緊急照明設備需具備什麼認證狀態？",
-    "options": ["自行組裝即可", "需列名 (listed)", "需防爆", "需 NFPA 110 證書"],
+    "question": "What listing status is required for emergency lighting equipment in an MDC?",
+    "options": ["Self-assembly is fine", "It must be listed", "It must be explosion-proof", "An NFPA 110 certificate is required"],
     "answer_index": 1,
-    "explanation_zh": "§646.16：緊急照明設備需 listed，且出口通道必須有緊急照明。"
+    "explanation": "Per §646.16, emergency lighting equipment must be listed, and egress paths must have emergency lighting."
   },
   {
     "id": "nec646-17-001",
-    "source": "NEC §646.17 緊急照明電路",
+    "source": "NEC §646.17 Emergency Lighting Circuits",
     "category": "Emergency Lighting",
     "difficulty": "intermediate",
-    "question_zh": "緊急照明電路的電源要求？",
+    "question": "What is the power-supply requirement for emergency lighting circuits?",
     "options": [
-      "與一般照明共用電路即可",
-      "需獨立供電（如電池、UPS）並清楚標示",
-      "限定使用柴油發電機",
-      "無要求"
+      "May share a circuit with general lighting",
+      "Must be independently supplied, for example by battery or UPS, and clearly identified",
+      "Must use a diesel generator",
+      "No specific requirement"
     ],
     "answer_index": 1,
-    "explanation_zh": "§646.17：僅供緊急使用、獨立供電 (battery/UPS)、需清楚標示 (labeled)。"
+    "explanation": "Per §646.17, emergency lighting circuits must be supplied independently, such as from a battery or UPS, used only for emergency purposes, and clearly identified or labeled."
   },
   {
     "id": "nec646-18-001",
-    "source": "NEC §646.18 工作空間",
+    "source": "NEC §646.18 Workspace",
     "category": "Workspace",
     "difficulty": "basic",
-    "question_zh": "MDC 電氣設備周圍工作空間依哪一節？",
+    "question": "Workspace around electrical equipment in an MDC follows which section?",
     "options": ["NEC §100.7", "NEC §110.26", "NEC §240.24", "NFPA 75"],
     "answer_index": 1,
-    "explanation_zh": "§646.18：依 NEC §110.26 決定工作空間深度、寬度、高度。"
+    "explanation": "Per §646.18, workspace depth, width, and height must comply with NEC §110.26."
   },
   {
     "id": "nec646-19-001",
-    "source": "NEC §646.19 入口與出口",
+    "source": "NEC §646.19 Entry and Egress",
     "category": "Egress",
     "difficulty": "intermediate",
-    "question_zh": "依 NEC §646.19，設備寬深「超過 1.8 公尺」時緊急出口規格須為？",
+    "question": "Per NEC §646.19, if the equipment exceeds 1.8 meters in width or depth, what egress is required?",
     "options": [
-      "單一出口即可",
-      "雙向出口，每個寬 61 cm、高 2 m，配緊急硬體 (panic hardware)",
-      "任一側出口寬 90 cm 即可",
-      "無強制規定"
+      "A single exit is sufficient",
+      "Two means of egress, each at least 61 centimeters wide and 2 meters tall, with panic hardware",
+      "A 90-centimeter-wide exit on either side",
+      "No specific requirement"
     ],
     "answer_index": 1,
-    "explanation_zh": "§646.19：>1.8 m → two means of egress，每口 ≥ 61 cm × 2 m，配 emergency hardware (panic bar)。"
+    "explanation": "Per §646.19, for equipment exceeding 1.8 meters, two means of egress are required. Each must be at least 61 centimeters by 2 meters, equipped with emergency (panic) hardware."
   },
   {
     "id": "nec646-19-002",
     "source": "NEC §646.19",
     "category": "Egress",
     "difficulty": "intermediate",
-    "question_zh": "若 MDC 僅設「單一出入口」時，出口規格需？",
+    "question": "If an MDC has only a single entry or exit, what is the requirement?",
     "options": [
-      "寬 50 cm 即可",
-      "無障礙物 (unobstructed) 或 雙倍深度 (2× depth)",
-      "需配警報器",
-      "加裝旋轉門"
+      "50 centimeters wide is sufficient",
+      "The path must be unobstructed, or the workspace depth must be doubled",
+      "An alarm must be installed",
+      "A revolving door is required"
     ],
     "answer_index": 1,
-    "explanation_zh": "§646.19：單入口需 unobstructed 或 double the depth（即設備周圍空間加倍）。"
+    "explanation": "Per §646.19, with a single entrance or exit, the path must be unobstructed or the surrounding workspace depth must be doubled."
   },
   {
     "id": "nec646-20-001",
-    "source": "NEC §646.20 ITE 工作空間",
+    "source": "NEC §646.20 ITE Workspace",
     "category": "Workspace",
     "difficulty": "intermediate",
-    "question_zh": "ITE 工作空間於下列哪種電壓下可免除 §646.19 要求？",
+    "question": "At what voltage level is an ITE workspace exempt from §646.19 egress requirements?",
     "options": [
-      "< 30 Vrms / 60 Vdc",
-      "< 50 Vrms / 120 Vdc",
-      "< 100 Vrms / 200 Vdc",
-      "任何電壓均需"
+      "Less than 30 volts rms or 60 volts DC",
+      "Less than 50 volts rms or 120 volts DC",
+      "Less than 100 volts rms or 200 volts DC",
+      "Required at any voltage"
     ],
     "answer_index": 0,
-    "explanation_zh": "§646.20：低壓 (<30Vrms / 60Vdc) 的 ITE 區不需符合 §646.19；高於此電壓則需。"
+    "explanation": "Per §646.20, ITE work areas at less than 30 volts rms or 60 volts DC are exempt from §646.19. Above that voltage, §646.19 applies."
   },
   {
     "id": "nec646-21-001",
-    "source": "NEC §646.21 電池空間",
+    "source": "NEC §646.21 Battery Space",
     "category": "Battery",
     "difficulty": "basic",
-    "question_zh": "MDC 電池空間的工作空間依？",
+    "question": "Workspace around batteries in an MDC is measured per which section?",
     "options": ["§110.26", "§480.10", "NFPA 75", "UL 1973"],
     "answer_index": 0,
-    "explanation_zh": "§646.21：電池 space 依 §110.26 測量工作空間。"
+    "explanation": "Per §646.21, battery-space workspace is measured per NEC §110.26."
   },
   {
     "id": "nec110.26-001",
     "source": "NEC §110.26(A)(1)",
     "category": "Workspace Clearance",
     "difficulty": "intermediate",
-    "question_zh": "600 V 以下設備，帶電部件對「無活線面 (ungrounded wall)」工作空間最小深度？",
-    "options": ["762 mm (2.5 ft)", "900 mm (3 ft)", "1067 mm (3.5 ft)", "1220 mm (4 ft)"],
+    "question": "For equipment rated below 600 volts, what is the minimum workspace depth when live parts face an ungrounded wall, Condition 1?",
+    "options": ["762 millimeters, 2 and a half feet", "900 millimeters, 3 feet", "1067 millimeters, 3 and a half feet", "1220 millimeters, 4 feet"],
     "answer_index": 1,
-    "explanation_zh": "Table 110.26(A)(1)：Condition 1 (帶電對接地面) = 3 ft；C2 = 3.5 ft；C3 = 4 ft。"
+    "explanation": "Per Table 110.26(A)(1): Condition 1, live parts facing an ungrounded surface, requires 3 feet. Condition 2 is 3 and a half feet. Condition 3 is 4 feet."
   },
   {
     "id": "nec110.26-002",
     "source": "NEC §110.26(A)(1)",
     "category": "Workspace Clearance",
     "difficulty": "intermediate",
-    "question_zh": "600 V 以下，兩側皆帶電（exposed live parts on both sides）的 workspace 最小深度？",
-    "options": ["900 mm", "1067 mm (3.5 ft)", "1220 mm (4 ft)", "1525 mm (5 ft)"],
+    "question": "For equipment below 600 volts with exposed live parts on both sides of the worker, what is the minimum workspace depth?",
+    "options": ["900 millimeters", "1067 millimeters, 3 and a half feet", "1220 millimeters, 4 feet", "1525 millimeters, 5 feet"],
     "answer_index": 2,
-    "explanation_zh": "Condition 3：exposed live parts 在操作者兩側未加防護 → 4 ft / 1220 mm。"
+    "explanation": "Condition 3 applies when exposed live parts exist on both sides of the worker without guarding. The minimum depth is 4 feet, or 1220 millimeters."
   },
   {
     "id": "fxx-walkin-001",
-    "source": "FXX 800Vdc PTU 稽核",
+    "source": "FXX 800Vdc PTU Audit",
     "category": "Walk-In Equipment",
     "difficulty": "intermediate",
-    "question_zh": "CSA 稽核 800Vdc PTU walk-in 空間時，最小維修走道 clearance 依據哪條法規？",
+    "question": "In the CSA audit of the 800-volt DC PTU walk-in space, the minimum service clearance width is determined by which code?",
     "options": [
       "NEC §110.26 workspace",
       "NFPA 75 cooling spacing",
@@ -347,51 +347,51 @@
       "NEC §230.90 overcurrent"
     ],
     "answer_index": 0,
-    "explanation_zh": "Walk-in walkway 屬 electrical workspace → NEC §110.26(A)(1) 決定深度（<600V C1 = 900 mm）。"
+    "explanation": "A walk-in walkway is classified as electrical workspace, so minimum depth is determined by NEC §110.26(A)(1). For below 600 volts, Condition 1, the minimum is 900 millimeters."
   },
   {
     "id": "fxx-walkin-002",
-    "source": "FXX 800Vdc PTU 稽核",
+    "source": "FXX 800Vdc PTU Audit",
     "category": "Walk-In Equipment",
     "difficulty": "intermediate",
-    "question_zh": "稽核中詢問 IT rack + Powershelf + BBU 是否為 Dead-front assemblies，其判斷原則？",
+    "question": "During the audit, the inspector asked whether the IT rack, power shelf, and BBU qualify as dead-front assemblies. What is the judgment rule?",
     "options": [
-      "正面無暴露帶電部件即為 dead-front",
-      "只要有門即為 dead-front",
-      "內部無電流即為 dead-front",
-      "僅適用於低壓"
+      "The front side has no exposed live parts",
+      "Having a door automatically qualifies it as dead-front",
+      "No current flow inside qualifies it as dead-front",
+      "Only applies to low-voltage equipment"
     ],
     "answer_index": 0,
-    "explanation_zh": "Dead-front assembly：在操作者正面 (front side) 無 exposed live parts，帶電端藏於殼內；決定 §110.26 Condition 選擇。"
+    "explanation": "A dead-front assembly has no exposed live parts on the operator's front side. Live terminals are hidden inside the enclosure. This classification affects the §110.26 Condition selection."
   },
   {
     "id": "fxx-egress-001",
-    "source": "FXX 稽核 — Egress",
+    "source": "FXX Audit: Egress",
     "category": "Egress",
     "difficulty": "intermediate",
-    "question_zh": "MDC 內雙向出口 (two egress) 的門寬與門高最小值？",
+    "question": "What are the minimum door width and height for two means of egress inside an MDC?",
     "options": [
-      "寬 50 cm × 高 180 cm",
-      "寬 61 cm × 高 2 m",
-      "寬 90 cm × 高 210 cm",
-      "無強制規定"
+      "50 centimeters wide by 180 centimeters tall",
+      "61 centimeters wide by 2 meters tall",
+      "90 centimeters wide by 210 centimeters tall",
+      "No specific requirement"
     ],
     "answer_index": 1,
-    "explanation_zh": "NEC §646.19：each egress door 最小 61 cm (24 in) × 2 m (6.5 ft)；含 panic hardware。"
+    "explanation": "Per NEC §646.19, each egress door must be at least 61 centimeters, or 24 inches, wide and 2 meters, or 6 and a half feet, tall, equipped with panic hardware."
   },
   {
     "id": "ul2755-grounding-001",
     "source": "UL2755 §6.2 Grounding",
     "category": "Grounding",
     "difficulty": "basic",
-    "question_zh": "MDC 所有外露金屬外殼 (exposed metal enclosures) 必須？",
+    "question": "All exposed metal enclosures of an MDC must be?",
     "options": [
-      "上漆即可",
-      "有效接地 (effectively grounded/bonded)",
-      "貼警告標示",
-      "距地 1 m 以上"
+      "Painted",
+      "Effectively grounded and bonded",
+      "Labeled with warning signs",
+      "Kept at least 1 meter above floor"
     ],
     "answer_index": 1,
-    "explanation_zh": "UL2755 依 NEC §250：所有非帶電導電部件須 bonded & grounded，形成 low-impedance 故障電流路徑。"
+    "explanation": "UL2755 follows NEC §250: all non-current-carrying conductive parts must be bonded and grounded to form a low-impedance fault current path."
   }
 ]

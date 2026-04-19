@@ -63,13 +63,13 @@ for i, q in enumerate(questions, 1):
     qdir.mkdir(exist_ok=True)
 
     # 1. question
-    q_text = f"第{i}題。{q['question_zh']}"
+    q_text = f"Question {i}. {q['question']}"
     # 2. options
     letters = ['A', 'B', 'C', 'D']
-    opts_text = '。'.join(f'選項{letters[j]}，{opt}' for j, opt in enumerate(q['options'])) + '。'
+    opts_text = ' '.join(f'Option {letters[j]}. {opt}.' for j, opt in enumerate(q['options']))
     # 3. answer + explanation
     ans_letter = letters[q['answer_index']]
-    ans_text = f"答案是{ans_letter}。{q['explanation_zh']}"
+    ans_text = f"The answer is {ans_letter}. {q['explanation']}"
 
     targets = [('q.mp3', q_text), ('opts.mp3', opts_text), ('ans.mp3', ans_text)]
     for fname, text in targets:

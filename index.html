@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>UL2755 衝刺營 🏍️</title>
+<title>UL2755 Sprint 🏍️</title>
 <meta name="theme-color" content="#c8102e">
 <link rel="manifest" href="manifest.webmanifest">
 <style>
@@ -67,13 +67,18 @@
   @keyframes shakeNo { 0%,100%{transform:translateX(0)} 15%{transform:translateX(-8px)} 30%{transform:translateX(8px)} 45%{transform:translateX(-6px)} 60%{transform:translateX(6px)} 75%{transform:translateX(-3px)} }
   .shake-ok { animation: shakeOk 0.25s ease; box-shadow: 0 0 0 3px #10b981 inset; }
   .shake-no { animation: shakeNo 0.45s ease; box-shadow: 0 0 0 3px #ef4444 inset; }
+
+  .speed-row { display: flex; gap: 0.3rem; align-items: center; margin: 0.8rem 0; flex-wrap: wrap; }
+  .speed-label { font-size: 0.85rem; color: #94a3b8; margin-right: 0.3rem; }
+  .speed-btn { flex: 1; min-width: 48px; padding: 0.5rem 0.6rem; background: #0f172a; border: 1px solid #334155; color: #cbd5e1; border-radius: 6px; font-size: 0.88rem; cursor: pointer; }
+  .speed-btn.active { background: #c8102e; color: white; border-color: #c8102e; }
 </style>
 </head>
 <body>
 
 <header>
   <div class="top">
-    <span class="brand">🏍️ UL2755 衝刺營</span>
+    <span class="brand">🏍️ UL2755 Sprint</span>
     <div class="stats">
       <span id="streak">🔥 0</span>
       <span id="combo"></span>
@@ -84,14 +89,14 @@
 </header>
 
 <div class="modes">
-  <button id="modeMcq" class="active">📱 互動模式</button>
-  <button id="modeAudio">🏍️ 騎車模式</button>
-  <button id="wrongOnly" style="flex:0 0 auto;">🔄 錯題</button>
+  <button id="modeMcq" class="active">📱 Quiz</button>
+  <button id="modeAudio">🏍️ Riding</button>
+  <button id="wrongOnly" style="flex:0 0 auto;">🔄 Wrong</button>
 </div>
 
-<main id="card" class="card">載入中⋯</main>
+<main id="card" class="card">Loading…</main>
 
-<footer>UL2755 + NEC 646 + FXX 案例 · MVP · <a href="https://github.com/Aachentw/UL2755-quiz" style="color:#64748b;">source</a></footer>
+<footer>UL2755 + NEC 646 + FXX Audit · MVP · <a href="https://github.com/Aachentw/UL2755-quiz" style="color:#64748b;">source</a></footer>
 
 <script src="app.js"></script>
 </body>

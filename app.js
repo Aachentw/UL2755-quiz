@@ -56,7 +56,7 @@ function renderMCQ() {
       <span class="tag">${q.category}</span>
       <span class="src">${q.source}</span>
     </div>
-    <h2 class="question">${q.question_zh}</h2>
+    <h2 class="question">${q.question}</h2>
     <div class="options">
       ${q.options.map((o, i) => `
         <button class="opt" data-i="${i}">
@@ -67,7 +67,7 @@ function renderMCQ() {
     </div>
     <div id="feedback"></div>
     <div class="nav-row">
-      <button id="skip" class="ghost">跳過 →</button>
+      <button id="skip" class="ghost">Skip →</button>
     </div>
   `;
   document.querySelectorAll('.opt').forEach(b =>
@@ -105,10 +105,10 @@ function handleAnswer(picked) {
   });
   $('#feedback').innerHTML = `
     <div class="fb ${correct ? 'ok' : 'no'}">
-      ${correct ? '✅ 答對！' : '❌ 再看一次'}
-      <div class="expl">${q.explanation_zh}</div>
+      ${correct ? '✅ Correct!' : '❌ Try again'}
+      <div class="expl">${q.explanation}</div>
     </div>
-    <button id="nextBtn" class="primary">下一題 →</button>
+    <button id="nextBtn" class="primary">Next →</button>
   `;
   $('#nextBtn').addEventListener('click', next);
   updateHeader();
@@ -129,10 +129,10 @@ function renderDone() {
   const right = Object.values(State.answered).filter(a => a.correct).length;
   $('#card').innerHTML = `
     <div class="done">
-      <h2>🏆 本輪結束</h2>
-      <p>答對 ${right} / ${total}</p>
-      <p>🔥 Streak: ${State.streak} 天</p>
-      <button class="primary" onclick="restart()">重新開始</button>
+      <h2>🏆 Round Complete</h2>
+      <p>Correct: ${right} / ${total}</p>
+      <p>🔥 Streak: ${State.streak} days</p>
+      <button class="primary" onclick="restart()">Restart</button>
     </div>
   `;
 }
@@ -140,22 +140,39 @@ function renderDone() {
 window.restart = () => { State.idx = 0; State.order = shuffle([...State.questions.keys()]); renderMCQ(); };
 
 // ---------- Audio mode ----------
+const SPEEDS = [0.5, 0.75, 1.0, 1.25];
+function getSpeed() { return parseFloat(localStorage.getItem('speed') || '0.75'); }
+function setSpeed(s) {
+  localStorage.setItem('speed', s);
+  if (sharedAudio) sharedAudio.playbackRate = s;
+  document.querySelectorAll('.speed-btn').forEach(b =>
+    b.classList.toggle('active', parseFloat(b.dataset.s) === s));
+}
+
 function renderAudioIntro() {
+  const s = getSpeed();
   $('#card').innerHTML = `
     <div class="audio-view">
-      <div class="riding">🏍️ 騎車模式</div>
+      <div class="riding">🏍️ Riding Mode</div>
       <div style="background:#7f1d1d;color:#fecaca;padding:0.7rem;border-radius:8px;margin:0.5rem 0;font-size:0.9rem;line-height:1.6;">
-        <b>⚠️ iPhone 使用提示：</b><br>
-        1. 確認左側「<b>靜音開關</b>」推到響鈴位置（不是橘色）<br>
-        2. 音量調至可聽見<br>
-        3. 戴好藍牙耳機<br>
-        4. 點下方按鈕開始
+        <b>⚠️ iPhone reminder:</b><br>
+        1. Flip the <b>silent switch</b> on the left side to ring position (not orange).<br>
+        2. Turn up the volume.<br>
+        3. Connect Bluetooth headphones.<br>
+        4. Tap the button below to start.
       </div>
-      <button class="primary" onclick="primeAndStart()">▶️ 開始朗讀</button>
-      <div class="stage" style="margin-top:1rem;color:#94a3b8;">從第 ${State.idx + 1} 題開始</div>
+
+      <div class="speed-row">
+        <span class="speed-label">Speed</span>
+        ${SPEEDS.map(v => `<button class="speed-btn ${v===s?'active':''}" data-s="${v}" onclick="setSpeed(${v})">${v}x</button>`).join('')}
+      </div>
+
+      <button class="primary" onclick="primeAndStart()">▶️ Start</button>
+      <div class="stage" style="margin-top:1rem;color:#94a3b8;">Starting from Q${State.idx + 1}</div>
     </div>
   `;
 }
+window.setSpeed = setSpeed;
 
 // Single persistent Audio element — iOS needs .play() synchronously in gesture
 let sharedAudio = null;
@@ -163,7 +180,9 @@ function getAudio() {
   if (!sharedAudio) {
     sharedAudio = new Audio();
     sharedAudio.preload = 'auto';
+    sharedAudio.playbackRate = getSpeed();
   }
+  sharedAudio.playbackRate = getSpeed();
   return sharedAudio;
 }
 
@@ -184,14 +203,19 @@ async function startAudio({ firstAlreadyPlaying = false } = {}) {
   State.audioStopped = false;
   requestWakeLock();
   const q = currentQuestion();
+  const s = getSpeed();
   $('#card').innerHTML = `
     <div class="audio-view">
-      <div class="riding">🏍️ 騎車模式播放中</div>
-      <h2 id="audioQ">${q ? q.question_zh : '載入中…'}</h2>
+      <div class="riding">🏍️ Riding Mode — Playing</div>
+      <h2 id="audioQ">${q ? q.question : 'Loading…'}</h2>
       <div id="audioOpts" class="audio-opts">${q ? q.options.map((o, i) =>
         `<div class="aopt">${String.fromCharCode(65 + i)}. ${o}</div>`).join('') : ''}</div>
-      <div id="audioStage" class="stage">🎧 題目</div>
-      <button class="ghost" onclick="stopAudio()">⏹ 停止</button>
+      <div id="audioStage" class="stage">🎧 Question</div>
+      <div class="speed-row">
+        <span class="speed-label">Speed</span>
+        ${SPEEDS.map(v => `<button class="speed-btn ${v===s?'active':''}" data-s="${v}" onclick="setSpeed(${v})">${v}x</button>`).join('')}
+      </div>
+      <button class="ghost" onclick="stopAudio()">⏹ Stop</button>
     </div>
   `;
   playLoop({ firstAlreadyPlaying });
@@ -201,11 +225,11 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
   let first = firstAlreadyPlaying;
   while (!State.audioStopped && State.idx < State.order.length) {
     const q = currentQuestion();
-    $('#audioQ').textContent = q.question_zh;
+    $('#audioQ').textContent = q.question;
     $('#audioOpts').innerHTML = q.options.map((o, i) =>
       `<div class="aopt">${String.fromCharCode(65 + i)}. ${o}</div>`).join('');
 
-    $('#audioStage').textContent = '🎧 題目';
+    $('#audioStage').textContent = '🎧 Question';
     if (first) {
       await waitForCurrentEnd();
       first = false;
@@ -215,23 +239,23 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
     if (State.audioStopped) break;
     await wait(700);
 
-    $('#audioStage').textContent = '🔢 四個選項';
+    $('#audioStage').textContent = '🔢 Options';
     await playMp3(`audio/${q.id}/opts.mp3`);
     if (State.audioStopped) break;
 
-    $('#audioStage').textContent = '⏳ 思考 5 秒…';
+    $('#audioStage').textContent = '⏳ Think 5 seconds…';
     await wait(5000);
     if (State.audioStopped) break;
 
     const ans = String.fromCharCode(65 + q.answer_index);
-    $('#audioStage').textContent = `✅ 答案 ${ans}`;
+    $('#audioStage').textContent = `✅ Answer: ${ans}`;
     await playMp3(`audio/${q.id}/ans.mp3`);
     await wait(1200);
     State.idx++;
     updateHeader();
   }
   if (!State.audioStopped) {
-    $('#audioStage').textContent = '🏁 播放結束';
+    $('#audioStage').textContent = '🏁 End of round';
   }
 }
 
@@ -346,7 +370,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('#modeMcq').addEventListener('click', () => { State.mode = 'mcq'; setActive(); renderMCQ(); });
   $('#modeAudio').addEventListener('click', () => { State.mode = 'audio'; setActive(); stopAudio(); renderAudioIntro(); });
   $('#wrongOnly').addEventListener('click', () => {
-    if (!State.wrongPool.length) return alert('還沒有錯題～');
+    if (!State.wrongPool.length) return alert('No wrong answers yet.');
     State.order = shuffle(State.wrongPool.map(id => State.questions.findIndex(q => q.id === id)).filter(i => i >= 0));
     State.idx = 0;
     (State.mode === 'audio') ? renderAudioIntro() : renderMCQ();
