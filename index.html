@@ -2,99 +2,92 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UL2755 Quiz 連通測試</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UL2755 衝刺營 🏍️</title>
+<meta name="theme-color" content="#c8102e">
+<link rel="manifest" href="manifest.webmanifest">
 <style>
-  body { font-family: -apple-system, "Segoe UI", "Microsoft JhengHei", sans-serif;
-         max-width: 640px; margin: 2rem auto; padding: 1rem; line-height: 1.6; }
-  h1 { color: #c8102e; }
-  button { font-size: 1.2rem; padding: 0.8rem 1.5rem; margin: 0.3rem;
-           border: none; border-radius: 8px; background: #005eb8; color: white; cursor: pointer; }
-  button:active { background: #003d7a; }
-  .result { background: #f0f0f0; padding: 0.8rem; border-radius: 6px; margin-top: 1rem;
-            white-space: pre-wrap; font-family: monospace; }
-  .ok { color: #2e7d32; } .fail { color: #c62828; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; font-family: -apple-system, "Segoe UI", "Microsoft JhengHei", "PingFang TC", sans-serif; background: #0f172a; color: #f1f5f9; line-height: 1.5; }
+  body { max-width: 680px; margin: 0 auto; padding: 0.5rem 1rem 3rem; min-height: 100vh; }
+
+  header { position: sticky; top: 0; background: #0f172a; padding: 0.7rem 0 0.3rem; z-index: 10; }
+  .top { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
+  .top .brand { font-weight: 700; color: #fca5a5; }
+  .top .stats { display: flex; gap: 0.7rem; }
+  #combo { color: #fbbf24; font-weight: 700; }
+  .progress-bar { height: 4px; background: #1e293b; border-radius: 2px; margin: 0.4rem 0; overflow: hidden; }
+  #progress { height: 100%; background: linear-gradient(90deg, #ef4444, #f97316); width: 0%; transition: width 0.3s; }
+  #counter { font-size: 0.8rem; color: #94a3b8; text-align: right; }
+
+  .modes { display: flex; gap: 0.4rem; margin: 0.5rem 0; }
+  .modes button { flex: 1; padding: 0.6rem; border: 1px solid #334155; background: #1e293b; color: #cbd5e1; border-radius: 8px; font-size: 0.95rem; cursor: pointer; }
+  .modes button.active { background: #c8102e; color: white; border-color: #c8102e; }
+
+  .card { background: #1e293b; border-radius: 14px; padding: 1.2rem; margin-top: 0.8rem; }
+  .meta { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 0.7rem; }
+  .tag { background: #334155; padding: 2px 8px; border-radius: 10px; color: #cbd5e1; }
+  .src { color: #94a3b8; }
+  .question { font-size: 1.15rem; line-height: 1.55; margin: 0.5rem 0 1.2rem; color: #f8fafc; }
+
+  .options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .opt { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.9rem 1rem; background: #0f172a; border: 2px solid #334155; border-radius: 10px; color: #e2e8f0; font-size: 1rem; text-align: left; cursor: pointer; transition: transform 0.08s, background 0.15s, border-color 0.15s; }
+  .opt:active { transform: scale(0.98); }
+  .opt:hover:not(:disabled) { border-color: #60a5fa; }
+  .opt .letter { flex: 0 0 1.6rem; height: 1.6rem; background: #334155; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
+  .opt.right { background: #064e3b; border-color: #10b981; }
+  .opt.right .letter { background: #10b981; color: white; }
+  .opt.wrong { background: #7f1d1d; border-color: #ef4444; }
+  .opt.wrong .letter { background: #ef4444; color: white; }
+  .opt:disabled { cursor: default; opacity: 0.95; }
+
+  .fb { margin-top: 1rem; padding: 0.9rem 1rem; border-radius: 10px; font-weight: 600; }
+  .fb.ok { background: #064e3b; color: #6ee7b7; }
+  .fb.no { background: #7f1d1d; color: #fecaca; }
+  .expl { margin-top: 0.5rem; font-weight: 400; font-size: 0.92rem; color: #f1f5f9; line-height: 1.55; }
+
+  .primary, .ghost { display: block; width: 100%; padding: 0.9rem; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 0.8rem; border: none; }
+  .primary { background: #c8102e; color: white; }
+  .primary:active { background: #a00d25; }
+  .ghost { background: transparent; border: 1px solid #475569; color: #cbd5e1; }
+  .nav-row { margin-top: 0.5rem; }
+
+  .audio-view { text-align: center; }
+  .riding { font-size: 1.1rem; color: #fca5a5; margin-bottom: 0.8rem; }
+  .audio-opts { display: flex; flex-direction: column; gap: 0.3rem; margin: 1rem 0; }
+  .aopt { background: #0f172a; padding: 0.6rem; border-radius: 8px; font-size: 0.95rem; }
+  .stage { font-size: 1.05rem; color: #fbbf24; margin: 0.8rem 0 1rem; font-weight: 600; }
+
+  .done { text-align: center; padding: 1rem; }
+  .done h2 { color: #fbbf24; }
+
+  footer { text-align: center; font-size: 0.75rem; color: #64748b; margin-top: 1.5rem; }
 </style>
 </head>
 <body>
 
-<h1>🏍️ UL2755 Quiz — 連通性測試</h1>
-<p>若你能在手機看到這段文字，<strong>代表 GitHub Pages 部署成功</strong>。
-按下方按鈕測試中英文 TTS 切段朗讀。</p>
+<header>
+  <div class="top">
+    <span class="brand">🏍️ UL2755 衝刺營</span>
+    <div class="stats">
+      <span id="streak">🔥 0</span>
+      <span id="combo"></span>
+    </div>
+  </div>
+  <div class="progress-bar"><div id="progress"></div></div>
+  <div id="counter">0 / 0</div>
+</header>
 
-<button onclick="speakBilingual()">🔊 測試雙語 TTS（中文 + 英文術語）</button>
-<button onclick="speakChineseOnly()">🗣️ 純中文測試</button>
-<button onclick="listVoices()">🔍 列出可用語音</button>
+<div class="modes">
+  <button id="modeMcq" class="active">📱 互動模式</button>
+  <button id="modeAudio">🏍️ 騎車模式</button>
+  <button id="wrongOnly" style="flex:0 0 auto;">🔄 錯題</button>
+</div>
 
-<div id="result" class="result">等候點擊測試按鈕⋯</div>
+<main id="card" class="card">載入中⋯</main>
 
-<script>
-const out = document.getElementById('result');
+<footer>UL2755 + NEC 646 + FXX 案例 · MVP · <a href="https://github.com/Aachentw/UL2755-quiz" style="color:#64748b;">source</a></footer>
 
-function log(msg, cls='') {
-  out.innerHTML = `<span class="${cls}">${msg}</span>`;
-}
-
-// 雙語切段朗讀（核心技術：將句子拆成中英 segments，依序 speak）
-function speakBilingual() {
-  if (!('speechSynthesis' in window)) {
-    log('❌ 此瀏覽器不支援 Web Speech API', 'fail'); return;
-  }
-  const segments = [
-    { lang: 'zh-TW', text: 'UL 2755 規定' },
-    { lang: 'en-US', text: '600 volts' },
-    { lang: 'zh-TW', text: '以下設備的工作空間' },
-    { lang: 'en-US', text: 'clearance' },
-    { lang: 'zh-TW', text: '最小深度是 900 毫米。' }
-  ];
-  speechSynthesis.cancel();
-  segments.forEach(seg => {
-    const u = new SpeechSynthesisUtterance(seg.text);
-    u.lang = seg.lang;
-    u.rate = 0.95;
-    speechSynthesis.speak(u);
-  });
-  log('✅ 播放中：UL 2755 規定 [600 volts] 以下設備的工作空間 [clearance] 最小深度是 900 毫米。', 'ok');
-}
-
-function speakChineseOnly() {
-  if (!('speechSynthesis' in window)) {
-    log('❌ 此瀏覽器不支援 Web Speech API', 'fail'); return;
-  }
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance('你好，這是騎車模式的中文語音測試。');
-  u.lang = 'zh-TW';
-  speechSynthesis.speak(u);
-  log('✅ 播放純中文中⋯', 'ok');
-}
-
-function listVoices() {
-  const voices = speechSynthesis.getVoices();
-  if (voices.length === 0) {
-    log('⏳ 語音清單載入中，請 1 秒後再按一次。', 'fail'); return;
-  }
-  const zh = voices.filter(v => v.lang.startsWith('zh'));
-  const en = voices.filter(v => v.lang.startsWith('en'));
-  let msg = `✅ 偵測到 ${voices.length} 個語音：\n`;
-  msg += `\n中文語音 (${zh.length})：\n` + zh.map(v => `  • ${v.name} [${v.lang}]`).join('\n');
-  msg += `\n\n英文語音 (${en.length})：\n` + en.slice(0, 5).map(v => `  • ${v.name} [${v.lang}]`).join('\n');
-  log(msg, 'ok');
-}
-
-// 頁面載入即顯示環境資訊
-window.addEventListener('load', () => {
-  const info = [
-    `✅ 頁面載入成功`,
-    `URL: ${location.href}`,
-    `協定: ${location.protocol}`,
-    `UA: ${navigator.userAgent.substring(0, 80)}...`,
-    `Web Speech API: ${'speechSynthesis' in window ? '✅ 支援' : '❌ 不支援'}`,
-    `Wake Lock API: ${'wakeLock' in navigator ? '✅ 支援（騎車模式可用）' : '❌ 不支援'}`,
-    `IndexedDB: ${'indexedDB' in window ? '✅ 支援' : '❌ 不支援'}`,
-  ].join('\n');
-  log(info, 'ok');
-});
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>
