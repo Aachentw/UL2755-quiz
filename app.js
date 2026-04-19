@@ -84,11 +84,12 @@ function handleAnswer(picked) {
 
   if (correct) {
     State.combo++;
-    beep(880, 0.08);
-    if (State.combo >= 3) burst();
+    if (State.combo >= 3) burst(); else playRight();
+    tryVibrate(30);
   } else {
     State.combo = 0;
-    beep(220, 0.15);
+    playWrong();
+    tryVibrate([80, 50, 80]);
     if (!State.wrongPool.includes(q.id)) State.wrongPool.push(q.id);
   }
   localStorage.setItem('answered', JSON.stringify(State.answered));
@@ -108,7 +109,6 @@ function handleAnswer(picked) {
     <button id="nextBtn" class="primary">下一題 →</button>
   `;
   $('#nextBtn').addEventListener('click', next);
-  if ('vibrate' in navigator) navigator.vibrate(correct ? 30 : [60, 40, 60]);
   updateHeader();
 }
 
@@ -188,39 +188,18 @@ async function playLoop() {
   }
 }
 
-// Smart bilingual TTS: split text by CJK/Latin runs, speak each with matching lang
+// Chinese-only TTS (single utterance, zh-TW)
 function speakSmart(text) {
   return new Promise((resolve) => {
     if (!('speechSynthesis' in window)) return resolve();
     speechSynthesis.cancel();
-    const segs = splitBilingual(text);
-    let i = 0;
-    const speakNext = () => {
-      if (State.audioStopped || i >= segs.length) return resolve();
-      const seg = segs[i++];
-      const u = new SpeechSynthesisUtterance(seg.text);
-      u.lang = seg.lang;
-      u.rate = 0.95;
-      u.onend = speakNext;
-      u.onerror = speakNext;
-      speechSynthesis.speak(u);
-    };
-    speakNext();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-TW';
+    u.rate = 0.95;
+    u.onend = resolve;
+    u.onerror = resolve;
+    speechSynthesis.speak(u);
   });
-}
-
-function splitBilingual(text) {
-  // Split into runs of CJK+punct vs Latin/digits
-  const parts = [];
-  const re = /[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef，。！？、：；（）「」『』]+|[^\u4e00-\u9fff\u3000-\u303f\uff00-\uffef，。！？、：；（）「」『』]+/g;
-  let m;
-  while ((m = re.exec(text)) !== null) {
-    const s = m[0].trim();
-    if (!s) continue;
-    const isCJK = /[\u4e00-\u9fff]/.test(s);
-    parts.push({ text: s, lang: isCJK ? 'zh-TW' : 'en-US' });
-  }
-  return parts.length ? parts : [{ text, lang: 'zh-TW' }];
 }
 
 function wait(ms) { return new Promise(r => State.audioTimer = setTimeout(r, ms)); }
@@ -238,21 +217,42 @@ async function requestWakeLock() {
 }
 function releaseWakeLock() { State.wakeLock?.release?.(); State.wakeLock = null; }
 
-// ---------- Audio feedback ----------
+// ---------- Audio feedback (mobile-safe) ----------
 let audioCtx;
-function beep(freq, dur) {
+function ensureAudio() {
+  if (!audioCtx) {
+    const Ctor = window.AudioContext || window.webkitAudioContext;
+    if (!Ctor) return null;
+    audioCtx = new Ctor();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+  return audioCtx;
+}
+function beep(freq, dur, vol = 0.2) {
+  const ctx = ensureAudio();
+  if (!ctx) return;
   try {
-    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sine';
     o.frequency.value = freq;
-    o.connect(g); g.connect(audioCtx.destination);
-    g.gain.setValueAtTime(0.15, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-    o.start(); o.stop(audioCtx.currentTime + dur);
+    o.connect(g); g.connect(ctx.destination);
+    const t = ctx.currentTime;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.start(t); o.stop(t + dur);
   } catch (_) {}
 }
-function burst() { beep(660, 0.06); setTimeout(() => beep(880, 0.06), 80); setTimeout(() => beep(1100, 0.1), 160); }
+function playRight() { beep(880, 0.1); setTimeout(() => beep(1320, 0.12), 90); }
+function playWrong() { beep(220, 0.18, 0.25); setTimeout(() => beep(180, 0.2, 0.25), 120); }
+function burst() { beep(784, 0.08); setTimeout(() => beep(988, 0.08), 80); setTimeout(() => beep(1319, 0.14), 160); }
+
+function tryVibrate(pattern) {
+  if ('vibrate' in navigator) {
+    try { navigator.vibrate(pattern); } catch (_) {}
+  }
+}
 
 // ---------- header ----------
 function updateHeader() {

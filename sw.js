@@ -1,4 +1,4 @@
-const CACHE = 'ul2755-v1';
+const CACHE = 'ul2755-v2';
 const ASSETS = ['./', './index.html', './app.js', './manifest.webmanifest', './questions.json'];
 
 self.addEventListener('install', (e) => {
