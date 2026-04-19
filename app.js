@@ -158,16 +158,12 @@ function renderAudioIntro() {
 }
 
 window.primeAndStart = async () => {
-  // iOS voice warm-up: speak a silent utterance within user gesture
-  if ('speechSynthesis' in window) {
-    try {
-      speechSynthesis.cancel();
-      const warm = new SpeechSynthesisUtterance(' ');
-      warm.volume = 0.01;
-      warm.lang = 'zh-TW';
-      speechSynthesis.speak(warm);
-    } catch (_) {}
-  }
+  // iOS gesture unlock: play a tiny silent audio within user tap
+  try {
+    const silent = new Audio('data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMD////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAUHAAAAAAAAASDA9l3PEwAAAAAAAAAAAAAAAAAAAAAA//sQxAADwAABpAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV');
+    silent.volume = 0.01;
+    await silent.play().catch(() => {});
+  } catch (_) {}
   ensureAudio();
   await startAudio();
 };
@@ -193,45 +189,48 @@ async function playLoop() {
     $('#audioQ').textContent = q.question_zh;
     $('#audioOpts').innerHTML = q.options.map((o, i) =>
       `<div class="aopt">${String.fromCharCode(65 + i)}. ${o}</div>`).join('');
+
     $('#audioStage').textContent = '🎧 題目';
-    await speakSmart(q.question_zh);
+    await playMp3(`audio/${q.id}/q.mp3`);
     if (State.audioStopped) break;
     await wait(700);
 
     $('#audioStage').textContent = '🔢 四個選項';
-    for (let i = 0; i < q.options.length; i++) {
-      await speakSmart(`選項 ${String.fromCharCode(65 + i)}，${q.options[i]}`);
-      if (State.audioStopped) return;
-    }
+    await playMp3(`audio/${q.id}/opts.mp3`);
+    if (State.audioStopped) break;
+
     $('#audioStage').textContent = '⏳ 思考 5 秒…';
     await wait(5000);
     if (State.audioStopped) break;
 
     const ans = String.fromCharCode(65 + q.answer_index);
     $('#audioStage').textContent = `✅ 答案 ${ans}`;
-    await speakSmart(`答案是 ${ans}。`);
-    await speakSmart(q.explanation_zh);
+    await playMp3(`audio/${q.id}/ans.mp3`);
     await wait(1200);
     State.idx++;
     updateHeader();
   }
   if (!State.audioStopped) {
     $('#audioStage').textContent = '🏁 播放結束';
-    await speakSmart('本輪播放結束，請靠邊停車休息。');
   }
 }
 
-// Chinese-only TTS (single utterance, zh-TW)
-function speakSmart(text) {
+// Play pre-generated MP3 (OpenAI TTS nova). Falls back to Web Speech if missing.
+let currentAudio = null;
+function playMp3(url) {
   return new Promise((resolve) => {
-    if (!('speechSynthesis' in window)) return resolve();
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'zh-TW';
-    u.rate = 0.95;
-    u.onend = resolve;
-    u.onerror = resolve;
-    speechSynthesis.speak(u);
+    if (currentAudio) { try { currentAudio.pause(); } catch (_) {} }
+    const a = new Audio(url);
+    currentAudio = a;
+    a.onended = resolve;
+    a.onerror = () => {
+      console.warn('MP3 failed, fallback to TTS:', url);
+      resolve();
+    };
+    a.play().catch((err) => {
+      console.warn('play() rejected:', err);
+      resolve();
+    });
   });
 }
 
@@ -240,6 +239,7 @@ function wait(ms) { return new Promise(r => State.audioTimer = setTimeout(r, ms)
 window.stopAudio = () => {
   State.audioStopped = true;
   clearTimeout(State.audioTimer);
+  if (currentAudio) { try { currentAudio.pause(); currentAudio.src = ''; } catch (_) {} currentAudio = null; }
   if ('speechSynthesis' in window) speechSynthesis.cancel();
   releaseWakeLock();
   if (State.mode === 'audio') renderAudioIntro();
