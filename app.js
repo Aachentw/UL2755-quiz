@@ -86,10 +86,12 @@ function handleAnswer(picked) {
     State.combo++;
     if (State.combo >= 3) burst(); else playRight();
     tryVibrate(30);
+    shake(true);
   } else {
     State.combo = 0;
     playWrong();
     tryVibrate([80, 50, 80]);
+    shake(false);
     if (!State.wrongPool.includes(q.id)) State.wrongPool.push(q.id);
   }
   localStorage.setItem('answered', JSON.stringify(State.answered));
@@ -138,8 +140,39 @@ function renderDone() {
 window.restart = () => { State.idx = 0; State.order = shuffle([...State.questions.keys()]); renderMCQ(); };
 
 // ---------- Audio mode ----------
+function renderAudioIntro() {
+  $('#card').innerHTML = `
+    <div class="audio-view">
+      <div class="riding">🏍️ 騎車模式</div>
+      <div style="background:#7f1d1d;color:#fecaca;padding:0.7rem;border-radius:8px;margin:0.5rem 0;font-size:0.9rem;line-height:1.6;">
+        <b>⚠️ iPhone 使用提示：</b><br>
+        1. 確認左側「<b>靜音開關</b>」推到響鈴位置（不是橘色）<br>
+        2. 音量調至可聽見<br>
+        3. 戴好藍牙耳機<br>
+        4. 點下方按鈕開始
+      </div>
+      <button class="primary" onclick="primeAndStart()">▶️ 開始朗讀</button>
+      <div class="stage" style="margin-top:1rem;color:#94a3b8;">從第 ${State.idx + 1} 題開始</div>
+    </div>
+  `;
+}
+
+window.primeAndStart = async () => {
+  // iOS voice warm-up: speak a silent utterance within user gesture
+  if ('speechSynthesis' in window) {
+    try {
+      speechSynthesis.cancel();
+      const warm = new SpeechSynthesisUtterance(' ');
+      warm.volume = 0.01;
+      warm.lang = 'zh-TW';
+      speechSynthesis.speak(warm);
+    } catch (_) {}
+  }
+  ensureAudio();
+  await startAudio();
+};
+
 async function startAudio() {
-  stopAudio();
   State.audioStopped = false;
   await requestWakeLock();
   $('#card').innerHTML = `
@@ -209,6 +242,7 @@ window.stopAudio = () => {
   clearTimeout(State.audioTimer);
   if ('speechSynthesis' in window) speechSynthesis.cancel();
   releaseWakeLock();
+  if (State.mode === 'audio') renderAudioIntro();
 };
 
 async function requestWakeLock() {
@@ -254,6 +288,14 @@ function tryVibrate(pattern) {
   }
 }
 
+function shake(ok) {
+  const c = $('#card');
+  if (!c) return;
+  c.classList.remove('shake-ok', 'shake-no');
+  void c.offsetWidth;
+  c.classList.add(ok ? 'shake-ok' : 'shake-no');
+}
+
 // ---------- header ----------
 function updateHeader() {
   const done = State.idx;
@@ -264,18 +306,26 @@ function updateHeader() {
   $('#counter').textContent = `${done} / ${total}`;
 }
 
+// Preload voice list (iOS needs this called once)
+function warmVoices() {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}
+
 // ---------- init ----------
 document.addEventListener('DOMContentLoaded', async () => {
   await loadQuestions();
   tickStreak();
+  warmVoices();
 
   $('#modeMcq').addEventListener('click', () => { State.mode = 'mcq'; setActive(); renderMCQ(); });
-  $('#modeAudio').addEventListener('click', () => { State.mode = 'audio'; setActive(); startAudio(); });
+  $('#modeAudio').addEventListener('click', () => { State.mode = 'audio'; setActive(); stopAudio(); renderAudioIntro(); });
   $('#wrongOnly').addEventListener('click', () => {
     if (!State.wrongPool.length) return alert('還沒有錯題～');
     State.order = shuffle(State.wrongPool.map(id => State.questions.findIndex(q => q.id === id)).filter(i => i >= 0));
     State.idx = 0;
-    (State.mode === 'audio') ? startAudio() : renderMCQ();
+    (State.mode === 'audio') ? renderAudioIntro() : renderMCQ();
   });
 
   setActive();
