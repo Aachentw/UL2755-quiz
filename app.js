@@ -157,33 +157,48 @@ function renderAudioIntro() {
   `;
 }
 
-window.primeAndStart = async () => {
-  // iOS gesture unlock: play a tiny silent audio within user tap
-  try {
-    const silent = new Audio('data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMD////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAUHAAAAAAAAASDA9l3PEwAAAAAAAAAAAAAAAAAAAAAA//sQxAADwAABpAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV');
-    silent.volume = 0.01;
-    await silent.play().catch(() => {});
-  } catch (_) {}
+// Single persistent Audio element — iOS needs .play() synchronously in gesture
+let sharedAudio = null;
+function getAudio() {
+  if (!sharedAudio) {
+    sharedAudio = new Audio();
+    sharedAudio.preload = 'auto';
+  }
+  return sharedAudio;
+}
+
+window.primeAndStart = () => {
+  // CRITICAL: synchronous inside the click handler (iOS Chrome/Safari requirement)
   ensureAudio();
-  await startAudio();
+  const q = currentQuestion();
+  if (!q) return;
+  const a = getAudio();
+  a.src = `audio/${q.id}/q.mp3?v=1`;
+  const p = a.play();
+  if (p && p.catch) p.catch(err => console.warn('initial play rejected:', err));
+  // Now async path takes over
+  startAudio({ firstAlreadyPlaying: true });
 };
 
-async function startAudio() {
+async function startAudio({ firstAlreadyPlaying = false } = {}) {
   State.audioStopped = false;
-  await requestWakeLock();
+  requestWakeLock();
+  const q = currentQuestion();
   $('#card').innerHTML = `
     <div class="audio-view">
       <div class="riding">🏍️ 騎車模式播放中</div>
-      <h2 id="audioQ">載入中…</h2>
-      <div id="audioOpts" class="audio-opts"></div>
-      <div id="audioStage" class="stage">—</div>
+      <h2 id="audioQ">${q ? q.question_zh : '載入中…'}</h2>
+      <div id="audioOpts" class="audio-opts">${q ? q.options.map((o, i) =>
+        `<div class="aopt">${String.fromCharCode(65 + i)}. ${o}</div>`).join('') : ''}</div>
+      <div id="audioStage" class="stage">🎧 題目</div>
       <button class="ghost" onclick="stopAudio()">⏹ 停止</button>
     </div>
   `;
-  playLoop();
+  playLoop({ firstAlreadyPlaying });
 }
 
-async function playLoop() {
+async function playLoop({ firstAlreadyPlaying = false } = {}) {
+  let first = firstAlreadyPlaying;
   while (!State.audioStopped && State.idx < State.order.length) {
     const q = currentQuestion();
     $('#audioQ').textContent = q.question_zh;
@@ -191,7 +206,12 @@ async function playLoop() {
       `<div class="aopt">${String.fromCharCode(65 + i)}. ${o}</div>`).join('');
 
     $('#audioStage').textContent = '🎧 題目';
-    await playMp3(`audio/${q.id}/q.mp3`);
+    if (first) {
+      await waitForCurrentEnd();
+      first = false;
+    } else {
+      await playMp3(`audio/${q.id}/q.mp3`);
+    }
     if (State.audioStopped) break;
     await wait(700);
 
@@ -215,22 +235,26 @@ async function playLoop() {
   }
 }
 
-// Play pre-generated MP3 (OpenAI TTS nova). Falls back to Web Speech if missing.
+// Play MP3 by swapping src on the single shared Audio element (iOS-safe)
 let currentAudio = null;
 function playMp3(url) {
   return new Promise((resolve) => {
-    if (currentAudio) { try { currentAudio.pause(); } catch (_) {} }
-    const a = new Audio(url);
+    const a = getAudio();
     currentAudio = a;
-    a.onended = resolve;
-    a.onerror = () => {
-      console.warn('MP3 failed, fallback to TTS:', url);
-      resolve();
-    };
-    a.play().catch((err) => {
-      console.warn('play() rejected:', err);
-      resolve();
-    });
+    a.src = url;
+    a.onended = () => resolve();
+    a.onerror = () => { console.warn('MP3 error:', url); resolve(); };
+    const p = a.play();
+    if (p && p.catch) p.catch(err => { console.warn('play() rejected:', err); resolve(); });
+  });
+}
+
+function waitForCurrentEnd() {
+  return new Promise((resolve) => {
+    const a = getAudio();
+    if (a.paused || a.ended) return resolve();
+    const onEnd = () => { a.removeEventListener('ended', onEnd); resolve(); };
+    a.addEventListener('ended', onEnd);
   });
 }
 
