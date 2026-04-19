@@ -1,8 +1,8 @@
-const CACHE = 'ul2755-v6';
-const ASSETS = ['./', './index.html', './app.js', './manifest.webmanifest', './questions.json'];
+const CACHE = 'ul2755-v7';
+const SHELL = ['./', './index.html', './app.js', './manifest.webmanifest', './questions.json'];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {
@@ -12,15 +12,29 @@ self.addEventListener('activate', (e) => {
   );
 });
 
+// Network-first for app shell & questions (get fresh updates).
+// Cache-first for audio MP3s (static, large, rarely change).
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      const net = fetch(e.request).then(res => {
+  const url = new URL(e.request.url);
+  const isAudio = url.pathname.includes('/audio/') && url.pathname.endsWith('.mp3');
+
+  if (isAudio) {
+    e.respondWith(
+      caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
         if (res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
         return res;
-      }).catch(() => cached);
-      return cached || net;
-    })
-  );
+      }))
+    );
+  } else {
+    e.respondWith(
+      fetch(e.request).then(res => {
+        if (res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, copy));
+        }
+        return res;
+      }).catch(() => caches.match(e.request))
+    );
+  }
 });
