@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>SRS Tests</title>
+<style>body{font-family:monospace;padding:1rem;background:#0f172a;color:#f1f5f9}
+.ok{color:#10b981}.fail{color:#ef4444;font-weight:700}</style>
+</head><body>
+<h1>SRS Unit Tests</h1><div id="out"></div>
+<script src="srs.js"></script>
+<script>
+const out = document.getElementById('out');
+let pass = 0, fail = 0;
+function assert(name, cond, detail) {
+  const div = document.createElement('div');
+  div.className = cond ? 'ok' : 'fail';
+  div.textContent = (cond ? '[OK] ' : '[FAIL] ') + name + (cond ? '' : ' -> ' + JSON.stringify(detail));
+  out.appendChild(div);
+  cond ? pass++ : fail++;
+}
+const t0 = 1_700_000_000_000;
+
+// --- Task 1: new/learning ---
+assert('new -> correct -> learning +10min',
+  (() => { const s = SRS.nextState(null, true, t0); return s.stage === 'learning' && s.due_at === t0 + 10*60*1000; })(),
+  SRS.nextState(null, true, t0));
+assert('new -> wrong -> still new',
+  (() => { const s = SRS.nextState(null, false, t0); return s.stage === 'new' && s.consecutive_correct === 0; })(),
+  SRS.nextState(null, false, t0));
+assert('learning -> correct -> review 1 day',
+  (() => { const start = { stage: 'learning', consecutive_correct: 0, interval_minutes: 10, total_seen: 1, total_correct: 1 };
+    const s = SRS.nextState(start, true, t0); return s.stage === 'review' && s.interval_minutes === 1440; })(),
+  null);
+assert('learning -> wrong -> stays learning +10min',
+  (() => { const start = { stage: 'learning', consecutive_correct: 0, interval_minutes: 10 };
+    const s = SRS.nextState(start, false, t0); return s.stage === 'learning' && s.due_at === t0 + 10*60*1000; })(),
+  null);
+
+// --- Task 2: review/graduated ---
+const rev = (cc, iv) => ({ stage: 'review', consecutive_correct: cc, interval_minutes: iv, total_seen: 5, total_correct: 5 });
+assert('review cc=0 iv=1d -> correct -> cc=1 iv=3d',
+  (() => { const s = SRS.nextState(rev(0, 1440), true, t0); return s.stage === 'review' && s.interval_minutes === 4320 && s.consecutive_correct === 1; })(), null);
+assert('review cc=1 iv=3d -> correct -> cc=2 iv=7d',
+  (() => { const s = SRS.nextState(rev(1, 4320), true, t0); return s.stage === 'review' && s.interval_minutes === 10080 && s.consecutive_correct === 2; })(), null);
+assert('review cc=2 iv=7d -> correct -> graduated cc=3 iv=30d',
+  (() => { const s = SRS.nextState(rev(2, 10080), true, t0); return s.stage === 'graduated' && s.consecutive_correct === 3 && s.interval_minutes === 43200; })(), null);
+assert('review -> wrong -> learning +10min cc=0',
+  (() => { const s = SRS.nextState(rev(2, 10080), false, t0); return s.stage === 'learning' && s.consecutive_correct === 0 && s.interval_minutes === 10; })(), null);
+assert('graduated 30d -> correct -> 90d',
+  (() => { const s = SRS.nextState({ stage: 'graduated', consecutive_correct: 3, interval_minutes: 43200, total_seen: 10, total_correct: 10 }, true, t0);
+    return s.stage === 'graduated' && s.interval_minutes === 129600; })(), null);
+assert('graduated 180d -> correct -> stays 180d (capped)',
+  (() => { const s = SRS.nextState({ stage: 'graduated', consecutive_correct: 3, interval_minutes: 259200, total_seen: 20, total_correct: 20 }, true, t0);
+    return s.stage === 'graduated' && s.interval_minutes === 259200; })(), null);
+assert('graduated -> wrong -> review +1d cc=0',
+  (() => { const s = SRS.nextState({ stage: 'graduated', consecutive_correct: 3, interval_minutes: 43200, total_seen: 10, total_correct: 9 }, false, t0);
+    return s.stage === 'review' && s.consecutive_correct === 0 && s.interval_minutes === 1440; })(), null);
+
+// --- Task 3: buildDeck ---
+const QS = Array.from({ length: 5 }, (_, i) => ({ id: 'q' + (i+1) }));
+assert('empty state: 5 new, cap 2 -> deck of 2',
+  (() => { const deck = SRS.buildDeck({}, QS, { new_per_day: 2, session_cap: null, order: 'reviews_first' }, t0, 0);
+    return deck.length === 2 && deck[0].id === 'q1'; })(), null);
+assert('2 due + cap 1 new -> deck [q1,q2,q3]',
+  (() => {
+    const state = { q1: { stage:'review', due_at:t0-1000, interval_minutes:1440, consecutive_correct:1, total_seen:1, total_correct:1 },
+                    q2: { stage:'review', due_at:t0-500,  interval_minutes:1440, consecutive_correct:1, total_seen:1, total_correct:1 } };
+    const deck = SRS.buildDeck(state, QS, { new_per_day: 1, session_cap: null, order: 'reviews_first' }, t0, 0);
+    return deck.length === 3 && deck[0].id === 'q1' && deck[1].id === 'q2' && deck[2].id === 'q3'; })(), null);
+assert('session_cap truncates tail',
+  (() => { const deck = SRS.buildDeck({}, QS, { new_per_day: 5, session_cap: 3, order: 'reviews_first' }, t0, 0);
+    return deck.length === 3; })(), null);
+assert('new_taken_today respected: 2 taken + cap 3 -> 1 slot',
+  (() => { const deck = SRS.buildDeck({}, QS, { new_per_day: 3, session_cap: null, order: 'reviews_first' }, t0, 2);
+    return deck.length === 1; })(), null);
+assert('non-due review not included',
+  (() => { const state = { q1: { stage:'review', due_at:t0+1000, interval_minutes:1440, consecutive_correct:1, total_seen:1, total_correct:1 } };
+    const deck = SRS.buildDeck(state, QS, { new_per_day: 0, session_cap: null, order: 'reviews_first' }, t0, 0);
+    return deck.length === 0; })(), null);
+
+// --- Task 4: summary + migrate ---
+assert('summary counts by stage',
+  (() => { const state = {
+      q1: { stage:'review', due_at:t0-1, interval_minutes:1440, consecutive_correct:1, total_seen:1, total_correct:1 },
+      q2: { stage:'review', due_at:t0+1e9, interval_minutes:1440, consecutive_correct:1, total_seen:1, total_correct:1 },
+      q3: { stage:'graduated', due_at:t0+1e12, interval_minutes:43200, consecutive_correct:3, total_seen:5, total_correct:5 },
+      q4: { stage:'learning', due_at:t0-1, interval_minutes:10, consecutive_correct:0, total_seen:2, total_correct:0 },
+    };
+    const s = SRS.summary(state, QS, t0);
+    return s.due === 3 && s.new === 1 && s.graduated === 1 && s.learning === 1 && s.review === 2;
+  })(), null);
+assert('migrate: answered correct -> learning +10min',
+  (() => {
+    const seeded = SRS.migrate({ q1: { correct: true }, q2: { correct: false } }, ['q2'], t0);
+    return seeded.q1.stage === 'learning' && seeded.q1.due_at === t0 + 10*60*1000
+        && seeded.q2.stage === 'learning' && seeded.q2.due_at === t0 + 10*60*1000;
+  })(), null);
+assert('migrate: empty -> empty',
+  (() => { const seeded = SRS.migrate({}, [], t0); return Object.keys(seeded).length === 0; })(), null);
+
+const summary = document.createElement('h2');
+summary.textContent = pass + ' passed, ' + fail + ' failed';
+summary.style.color = fail ? '#ef4444' : '#10b981';
+out.appendChild(summary);
+</script></body></html>
