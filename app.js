@@ -209,7 +209,7 @@ async function startAudio({ firstAlreadyPlaying = false } = {}) {
       <div class="riding">🏍️ Riding Mode — Playing</div>
       <h2 id="audioQ">${q ? q.question : 'Loading…'}</h2>
       <div id="audioOpts" class="audio-opts">${q ? q.options.map((o, i) =>
-        `<div class="aopt">${String.fromCharCode(65 + i)}. ${o}</div>`).join('') : ''}</div>
+        `<div class="aopt"><span class="letter">${String.fromCharCode(65 + i)}</span><span>${o}</span></div>`).join('') : ''}</div>
       <div id="audioStage" class="stage">🎧 Question</div>
       <div class="speed-row">
         <span class="speed-label">Speed</span>
@@ -236,7 +236,7 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
     const q = currentQuestion();
     $('#audioQ').textContent = q.question;
     $('#audioOpts').innerHTML = q.options.map((o, i) =>
-      `<div class="aopt">${String.fromCharCode(65 + i)}. ${o}</div>`).join('');
+      `<div class="aopt"><span class="letter">${String.fromCharCode(65 + i)}</span><span>${o}</span></div>`).join('');
 
     $('#audioStage').textContent = '🎧 Question';
     if (first) {
