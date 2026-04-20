@@ -39,6 +39,19 @@ const SrsStore = {
     const cur = this.getNewToday();
     localStorage.setItem('srs_new_today', JSON.stringify({ date: key, count: cur + 1 }));
   },
+  loadCurriculum() { try { return JSON.parse(localStorage.getItem('srs_curriculum') || 'null'); } catch { return null; } },
+  saveCurriculum(c) { localStorage.setItem('srs_curriculum', JSON.stringify(c)); },
+  ensureCurriculum(questions, settings) {
+    const existing = this.loadCurriculum();
+    const totalStored = existing ? existing.days.reduce((n, d) => n + d.question_ids.length, 0) : 0;
+    if (existing && existing.built_from_new_per_day === settings.new_per_day && totalStored === questions.length) {
+      return existing;
+    }
+    const today = new Date().toISOString().slice(0, 10);
+    const fresh = SRS.buildCurriculum(questions, settings.new_per_day, today);
+    this.saveCurriculum(fresh);
+    return fresh;
+  },
 };
 
 function runMigration() {
@@ -429,6 +442,7 @@ function updateHeader() {
 
 // ---------- Dashboard ----------
 function startOfToday() { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
+function ymd(d) { return d.toISOString().slice(0, 10); }
 
 function renderDashboard() {
   stopAudioCleanup();
@@ -444,8 +458,27 @@ function renderDashboard() {
   const todayDone = Object.values(state).filter(r => (r.last_answered_at || 0) >= startToday).length;
   const pct = todayGoal > 0 ? Math.min(100, (todayDone / todayGoal) * 100) : 0;
 
+  const curr = SrsStore.ensureCurriculum(State.questions, settings);
+  const doneDays = SRS.completedDays(curr, state);
+  const totalDays = curr.days.length;
+  const completedCount = doneDays.size;
+  const remainingDays = totalDays - completedCount;
+  const firstIncompleteDay = curr.days.find(d => !doneDays.has(d.day));
+  const projDate = new Date();
+  projDate.setDate(projDate.getDate() + Math.max(0, remainingDays - 1));
+  const projStr = ymd(projDate);
+  const plannedEnd = new Date(curr.start_date + 'T00:00:00');
+  plannedEnd.setDate(plannedEnd.getDate() + totalDays - 1);
+  const dayMs = 24 * 60 * 60 * 1000;
+  const behind = Math.floor((projDate - plannedEnd) / dayMs);
+  const badgeText = behind > 0 ? ` (${behind} day${behind > 1 ? 's' : ''} behind)` : (behind < 0 ? ' (ahead)' : ' (on track)');
+
   $('#card').innerHTML = `
     <div class="dashboard">
+      <div class="muted" style="margin-bottom:0.4rem;">
+        Projected: <b>${projStr}</b>${badgeText}<br>
+        Day ${firstIncompleteDay ? firstIncompleteDay.day : totalDays} of ${totalDays} · Started ${curr.start_date}
+      </div>
       <h2>Today</h2>
       <div class="progress-large"><div class="bar" style="width:${pct}%"></div></div>
       <div class="muted">${todayDone} / ${todayGoal} done</div>
@@ -459,12 +492,175 @@ function renderDashboard() {
       <div class="dash-actions">
         <button class="primary" onclick="enterQuiz()">Quiz</button>
         <button class="primary" onclick="enterRiding()">Riding</button>
+        <button class="ghost" onclick="location.hash='calendar'">📅 Calendar</button>
         <button class="ghost" onclick="openSettings()">⚙ Settings</button>
       </div>
     </div>
   `;
   updateHeader();
 }
+
+// ---------- Calendar ----------
+function renderCalendar() {
+  stopAudioCleanup();
+  const state = SrsStore.loadState();
+  const curr = SrsStore.ensureCurriculum(State.questions, SrsStore.loadSettings());
+  const done = SRS.completedDays(curr, state);
+  const firstIncomplete = curr.days.find(d => !done.has(d.day));
+
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const startDate = new Date(curr.start_date + 'T00:00:00');
+
+  // Slide-forward: completed days keep their completion date (assume sequential from start);
+  // first incomplete anchors at max(cursor, today); subsequent upcoming days flow from there.
+  const dayEffective = {};
+  let cursor = new Date(startDate);
+  for (const d of curr.days) {
+    if (done.has(d.day)) {
+      dayEffective[d.day] = new Date(cursor);
+    } else {
+      if (firstIncomplete && d.day === firstIncomplete.day) {
+        cursor = new Date(Math.max(cursor.getTime(), today.getTime()));
+      }
+      dayEffective[d.day] = new Date(cursor);
+    }
+    cursor = new Date(cursor); cursor.setDate(cursor.getDate() + 1);
+  }
+  const dateToDay = {};
+  for (const [num, dt] of Object.entries(dayEffective)) dateToDay[ymd(dt)] = parseInt(num, 10);
+
+  const viewMonth = State.calMonth || new Date(today.getFullYear(), today.getMonth(), 1);
+  State.calMonth = viewMonth;
+
+  const gridStart = new Date(viewMonth);
+  gridStart.setDate(1 - viewMonth.getDay());
+
+  const cells = [];
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(gridStart);
+    d.setDate(d.getDate() + i);
+    cells.push({ date: d, inMonth: d.getMonth() === viewMonth.getMonth(), dayN: dateToDay[ymd(d)] });
+  }
+  const monthLabel = viewMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+  $('#card').innerHTML = `
+    <div class="cal-header">
+      <button onclick="calNav(-1)">‹</button>
+      <span class="cal-title">${monthLabel}</span>
+      <button onclick="calNav(1)">›</button>
+    </div>
+    <div class="cal-grid">
+      ${['S','M','T','W','T','F','S'].map(x => `<div class="cal-dow">${x}</div>`).join('')}
+      ${cells.map(c => {
+        if (!c.inMonth) return `<div class="cal-cell empty"></div>`;
+        const day = curr.days.find(d => d.day === c.dayN);
+        const isToday = ymd(c.date) === ymd(today);
+        const isDone = day && done.has(day.day);
+        const isSlipped = day && !isDone && c.date < today;
+        const cls = ['cal-cell'];
+        if (isDone) cls.push('done');
+        else if (isToday && day) cls.push('today');
+        else if (isSlipped) cls.push('slip');
+        const badge = day ? `Day ${day.day}<br>${day.question_ids.length}Q` : '';
+        const clickAttr = day ? `onclick="location.hash='day=${day.day}'"` : '';
+        return `<div class="${cls.join(' ')}" ${clickAttr}><span class="date">${c.date.getDate()}</span><span class="badge">${badge}</span></div>`;
+      }).join('')}
+    </div>
+    <button class="ghost" style="margin-top:1rem;" onclick="location.hash='home'">‹ Back</button>
+  `;
+  updateHeader();
+}
+
+window.calNav = (delta) => {
+  const m = State.calMonth || new Date();
+  State.calMonth = new Date(m.getFullYear(), m.getMonth() + delta, 1);
+  renderCalendar();
+};
+
+// ---------- Day Page ----------
+function renderDayPage(dayN) {
+  stopAudioCleanup();
+  const curr = SrsStore.loadCurriculum();
+  if (!curr) { location.hash = 'home'; return; }
+  const day = curr.days.find(d => d.day === dayN);
+  if (!day) { location.hash = 'calendar'; return; }
+  const state = SrsStore.loadState();
+  const items = day.question_ids.map(id => ({ q: State.questions.find(qq => qq.id === id), r: state[id] })).filter(x => x.q);
+  const graduated = items.filter(x => x.r && x.r.stage === 'graduated').length;
+
+  const badge = (r) => {
+    if (!r || r.stage === 'new') return `<span class="sbadge new">🆕 New</span>`;
+    if (r.stage === 'learning') return `<span class="sbadge learning">📖 Learning</span>`;
+    if (r.stage === 'review') return `<span class="sbadge review">🔁 Review (${r.consecutive_correct || 0}/3)</span>`;
+    if (r.stage === 'graduated') return `<span class="sbadge graduated">🎓 Graduated</span>`;
+    return '';
+  };
+
+  const categories = [...new Set(items.map(x => x.q.category))].join(' · ');
+
+  $('#card').innerHTML = `
+    <div class="day-header">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="margin:0;color:#f8fafc;">Day ${dayN}</h2>
+        <button class="ghost" style="flex:0;padding:0.4rem 0.7rem;margin:0;" onclick="location.hash='calendar'">‹ Back</button>
+      </div>
+      <div class="sub">${categories}</div>
+      <div class="sub">${items.length} questions · ${graduated} graduated · ${items.length - graduated} to go</div>
+    </div>
+
+    ${items.map(({ q, r }) => `
+      <div class="day-card">
+        <div class="hdr">
+          <span>${q.category} · ${q.source}</span>
+          ${badge(r)}
+        </div>
+        <div class="q">${q.question}</div>
+        <div class="ans">✓ Answer: ${q.options[q.answer_index]}</div>
+        <div class="expl">💡 ${q.explanation}</div>
+      </div>
+    `).join('')}
+
+    <div class="day-actions">
+      <button class="primary" onclick="enterRidingDay(${dayN})">🏍️ Riding this day</button>
+      <button class="primary" onclick="enterQuizDay(${dayN})">📱 Quiz this day</button>
+    </div>
+  `;
+  updateHeader();
+}
+
+window.enterQuizDay = (dayN) => {
+  const curr = SrsStore.loadCurriculum();
+  const day = curr && curr.days.find(d => d.day === dayN);
+  if (!day) return;
+  State.order = day.question_ids.map(id => State.questions.findIndex(q => q.id === id)).filter(i => i >= 0);
+  State.idx = 0;
+  State.mode = 'mcq';
+  setActive();
+  renderMCQ();
+};
+
+window.enterRidingDay = (dayN) => {
+  const curr = SrsStore.loadCurriculum();
+  const day = curr && curr.days.find(d => d.day === dayN);
+  if (!day) return;
+  State.order = day.question_ids.map(id => State.questions.findIndex(q => q.id === id)).filter(i => i >= 0);
+  State.idx = 0;
+  State.mode = 'audio';
+  setActive();
+  stopAudioCleanup();
+  renderAudioIntro();
+};
+
+// ---------- Router ----------
+function route() {
+  const hash = location.hash.replace(/^#/, '') || 'home';
+  if (hash === 'home') return renderDashboard();
+  if (hash === 'calendar') return renderCalendar();
+  const m = hash.match(/^day=(\d+)$/);
+  if (m) return renderDayPage(parseInt(m[1], 10));
+  renderDashboard();
+}
+window.addEventListener('hashchange', route);
 
 window.enterQuiz = () => { State.mode = 'mcq'; setActive(); rebuildDeck(); renderMCQ(); };
 window.enterRiding = () => { State.mode = 'audio'; setActive(); stopAudio(); rebuildDeck(); renderAudioIntro(); };
@@ -486,6 +682,8 @@ window.saveSettingsFromForm = () => {
     session_cap: (cap == null || isNaN(cap) || cap <= 0) ? null : Math.min(100, cap),
     order: 'reviews_first',
   });
+  localStorage.removeItem('srs_curriculum');
+  SrsStore.ensureCurriculum(State.questions, SrsStore.loadSettings());
   closeSettings();
   renderDashboard();
 };
@@ -494,6 +692,8 @@ window.resetAllSrs = () => {
   if (!confirm('This cannot be undone. Still reset?')) return;
   localStorage.removeItem('srs_state');
   localStorage.removeItem('srs_new_today');
+  localStorage.removeItem('srs_curriculum');
+  SrsStore.ensureCurriculum(State.questions, SrsStore.loadSettings());
   closeSettings();
   renderDashboard();
 };
@@ -509,6 +709,7 @@ function warmVoices() {
 document.addEventListener('DOMContentLoaded', async () => {
   await loadQuestions();
   runMigration();
+  SrsStore.ensureCurriculum(State.questions, SrsStore.loadSettings());
   tickStreak();
   warmVoices();
 
@@ -526,11 +727,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     (State.mode === 'audio') ? renderAudioIntro() : renderMCQ();
   });
 
-  $('.brand').addEventListener('click', () => { State.mode = 'mcq'; setActive(); renderDashboard(); });
+  $('.brand').addEventListener('click', () => { location.hash = 'home'; });
   $('.brand').style.cursor = 'pointer';
+  $('#modeCal').addEventListener('click', () => { location.hash = 'calendar'; });
 
   setActive();
-  renderDashboard();
+  route();
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});

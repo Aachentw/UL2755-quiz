@@ -85,6 +85,34 @@
   .modal label { display: block; margin: 0.8rem 0; color: #cbd5e1; font-size: 0.95rem; }
   .modal input { width: 100%; padding: 0.6rem; margin-top: 0.3rem; background: #0f172a; border: 1px solid #334155; color: #f1f5f9; border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
 
+  .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.7rem; }
+  .cal-header button { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 0.4rem 0.7rem; border-radius: 6px; cursor: pointer; }
+  .cal-title { font-size: 1.05rem; font-weight: 600; color: #f8fafc; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-dow { text-align: center; font-size: 0.75rem; color: #94a3b8; padding: 0.3rem 0; }
+  .cal-cell { aspect-ratio: 1; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 0.3rem 0.2rem 0.2rem; color: #cbd5e1; font-size: 0.85rem; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; overflow: hidden; }
+  .cal-cell .date { font-weight: 600; }
+  .cal-cell .badge { font-size: 0.68rem; color: #94a3b8; text-align: right; line-height: 1.2; }
+  .cal-cell.empty { background: transparent; border-color: transparent; cursor: default; }
+  .cal-cell.today { background: #1e3a8a; border-color: #3b82f6; color: #dbeafe; }
+  .cal-cell.done { background: #064e3b; border-color: #10b981; color: #d1fae5; }
+  .cal-cell.slip { background: #78350f; border-color: #f59e0b; color: #fef3c7; }
+
+  .day-header { margin: 0.3rem 0 0.8rem; }
+  .day-header .sub { color: #94a3b8; font-size: 0.9rem; margin-top: 0.25rem; }
+  .day-card { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 0.9rem; margin: 0.6rem 0; }
+  .day-card .hdr { display: flex; justify-content: space-between; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; font-size: 0.78rem; color: #94a3b8; flex-wrap: wrap; }
+  .day-card .q { color: #f8fafc; margin: 0.4rem 0 0.5rem; line-height: 1.5; }
+  .day-card .ans { color: #6ee7b7; font-weight: 600; margin: 0.4rem 0; line-height: 1.5; }
+  .day-card .expl { color: #cbd5e1; font-size: 0.9rem; line-height: 1.55; margin-top: 0.4rem; }
+  .day-actions { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+  .day-actions button { flex: 1 1 140px; }
+  .sbadge { padding: 2px 7px; border-radius: 10px; font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
+  .sbadge.new { background: #1e293b; color: #cbd5e1; }
+  .sbadge.learning { background: #7c2d12; color: #fed7aa; }
+  .sbadge.review { background: #1e3a8a; color: #dbeafe; }
+  .sbadge.graduated { background: #064e3b; color: #6ee7b7; }
+
   .speed-row { display: flex; gap: 0.3rem; align-items: center; margin: 0.8rem 0; flex-wrap: wrap; }
   .speed-label { font-size: 0.85rem; color: #94a3b8; margin-right: 0.3rem; }
   .speed-btn { flex: 1; min-width: 48px; padding: 0.5rem 0.6rem; background: #0f172a; border: 1px solid #334155; color: #cbd5e1; border-radius: 6px; font-size: 0.88rem; cursor: pointer; }
@@ -109,6 +137,7 @@
   <button id="modeMcq" class="active">📱 Quiz</button>
   <button id="modeAudio">🏍️ Riding</button>
   <button id="dueOnly" style="flex:0 0 auto;">📘 Due</button>
+  <button id="modeCal" style="flex:0 0 auto;">📅</button>
 </div>
 
 <main id="card" class="card">Loading…</main>
