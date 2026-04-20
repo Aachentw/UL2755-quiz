@@ -223,7 +223,16 @@ async function startAudio({ firstAlreadyPlaying = false } = {}) {
 
 async function playLoop({ firstAlreadyPlaying = false } = {}) {
   let first = firstAlreadyPlaying;
-  while (!State.audioStopped && State.idx < State.order.length) {
+  let lap = 1;
+  while (!State.audioStopped) {
+    if (State.idx >= State.order.length) {
+      lap++;
+      State.idx = 0;
+      State.order = shuffle([...State.questions.keys()]);
+      $('#audioStage').textContent = `🔄 Lap ${lap} — reshuffling…`;
+      await wait(2500);
+      if (State.audioStopped) break;
+    }
     const q = currentQuestion();
     $('#audioQ').textContent = q.question;
     $('#audioOpts').innerHTML = q.options.map((o, i) =>
@@ -253,9 +262,6 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
     await wait(1200);
     State.idx++;
     updateHeader();
-  }
-  if (!State.audioStopped) {
-    $('#audioStage').textContent = '🏁 End of round';
   }
 }
 
