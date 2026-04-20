@@ -1,5 +1,5 @@
-const CACHE = 'ul2755-v7';
-const SHELL = ['./', './index.html', './app.js', './manifest.webmanifest', './questions.json'];
+const CACHE = 'ul2755-v8';
+const SHELL = ['./', './index.html', './app.js', './srs.js', './manifest.webmanifest', './questions.json'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -12,8 +12,7 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Network-first for app shell & questions (get fresh updates).
-// Cache-first for audio MP3s (static, large, rarely change).
+// Network-first for app shell & questions; cache-first for audio MP3s.
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);

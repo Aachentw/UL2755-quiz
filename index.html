@@ -68,6 +68,23 @@
   .shake-ok { animation: shakeOk 0.25s ease; box-shadow: 0 0 0 3px #10b981 inset; }
   .shake-no { animation: shakeNo 0.45s ease; box-shadow: 0 0 0 3px #ef4444 inset; }
 
+  .dashboard { text-align: left; }
+  .dashboard h2 { margin: 0.2rem 0 0.5rem; color: #f8fafc; }
+  .progress-large { height: 14px; background: #0f172a; border-radius: 7px; overflow: hidden; margin: 0.4rem 0; border: 1px solid #334155; }
+  .progress-large .bar { height: 100%; background: linear-gradient(90deg,#ef4444,#f97316); transition: width 0.3s; }
+  .muted { color: #94a3b8; font-size: 0.9rem; margin-bottom: 1rem; }
+  .metric-list { list-style: none; padding: 0; margin: 1rem 0; }
+  .metric-list li { padding: 0.7rem 0.9rem; background: #0f172a; border: 1px solid #334155; border-radius: 10px; margin: 0.4rem 0; display: flex; justify-content: space-between; align-items: center; }
+  .metric-list li b { font-size: 1.2rem; color: #f8fafc; }
+  .dash-actions { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem; }
+
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 20; padding: 1rem; }
+  .modal[hidden] { display: none !important; }
+  .modal-inner { background: #1e293b; border-radius: 14px; padding: 1.2rem; max-width: 420px; width: 100%; }
+  .modal h2 { margin-top: 0; color: #f8fafc; }
+  .modal label { display: block; margin: 0.8rem 0; color: #cbd5e1; font-size: 0.95rem; }
+  .modal input { width: 100%; padding: 0.6rem; margin-top: 0.3rem; background: #0f172a; border: 1px solid #334155; color: #f1f5f9; border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
+
   .speed-row { display: flex; gap: 0.3rem; align-items: center; margin: 0.8rem 0; flex-wrap: wrap; }
   .speed-label { font-size: 0.85rem; color: #94a3b8; margin-right: 0.3rem; }
   .speed-btn { flex: 1; min-width: 48px; padding: 0.5rem 0.6rem; background: #0f172a; border: 1px solid #334155; color: #cbd5e1; border-radius: 6px; font-size: 0.88rem; cursor: pointer; }
@@ -91,12 +108,27 @@
 <div class="modes">
   <button id="modeMcq" class="active">📱 Quiz</button>
   <button id="modeAudio">🏍️ Riding</button>
-  <button id="wrongOnly" style="flex:0 0 auto;">🔄 Wrong</button>
+  <button id="dueOnly" style="flex:0 0 auto;">📘 Due</button>
 </div>
 
 <main id="card" class="card">Loading…</main>
 
 <footer>UL2755 + NEC 646 + FXX Audit · MVP · <a href="https://github.com/Aachentw/UL2755-quiz" style="color:#64748b;">source</a></footer>
+
+<div id="settingsModal" class="modal" hidden>
+  <div class="modal-inner">
+    <h2>Settings</h2>
+    <label>New questions per day
+      <input type="number" id="newPerDay" min="1" max="50" value="10">
+    </label>
+    <label>Session cap (blank = none)
+      <input type="number" id="sessionCap" min="0" max="100">
+    </label>
+    <button class="primary" onclick="saveSettingsFromForm()">Save</button>
+    <button class="ghost" onclick="resetAllSrs()">Reset all SRS data</button>
+    <button class="ghost" onclick="closeSettings()">Close</button>
+  </div>
+</div>
 
 <script src="srs.js"></script>
 <script src="app.js"></script>

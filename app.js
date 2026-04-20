@@ -9,8 +9,6 @@ const State = {
   combo: 0,
   streak: parseInt(localStorage.getItem('streak') || '0', 10),
   lastDay: localStorage.getItem('lastDay') || '',
-  answered: JSON.parse(localStorage.getItem('answered') || '{}'),
-  wrongPool: JSON.parse(localStorage.getItem('wrongPool') || '[]'),
   wakeLock: null,
   audioTimer: null,
   audioStopped: false,
@@ -58,7 +56,14 @@ function runMigration() {
 async function loadQuestions() {
   const res = await fetch('questions.json?v=' + Date.now());
   State.questions = await res.json();
-  State.order = shuffle([...State.questions.keys()]);
+}
+
+function rebuildDeck() {
+  const settings = SrsStore.loadSettings();
+  const state = SrsStore.loadState();
+  const deck = SRS.buildDeck(state, State.questions, settings, Date.now(), SrsStore.getNewToday());
+  State.order = deck.map(q => State.questions.indexOf(q));
+  State.idx = 0;
 }
 
 function shuffle(arr) {
@@ -82,7 +87,7 @@ function tickStreak() {
 
 // ---------- MCQ mode ----------
 function renderMCQ() {
-  stopAudio();
+  stopAudioCleanup();
   const q = currentQuestion();
   if (!q) { renderDone(); return; }
 
@@ -115,7 +120,12 @@ function renderMCQ() {
 function handleAnswer(picked) {
   const q = currentQuestion();
   const correct = picked === q.answer_index;
-  State.answered[q.id] = { picked, correct, t: Date.now() };
+  const state = SrsStore.loadState();
+  const prev = state[q.id] || null;
+  const updated = SRS.nextState(prev, correct, Date.now());
+  if (!prev) SrsStore.incNewToday();
+  state[q.id] = updated;
+  SrsStore.saveState(state);
 
   if (correct) {
     State.combo++;
@@ -127,10 +137,7 @@ function handleAnswer(picked) {
     playWrong();
     tryVibrate([80, 50, 80]);
     shake(false);
-    if (!State.wrongPool.includes(q.id)) State.wrongPool.push(q.id);
   }
-  localStorage.setItem('answered', JSON.stringify(State.answered));
-  localStorage.setItem('wrongPool', JSON.stringify(State.wrongPool));
   tickStreak();
 
   document.querySelectorAll('.opt').forEach((b, i) => {
@@ -160,8 +167,9 @@ function currentQuestion() {
 }
 
 function renderDone() {
-  const total = Object.values(State.answered).length;
-  const right = Object.values(State.answered).filter(a => a.correct).length;
+  const state = SrsStore.loadState();
+  const total = Object.values(state).length;
+  const right = Object.values(state).reduce((n, r) => n + (r.total_correct || 0), 0);
   $('#card').innerHTML = `
     <div class="done">
       <h2>🏆 Round Complete</h2>
@@ -172,7 +180,7 @@ function renderDone() {
   `;
 }
 
-window.restart = () => { State.idx = 0; State.order = shuffle([...State.questions.keys()]); renderMCQ(); };
+window.restart = () => { rebuildDeck(); renderMCQ(); };
 
 // ---------- Audio mode ----------
 const SPEEDS = [0.5, 0.75, 1.0, 1.25];
@@ -262,8 +270,11 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
   while (!State.audioStopped) {
     if (State.idx >= State.order.length) {
       lap++;
-      State.idx = 0;
-      State.order = shuffle([...State.questions.keys()]);
+      rebuildDeck();
+      if (State.order.length === 0) {
+        // No due items right now — fall back to full pool reshuffle for continuous listening
+        State.order = shuffle([...State.questions.keys()]);
+      }
       $('#audioStage').textContent = `🔄 Lap ${lap} — reshuffling…`;
       await wait(2500);
       if (State.audioStopped) break;
@@ -329,12 +340,16 @@ function waitForCurrentEnd() {
 
 function wait(ms) { return new Promise(r => State.audioTimer = setTimeout(r, ms)); }
 
-window.stopAudio = () => {
+function stopAudioCleanup() {
   State.audioStopped = true;
   clearTimeout(State.audioTimer);
   if (currentAudio) { try { currentAudio.pause(); currentAudio.src = ''; } catch (_) {} currentAudio = null; }
   if ('speechSynthesis' in window) speechSynthesis.cancel();
   releaseWakeLock();
+}
+
+window.stopAudio = () => {
+  stopAudioCleanup();
   if (State.mode === 'audio') renderAudioIntro();
 };
 
@@ -399,6 +414,77 @@ function updateHeader() {
   $('#counter').textContent = `${done} / ${total}`;
 }
 
+// ---------- Dashboard ----------
+function startOfToday() { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
+
+function renderDashboard() {
+  stopAudioCleanup();
+  const state = SrsStore.loadState();
+  const now = Date.now();
+  const s = SRS.summary(state, State.questions, now);
+  const settings = SrsStore.loadSettings();
+  const taken = SrsStore.getNewToday();
+  const dueReviews = Math.max(0, s.due - s.new);
+  const newAvailable = Math.max(0, Math.min(s.new, settings.new_per_day - taken));
+  const todayGoal = dueReviews + newAvailable + taken;
+  const startToday = startOfToday();
+  const todayDone = Object.values(state).filter(r => (r.last_answered_at || 0) >= startToday).length;
+  const pct = todayGoal > 0 ? Math.min(100, (todayDone / todayGoal) * 100) : 0;
+
+  $('#card').innerHTML = `
+    <div class="dashboard">
+      <h2>Today</h2>
+      <div class="progress-large"><div class="bar" style="width:${pct}%"></div></div>
+      <div class="muted">${todayDone} / ${todayGoal} done</div>
+
+      <ul class="metric-list">
+        <li>📘 Due Reviews <b>${dueReviews}</b></li>
+        <li>🆕 New Available <b>${newAvailable}</b></li>
+        <li>🎓 Graduated <b>${s.graduated}</b></li>
+      </ul>
+
+      <div class="dash-actions">
+        <button class="primary" onclick="enterQuiz()">Quiz</button>
+        <button class="primary" onclick="enterRiding()">Riding</button>
+        <button class="ghost" onclick="openSettings()">⚙ Settings</button>
+      </div>
+    </div>
+  `;
+  updateHeader();
+}
+
+window.enterQuiz = () => { State.mode = 'mcq'; setActive(); rebuildDeck(); renderMCQ(); };
+window.enterRiding = () => { State.mode = 'audio'; setActive(); stopAudio(); rebuildDeck(); renderAudioIntro(); };
+
+// ---------- Settings modal ----------
+window.openSettings = () => {
+  const s = SrsStore.loadSettings();
+  $('#newPerDay').value = s.new_per_day;
+  $('#sessionCap').value = s.session_cap == null ? '' : s.session_cap;
+  $('#settingsModal').hidden = false;
+};
+window.closeSettings = () => { $('#settingsModal').hidden = true; };
+window.saveSettingsFromForm = () => {
+  const n = parseInt($('#newPerDay').value, 10);
+  const capStr = $('#sessionCap').value.trim();
+  const cap = capStr === '' ? null : parseInt(capStr, 10);
+  SrsStore.saveSettings({
+    new_per_day: isNaN(n) ? 10 : Math.max(1, Math.min(50, n)),
+    session_cap: (cap == null || isNaN(cap) || cap <= 0) ? null : Math.min(100, cap),
+    order: 'reviews_first',
+  });
+  closeSettings();
+  renderDashboard();
+};
+window.resetAllSrs = () => {
+  if (!confirm('Really reset ALL SRS progress?')) return;
+  if (!confirm('This cannot be undone. Still reset?')) return;
+  localStorage.removeItem('srs_state');
+  localStorage.removeItem('srs_new_today');
+  closeSettings();
+  renderDashboard();
+};
+
 // Preload voice list (iOS needs this called once)
 function warmVoices() {
   if (!('speechSynthesis' in window)) return;
@@ -413,17 +499,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   tickStreak();
   warmVoices();
 
-  $('#modeMcq').addEventListener('click', () => { State.mode = 'mcq'; setActive(); renderMCQ(); });
-  $('#modeAudio').addEventListener('click', () => { State.mode = 'audio'; setActive(); stopAudio(); renderAudioIntro(); });
-  $('#wrongOnly').addEventListener('click', () => {
-    if (!State.wrongPool.length) return alert('No wrong answers yet.');
-    State.order = shuffle(State.wrongPool.map(id => State.questions.findIndex(q => q.id === id)).filter(i => i >= 0));
+  $('#modeMcq').addEventListener('click', () => { State.mode = 'mcq'; setActive(); rebuildDeck(); renderMCQ(); });
+  $('#modeAudio').addEventListener('click', () => { State.mode = 'audio'; setActive(); stopAudio(); rebuildDeck(); renderAudioIntro(); });
+  $('#dueOnly').addEventListener('click', () => {
+    const state = SrsStore.loadState();
+    const dueQs = State.questions.filter(q => {
+      const r = state[q.id];
+      return r && r.due_at != null && r.due_at <= Date.now();
+    });
+    if (!dueQs.length) return alert('Nothing due right now — check back later.');
+    State.order = dueQs.map(q => State.questions.indexOf(q));
     State.idx = 0;
     (State.mode === 'audio') ? renderAudioIntro() : renderMCQ();
   });
 
+  $('.brand').addEventListener('click', () => { State.mode = 'mcq'; setActive(); renderDashboard(); });
+  $('.brand').style.cursor = 'pointer';
+
   setActive();
-  renderMCQ();
+  renderDashboard();
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
