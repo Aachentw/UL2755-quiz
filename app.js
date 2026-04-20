@@ -19,6 +19,41 @@ const State = {
 const $ = (s) => document.querySelector(s);
 const todayKey = () => new Date().toISOString().slice(0, 10);
 
+// ---------- SRS storage ----------
+const SrsStore = {
+  loadState() { try { return JSON.parse(localStorage.getItem('srs_state') || '{}'); } catch { return {}; } },
+  saveState(s) { localStorage.setItem('srs_state', JSON.stringify(s)); },
+  loadSettings() {
+    const defaults = { new_per_day: 10, session_cap: null, order: 'reviews_first' };
+    try { return { ...defaults, ...JSON.parse(localStorage.getItem('srs_settings') || '{}') }; }
+    catch { return defaults; }
+  },
+  saveSettings(s) { localStorage.setItem('srs_settings', JSON.stringify(s)); },
+  getNewToday() {
+    const key = todayKey();
+    try {
+      const raw = JSON.parse(localStorage.getItem('srs_new_today') || '{}');
+      return raw.date === key ? (raw.count || 0) : 0;
+    } catch { return 0; }
+  },
+  incNewToday() {
+    const key = todayKey();
+    const cur = this.getNewToday();
+    localStorage.setItem('srs_new_today', JSON.stringify({ date: key, count: cur + 1 }));
+  },
+};
+
+function runMigration() {
+  if (localStorage.getItem('srs_state')) return;
+  const legacyAnswered = JSON.parse(localStorage.getItem('answered') || '{}');
+  const legacyWrong = JSON.parse(localStorage.getItem('wrongPool') || '[]');
+  if (!Object.keys(legacyAnswered).length && !legacyWrong.length) return;
+  const migrated = SRS.migrate(legacyAnswered, legacyWrong, Date.now());
+  SrsStore.saveState(migrated);
+  localStorage.removeItem('answered');
+  localStorage.removeItem('wrongPool');
+}
+
 // ---------- load ----------
 async function loadQuestions() {
   const res = await fetch('questions.json?v=' + Date.now());
@@ -374,6 +409,7 @@ function warmVoices() {
 // ---------- init ----------
 document.addEventListener('DOMContentLoaded', async () => {
   await loadQuestions();
+  runMigration();
   tickStreak();
   warmVoices();
 
