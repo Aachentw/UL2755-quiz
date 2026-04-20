@@ -47,7 +47,8 @@ const SrsStore = {
     if (existing && existing.built_from_new_per_day === settings.new_per_day && totalStored === questions.length) {
       return existing;
     }
-    const today = new Date().toISOString().slice(0, 10);
+    const t = new Date();
+    const today = t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0');
     const fresh = SRS.buildCurriculum(questions, settings.new_per_day, today);
     this.saveCurriculum(fresh);
     return fresh;
@@ -442,7 +443,9 @@ function updateHeader() {
 
 // ---------- Dashboard ----------
 function startOfToday() { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
-function ymd(d) { return d.toISOString().slice(0, 10); }
+function ymd(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
 
 function renderDashboard() {
   stopAudioCleanup();
@@ -561,9 +564,11 @@ function renderCalendar() {
         if (isDone) cls.push('done');
         else if (isToday && day) cls.push('today');
         else if (isSlipped) cls.push('slip');
-        const badge = day ? `Day ${day.day}<br>${day.question_ids.length}Q` : '';
         const clickAttr = day ? `onclick="location.hash='day=${day.day}'"` : '';
-        return `<div class="${cls.join(' ')}" ${clickAttr}><span class="date">${c.date.getDate()}</span><span class="badge">${badge}</span></div>`;
+        const inner = day
+          ? `<span class="cell-top"><span class="date">${c.date.getDate()}</span><span class="day-num">D${day.day}</span></span><span class="qcount">${day.question_ids.length}Q</span>`
+          : `<span class="cell-top"><span class="date">${c.date.getDate()}</span></span>`;
+        return `<div class="${cls.join(' ')}" ${clickAttr}>${inner}</div>`;
       }).join('')}
     </div>
     <button class="ghost" style="margin-top:1rem;" onclick="location.hash='home'">‹ Back</button>
@@ -635,7 +640,6 @@ window.enterQuizDay = (dayN) => {
   State.order = day.question_ids.map(id => State.questions.findIndex(q => q.id === id)).filter(i => i >= 0);
   State.idx = 0;
   State.mode = 'mcq';
-  setActive();
   renderMCQ();
 };
 
@@ -646,7 +650,6 @@ window.enterRidingDay = (dayN) => {
   State.order = day.question_ids.map(id => State.questions.findIndex(q => q.id === id)).filter(i => i >= 0);
   State.idx = 0;
   State.mode = 'audio';
-  setActive();
   stopAudioCleanup();
   renderAudioIntro();
 };
@@ -662,34 +665,87 @@ function route() {
 }
 window.addEventListener('hashchange', route);
 
-window.enterQuiz = () => { State.mode = 'mcq'; setActive(); rebuildDeck(); renderMCQ(); };
-window.enterRiding = () => { State.mode = 'audio'; setActive(); stopAudio(); rebuildDeck(); renderAudioIntro(); };
+window.enterQuiz = () => { State.mode = 'mcq'; rebuildDeck(); renderMCQ(); };
+window.enterRiding = () => { State.mode = 'audio'; stopAudio(); rebuildDeck(); renderAudioIntro(); };
+
+// ---------- Two-way binding helpers ----------
+function todayYmd() { return ymd(new Date()); }
+function remainingNewCount() {
+  const state = SrsStore.loadState();
+  let seen = 0;
+  for (const q of State.questions) if (state[q.id]) seen++;
+  return Math.max(0, State.questions.length - seen);
+}
+function computeFinishedYmd(newPerDay, remainingNew, startYmd) {
+  const days = Math.max(1, Math.ceil(remainingNew / Math.max(1, newPerDay)));
+  const d = new Date(startYmd + 'T00:00:00');
+  d.setDate(d.getDate() + days - 1);
+  return ymd(d);
+}
+function computeNewPerDay(finishedYmd, remainingNew, startYmd) {
+  const a = new Date(startYmd + 'T00:00:00').getTime();
+  const b = new Date(finishedYmd + 'T00:00:00').getTime();
+  const days = Math.max(1, Math.round((b - a) / 86400000) + 1);
+  return Math.max(1, Math.ceil(remainingNew / days));
+}
 
 // ---------- Settings modal ----------
 window.openSettings = () => {
   const s = SrsStore.loadSettings();
+  const curr = SrsStore.ensureCurriculum(State.questions, s);
+  const remaining = remainingNewCount();
+  const start = curr.start_date || todayYmd();
   $('#newPerDay').value = s.new_per_day;
-  $('#sessionCap').value = s.session_cap == null ? '' : s.session_cap;
+  $('#finishedDate').value = computeFinishedYmd(s.new_per_day, remaining > 0 ? remaining : State.questions.length, start);
   $('#settingsModal').hidden = false;
+
+  // Live two-way binding — attach once via onchange (idempotent)
+  $('#newPerDay').oninput = () => {
+    const n = Math.max(1, Math.min(50, parseInt($('#newPerDay').value, 10) || 1));
+    const rem = remaining > 0 ? remaining : State.questions.length;
+    $('#finishedDate').value = computeFinishedYmd(n, rem, todayYmd());
+  };
+  $('#finishedDate').oninput = () => {
+    const f = $('#finishedDate').value;
+    if (!f) return;
+    const rem = remaining > 0 ? remaining : State.questions.length;
+    $('#newPerDay').value = computeNewPerDay(f, rem, todayYmd());
+  };
 };
 window.closeSettings = () => { $('#settingsModal').hidden = true; };
 window.saveSettingsFromForm = () => {
+  const stored = SrsStore.loadSettings();
   const n = parseInt($('#newPerDay').value, 10);
-  const capStr = $('#sessionCap').value.trim();
-  const cap = capStr === '' ? null : parseInt(capStr, 10);
-  SrsStore.saveSettings({
-    new_per_day: isNaN(n) ? 10 : Math.max(1, Math.min(50, n)),
-    session_cap: (cap == null || isNaN(cap) || cap <= 0) ? null : Math.min(100, cap),
-    order: 'reviews_first',
-  });
-  localStorage.removeItem('srs_curriculum');
-  SrsStore.ensureCurriculum(State.questions, SrsStore.loadSettings());
+  const newPerDay = isNaN(n) ? 10 : Math.max(1, Math.min(50, n));
+  const changed = newPerDay !== stored.new_per_day;
+
+  if (!changed) { closeSettings(); return; }
+
+  const keep = confirm(
+    'Rebuild curriculum?\n\n' +
+    'OK = Keep current progress (redistribute remaining questions)\n' +
+    'Cancel = Reset to Day 1 starting today (erases learning records)'
+  );
+
+  SrsStore.saveSettings({ new_per_day: newPerDay, session_cap: null, order: 'reviews_first' });
+
+  if (keep) {
+    const prevCurr = SrsStore.loadCurriculum();
+    const prevStart = prevCurr && prevCurr.start_date ? prevCurr.start_date : todayYmd();
+    localStorage.removeItem('srs_curriculum');
+    const rebuilt = SRS.buildCurriculum(State.questions, newPerDay, prevStart);
+    SrsStore.saveCurriculum(rebuilt);
+  } else {
+    localStorage.removeItem('srs_state');
+    localStorage.removeItem('srs_new_today');
+    localStorage.removeItem('srs_curriculum');
+    SrsStore.ensureCurriculum(State.questions, SrsStore.loadSettings());
+  }
   closeSettings();
   renderDashboard();
 };
 window.resetAllSrs = () => {
-  if (!confirm('Really reset ALL SRS progress?')) return;
-  if (!confirm('This cannot be undone. Still reset?')) return;
+  if (!confirm('Reset all learning records? This cannot be undone.')) return;
   localStorage.removeItem('srs_state');
   localStorage.removeItem('srs_new_today');
   localStorage.removeItem('srs_curriculum');
@@ -713,33 +769,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   tickStreak();
   warmVoices();
 
-  $('#modeMcq').addEventListener('click', () => { State.mode = 'mcq'; setActive(); rebuildDeck(); renderMCQ(); });
-  $('#modeAudio').addEventListener('click', () => { State.mode = 'audio'; setActive(); stopAudio(); rebuildDeck(); renderAudioIntro(); });
-  $('#dueOnly').addEventListener('click', () => {
-    const state = SrsStore.loadState();
-    const dueQs = State.questions.filter(q => {
-      const r = state[q.id];
-      return r && r.due_at != null && r.due_at <= Date.now();
-    });
-    if (!dueQs.length) return alert('Nothing due right now — check back later.');
-    State.order = dueQs.map(q => State.questions.indexOf(q));
-    State.idx = 0;
-    (State.mode === 'audio') ? renderAudioIntro() : renderMCQ();
-  });
-
   $('.brand').addEventListener('click', () => { location.hash = 'home'; });
   $('.brand').style.cursor = 'pointer';
-  $('#modeCal').addEventListener('click', () => { location.hash = 'calendar'; });
 
-  setActive();
   route();
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 });
-
-function setActive() {
-  $('#modeMcq').classList.toggle('active', State.mode === 'mcq');
-  $('#modeAudio').classList.toggle('active', State.mode === 'audio');
-}
