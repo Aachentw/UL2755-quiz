@@ -95,6 +95,43 @@ assert('migrate: answered correct -> learning +10min',
 assert('migrate: empty -> empty',
   (() => { const seeded = SRS.migrate({}, [], t0); return Object.keys(seeded).length === 0; })(), null);
 
+// --- Phase B.1: Curriculum tests ---
+const CURR_QS = [
+  { id: 'ul2755-b',  source: 'UL2755 §6.2.3',  category: 'Transformers' },
+  { id: 'ul2755-a',  source: 'UL2755 §6.1.6',  category: 'Electrical' },
+  { id: 'nec646-a',  source: 'NEC §646.1',     category: 'Scope' },
+  { id: 'fxx-a',     source: 'FXX Audit',      category: 'Workspace' },
+  { id: 'ul2755-c',  source: 'UL2755 §6.4.2',  category: 'Wiring' },
+];
+
+assert('buildCurriculum: 5 Qs @ per_day 2 -> 3 days',
+  (() => { const c = SRS.buildCurriculum(CURR_QS, 2, '2026-04-20');
+    return c.days.length === 3 && c.days[0].question_ids.length === 2
+      && c.days[2].question_ids.length === 1 && c.start_date === '2026-04-20'
+      && c.built_from_new_per_day === 2; })(), null);
+
+assert('buildCurriculum: UL -> NEC -> FXX, category alpha',
+  (() => { const c = SRS.buildCurriculum(CURR_QS, 5, '2026-04-20');
+    const ids = c.days[0].question_ids;
+    return ids[0] === 'ul2755-a' && ids[1] === 'ul2755-b' && ids[2] === 'ul2755-c'
+      && ids[3] === 'nec646-a' && ids[4] === 'fxx-a'; })(), null);
+
+assert('getDayForQuestion: returns correct day number',
+  (() => { const c = SRS.buildCurriculum(CURR_QS, 2, '2026-04-20');
+    return SRS.getDayForQuestion(c, 'ul2755-c') === 2
+      && SRS.getDayForQuestion(c, 'fxx-a') === 3
+      && SRS.getDayForQuestion(c, 'missing') === null; })(), null);
+
+assert('completedDays: all Qs seen + past new -> completed',
+  (() => { const c = SRS.buildCurriculum(CURR_QS, 2, '2026-04-20');
+    const state = {
+      'ul2755-a': { stage: 'learning', total_seen: 1 },
+      'ul2755-b': { stage: 'learning', total_seen: 1 },
+      'ul2755-c': { stage: 'new', total_seen: 0 },
+    };
+    const done = SRS.completedDays(c, state);
+    return done.has(1) && !done.has(2) && !done.has(3); })(), null);
+
 const summary = document.createElement('h2');
 summary.textContent = pass + ' passed, ' + fail + ' failed';
 summary.style.color = fail ? '#ef4444' : '#10b981';

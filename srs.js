@@ -115,5 +115,50 @@ const SRS = (() => {
     return state;
   }
 
-  return { nextState, buildDeck, summary, migrate };
+  function sourceGroupRank(source) {
+    const s = (source || '').toUpperCase();
+    if (s.startsWith('UL2755') || s.startsWith('UL 2755')) return 0;
+    if (s.startsWith('NEC')) return 1;
+    return 2;
+  }
+
+  function buildCurriculum(questions, newPerDay, startDateYmd) {
+    const sorted = [...questions].sort((a, b) => {
+      const ga = sourceGroupRank(a.source);
+      const gb = sourceGroupRank(b.source);
+      if (ga !== gb) return ga - gb;
+      const ca = (a.category || '').toLowerCase();
+      const cb = (b.category || '').toLowerCase();
+      if (ca !== cb) return ca < cb ? -1 : 1;
+      return (a.id || '') < (b.id || '') ? -1 : 1;
+    });
+    const days = [];
+    for (let i = 0; i < sorted.length; i += newPerDay) {
+      days.push({ day: days.length + 1, question_ids: sorted.slice(i, i + newPerDay).map(q => q.id) });
+    }
+    return { version: 1, start_date: startDateYmd, built_from_new_per_day: newPerDay, days };
+  }
+
+  function getDayForQuestion(curriculum, qId) {
+    if (!curriculum || !curriculum.days) return null;
+    for (const d of curriculum.days) {
+      if (d.question_ids.includes(qId)) return d.day;
+    }
+    return null;
+  }
+
+  function completedDays(curriculum, state) {
+    const done = new Set();
+    if (!curriculum || !curriculum.days) return done;
+    for (const d of curriculum.days) {
+      const allSeen = d.question_ids.every(id => {
+        const r = state[id];
+        return r && (r.total_seen || 0) > 0 && r.stage !== 'new';
+      });
+      if (allSeen) done.add(d.day);
+    }
+    return done;
+  }
+
+  return { nextState, buildDeck, summary, migrate, buildCurriculum, getDayForQuestion, completedDays };
 })();
