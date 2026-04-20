@@ -20,7 +20,7 @@ The user is studying UL2755 with a one-week sprint mental model and plans to rep
 2. Render a month-view calendar grid that shows per-day progress at a glance.
 3. A day detail page shows all of that day's questions with answers and explanations, as a read-only study sheet.
 4. Any day is tappable — past, today, future — and starts Quiz or Riding sessions scoped to that day.
-5. Riding for a selected day plays only questions that are **not yet graduated**.
+5. Riding for a selected day plays every question in that day, regardless of graduation status.
 6. A slipped day (user didn't practice) moves forward — the whole schedule shifts one day later instead of piling up.
 7. Dashboard shows an updated "Projected completion date" that reflects current pace and slippage.
 
@@ -131,13 +131,10 @@ Transformers · Wiring Methods
 10 questions · 3 graduated · 7 to go
 
 ──────────────────────────────────────
-Q1. [Transformers]  UL2755 §6.2.3
+Q1. [Transformers]  UL2755 §6.2.3  🔁 Review (2/3)
 Which types of premise transformers are permitted inside an MDC?
 
-  A  Any oil-filled transformer
-  B  Dry-type, or filled with a noncombustible dielectric  ✓
-  C  Dry-type only
-  D  Oil-filled only
+✓ Answer: Dry-type, or filled with a noncombustible dielectric
 
 💡 Per §6.2.3, premise transformers must be dry-type or filled...
 ──────────────────────────────────────
@@ -148,11 +145,10 @@ Q2. ...
 [ 🏍️ Riding this day ]   [ 📱 Quiz this day ]
 ```
 
-- Answers rendered inline with ✓ on the correct option (green highlight).
-- Explanation visible by default.
-- Mastery status per question shown as a badge: `🆕 New` / `📖 Learning` / `🔁 Review (2/3)` / `🎓 Graduated`.
-- Quiz button: enters Quiz mode with deck = this day's question IDs (all of them, regardless of SRS state).
-- Riding button: enters Riding mode with deck = this day's **non-graduated** question IDs only.
+- The Day page is a read-only **study sheet**, not a quiz. Show: question stem, **correct answer text only** (no A/B/C/D options list), explanation, source, category, SRS mastery badge.
+- Mastery badge values: `🆕 New` / `📖 Learning` / `🔁 Review (N/3)` / `🎓 Graduated`.
+- Quiz button: enters Quiz mode with deck = this day's question IDs (all of them, regardless of SRS state). Quiz mode is where options appear.
+- Riding button: enters Riding mode with deck = this day's question IDs (all of them, regardless of SRS state). Plays each question's full audio — question, options, answer, explanation. No graduated filter.
 
 ### Calendar → Mode interactions
 
@@ -162,13 +158,13 @@ Q2. ...
 
 ---
 
-## Riding day-scoped filter
+## Riding day-scoped behavior
 
 When entering Riding from a Day page:
 
 1. Load the day's `question_ids`.
-2. Filter out any where `srs_state[id].stage === 'graduated'`.
-3. Use the filtered list as the deck. If empty, show a message: "All questions in this day are graduated — pick another day."
+2. Use the full list as the deck, in the stored order. No graduated filter — the user may want repeated listening even for mastered items.
+3. Plays each question's existing MP3s (q.mp3 → opts.mp3 → ans.mp3) with the current playback speed.
 
 ---
 
@@ -216,7 +212,8 @@ No changes to `questions.json` or `audio/*.mp3`.
 4. Quiz through Day 1 → Day 1 cell turns green, Dashboard updates to `Day 2 of 3`.
 5. Skip a day (advance system clock +1 day without answering): Day 2 still blue (not yellow), projected completion shifts +1.
 6. Tap Day 3 (偷跑): Quiz works; answers count toward SRS.
-7. Graduate all 10 questions of a day, then enter Riding from that day → "All questions graduated" message.
+7. Day page shows only the correct answer text per question, not the A–D options. Options appear when the user starts Quiz mode.
+8. Riding from a day plays every question in the day (graduated ones included).
 
 ---
 
