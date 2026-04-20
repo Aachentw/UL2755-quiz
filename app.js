@@ -272,10 +272,14 @@ function playMp3(url) {
     const a = getAudio();
     currentAudio = a;
     a.src = url;
+    const applyRate = () => { a.playbackRate = getSpeed(); a.defaultPlaybackRate = getSpeed(); };
+    a.onloadedmetadata = applyRate;
+    a.onplay = applyRate;
     a.onended = () => resolve();
     a.onerror = () => { console.warn('MP3 error:', url); resolve(); };
+    applyRate();
     const p = a.play();
-    if (p && p.catch) p.catch(err => { console.warn('play() rejected:', err); resolve(); });
+    if (p && p.then) p.then(applyRate).catch(err => { console.warn('play() rejected:', err); resolve(); });
   });
 }
 
