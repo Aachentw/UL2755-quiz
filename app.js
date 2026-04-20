@@ -168,19 +168,32 @@ function currentQuestion() {
 
 function renderDone() {
   const state = SrsStore.loadState();
+  const now = Date.now();
+  const s = SRS.summary(state, State.questions, now);
   const total = Object.values(state).length;
   const right = Object.values(state).reduce((n, r) => n + (r.total_correct || 0), 0);
+  const moreAvailable = s.due > 0 || s.new > 0;
   $('#card').innerHTML = `
     <div class="done">
       <h2>🏆 Round Complete</h2>
-      <p>Correct: ${right} / ${total}</p>
+      <p>Correct answers so far: ${right} / ${total}</p>
       <p>🔥 Streak: ${State.streak} days</p>
-      <button class="primary" onclick="restart()">Restart</button>
+      ${moreAvailable
+        ? '<button class="primary" onclick="restart()">Continue</button>'
+        : '<p class="muted">No more questions due. Great job — come back later!</p>'}
+      <button class="ghost" onclick="renderDashboard()">Back to Dashboard</button>
     </div>
   `;
 }
 
-window.restart = () => { rebuildDeck(); renderMCQ(); };
+window.restart = () => {
+  rebuildDeck();
+  if (State.order.length === 0) {
+    renderDashboard();
+  } else {
+    renderMCQ();
+  }
+};
 
 // ---------- Audio mode ----------
 const SPEEDS = [0.5, 0.75, 1.0, 1.25];
