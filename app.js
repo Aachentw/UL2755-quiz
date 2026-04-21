@@ -603,7 +603,7 @@ function renderCalendar() {
 
         // Cell is interactive if it has curriculum day OR reviews scheduled
         const hasReviewsOnly = !day && total > 0;
-        const isClickable = !!day; // Day page only exists for curriculum days
+        const isClickable = !!day || hasReviewsOnly;
         const isSlipped = day && !isDone && c.date < today;
 
         const cls = ['cal-cell'];
@@ -612,7 +612,11 @@ function renderCalendar() {
         else if (isToday && (day || hasReviewsOnly)) cls.push('today');
         else if (isSlipped) cls.push('slip');
 
-        const clickAttr = isClickable ? `onclick="location.hash='day=${day.day}'"` : '';
+        const clickAttr = day
+          ? `onclick="location.hash='day=${day.day}'"`
+          : hasReviewsOnly
+            ? `onclick="location.hash='date=${ymd(c.date)}'"`
+            : '';
         const centerHtml = (!day && !hasReviewsOnly)
           ? ''
           : isDone
@@ -711,13 +715,143 @@ window.enterRidingDay = (dayN) => {
   renderAudioIntro();
 };
 
+// ---------- Date-scoped (pure review) mode entries ----------
+function questionsForDate(dateYmd) {
+  const dStart = new Date(dateYmd + 'T00:00:00').getTime();
+  const dEnd = dStart + 86400000;
+  const state = SrsStore.loadState();
+  const curr = SrsStore.loadCurriculum();
+  const counted = new Set();
+  const ids = [];
+
+  // (a) curriculum new assigned to this date (effective, not planned)
+  if (curr) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const startDate = new Date(curr.start_date + 'T00:00:00');
+    const doneSet = SRS.completedDays(curr, state);
+    const firstIncomplete = curr.days.find(d => !doneSet.has(d.day));
+    let cursor = new Date(startDate);
+    const eff = {};
+    for (const d of curr.days) {
+      if (doneSet.has(d.day)) { eff[d.day] = new Date(cursor); }
+      else {
+        if (firstIncomplete && d.day === firstIncomplete.day) {
+          cursor = new Date(Math.max(cursor.getTime(), today.getTime()));
+        }
+        eff[d.day] = new Date(cursor);
+      }
+      cursor = new Date(cursor); cursor.setDate(cursor.getDate() + 1);
+    }
+    for (const d of curr.days) {
+      if (ymd(eff[d.day]) !== dateYmd) continue;
+      for (const qid of d.question_ids) {
+        if (!state[qid] && !counted.has(qid)) { ids.push(qid); counted.add(qid); }
+      }
+    }
+  }
+  // (b) reviews scheduled on this date
+  for (const q of State.questions) {
+    if (counted.has(q.id)) continue;
+    const r = state[q.id];
+    if (r && r.due_at != null && r.due_at >= dStart && r.due_at < dEnd) {
+      ids.push(q.id);
+      counted.add(q.id);
+    }
+  }
+  return ids;
+}
+
+window.enterQuizDate = (dateYmd) => {
+  const ids = questionsForDate(dateYmd);
+  if (!ids.length) return;
+  State.order = ids.map(id => State.questions.findIndex(q => q.id === id)).filter(i => i >= 0);
+  State.idx = 0;
+  State.mode = 'mcq';
+  resetSession();
+  renderMCQ();
+};
+
+window.enterRidingDate = (dateYmd) => {
+  const ids = questionsForDate(dateYmd);
+  if (!ids.length) return;
+  State.order = ids.map(id => State.questions.findIndex(q => q.id === id)).filter(i => i >= 0);
+  State.idx = 0;
+  State.mode = 'audio';
+  stopAudioCleanup();
+  renderAudioIntro();
+};
+
+function renderDatePage(dateYmd) {
+  stopAudioCleanup();
+  const state = SrsStore.loadState();
+  const ids = questionsForDate(dateYmd);
+  const items = ids.map(id => ({ q: State.questions.find(qq => qq.id === id), r: state[id] })).filter(x => x.q);
+
+  const badge = (r) => {
+    if (!r || r.stage === 'new') return `<span class="sbadge new">🆕 New</span>`;
+    if (r.stage === 'learning') return `<span class="sbadge learning">📖 Learning</span>`;
+    if (r.stage === 'review') return `<span class="sbadge review">🔁 Review (${r.consecutive_correct || 0}/3)</span>`;
+    if (r.stage === 'graduated') return `<span class="sbadge graduated">🎓 Graduated</span>`;
+    return '';
+  };
+
+  if (!items.length) {
+    $('#card').innerHTML = `
+      <div class="day-header">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h2 style="margin:0;color:#f8fafc;">${dateYmd}</h2>
+          <button class="ghost" style="flex:0;padding:0.4rem 0.7rem;margin:0;" onclick="location.hash='calendar'">‹ Back</button>
+        </div>
+        <div class="sub">Nothing scheduled for this date.</div>
+      </div>`;
+    updateHeader();
+    return;
+  }
+
+  const todayY = ymd(new Date());
+  const isFuture = dateYmd > todayY;
+  const disabledAttr = isFuture ? ' disabled title="Future date — wait until the day arrives"' : '';
+
+  const categories = [...new Set(items.map(x => x.q.category))].join(' · ');
+  $('#card').innerHTML = `
+    <div class="day-header">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="margin:0;color:#f8fafc;">${dateYmd} · Reviews</h2>
+        <button class="ghost" style="flex:0;padding:0.4rem 0.7rem;margin:0;" onclick="location.hash='calendar'">‹ Back</button>
+      </div>
+      <div class="sub">${categories}</div>
+      <div class="sub">${items.length} question${items.length === 1 ? '' : 's'} scheduled</div>
+    </div>
+
+    ${items.map(({ q, r }) => `
+      <div class="day-card">
+        <div class="hdr">
+          <span>${q.category} · ${q.source}</span>
+          ${badge(r)}
+        </div>
+        <div class="q">${q.question}</div>
+        <div class="ans">✓ Answer: ${q.options[q.answer_index]}</div>
+        <div class="expl">💡 ${q.explanation}</div>
+      </div>
+    `).join('')}
+
+    <div class="day-actions">
+      <button class="primary"${disabledAttr} onclick="enterRidingDate('${dateYmd}')">🏍️ Riding these reviews</button>
+      <button class="primary"${disabledAttr} onclick="enterQuizDate('${dateYmd}')">📱 Quiz these reviews</button>
+    </div>
+  `;
+  updateHeader();
+}
+
 // ---------- Router ----------
 function route() {
   const hash = location.hash.replace(/^#/, '') || 'home';
   if (hash === 'home') return renderDashboard();
   if (hash === 'calendar') return renderCalendar();
-  const m = hash.match(/^day=(\d+)$/);
-  if (m) return renderDayPage(parseInt(m[1], 10));
+  const mDay = hash.match(/^day=(\d+)$/);
+  if (mDay) return renderDayPage(parseInt(mDay[1], 10));
+  const mDate = hash.match(/^date=(\d{4}-\d{2}-\d{2})$/);
+  if (mDate) return renderDatePage(mDate[1]);
   renderDashboard();
 }
 window.addEventListener('hashchange', route);
