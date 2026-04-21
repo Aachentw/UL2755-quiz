@@ -160,5 +160,27 @@ const SRS = (() => {
     return done;
   }
 
-  return { nextState, buildDeck, summary, migrate, buildCurriculum, getDayForQuestion, completedDays };
+  function ymd(d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function computeFinishedYmd(newPerDay, remainingNew, startYmd) {
+    const effRem = Math.max(0, remainingNew | 0);
+    const effPer = Math.max(1, newPerDay | 0);
+    const days = Math.max(1, Math.ceil(effRem / effPer) || 1);
+    const d = new Date(startYmd + 'T00:00:00');
+    d.setDate(d.getDate() + days - 1);
+    return ymd(d);
+  }
+
+  function computeNewPerDay(finishedYmd, remainingNew, startYmd) {
+    const a = new Date(startYmd + 'T00:00:00').getTime();
+    const b = new Date(finishedYmd + 'T00:00:00').getTime();
+    const days = Math.max(1, Math.round((b - a) / 86400000) + 1);
+    const effRem = Math.max(0, remainingNew | 0);
+    if (effRem === 0) return 1;
+    return Math.max(1, Math.ceil(effRem / days));
+  }
+
+  return { nextState, buildDeck, summary, migrate, buildCurriculum, getDayForQuestion, completedDays, ymd, computeFinishedYmd, computeNewPerDay };
 })();

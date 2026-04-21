@@ -132,6 +132,135 @@ assert('completedDays: all Qs seen + past new -> completed',
     const done = SRS.completedDays(c, state);
     return done.has(1) && !done.has(2) && !done.has(3); })(), null);
 
+// --- nextState branch completeness ---
+assert('TC-U-012 undefined record -> learning via new path',
+  (() => { const s = SRS.nextState(undefined, true, t0);
+    return s.stage === 'learning' && s.due_at === t0 + 600000; })(), null);
+
+assert('TC-U-013 total_seen accumulates',
+  (() => { const rec = { stage: 'learning', consecutive_correct: 0, interval_minutes: 10, total_seen: 5, total_correct: 5 };
+    const s = SRS.nextState(rec, true, t0);
+    return s.total_seen === 6; })(), null);
+
+assert('TC-U-014 total_correct increments only on correct',
+  (() => { let r = { stage: 'learning', consecutive_correct: 0, interval_minutes: 10, total_seen: 1, total_correct: 1 };
+    r = SRS.nextState(r, true, t0);
+    r = SRS.nextState(r, false, t0);
+    return r.total_correct === 2; })(), null);
+
+assert('TC-U-015 graduated 90d -> 180d',
+  (() => { const s = SRS.nextState({ stage: 'graduated', consecutive_correct: 3, interval_minutes: 129600, total_seen: 20, total_correct: 20 }, true, t0);
+    return s.stage === 'graduated' && s.interval_minutes === 259200; })(), null);
+
+// --- buildDeck edge cases ---
+assert('TC-U-021 all graduated, no new -> empty deck',
+  (() => { const qs = [{ id: 'q1' }, { id: 'q2' }];
+    const state = {
+      q1: { stage: 'graduated', due_at: t0 + 1e12, interval_minutes: 43200, consecutive_correct: 3, total_seen: 5, total_correct: 5 },
+      q2: { stage: 'graduated', due_at: t0 + 1e12, interval_minutes: 43200, consecutive_correct: 3, total_seen: 5, total_correct: 5 },
+    };
+    const deck = SRS.buildDeck(state, qs, { new_per_day: 10, session_cap: null, order: 'reviews_first' }, t0, 0);
+    return deck.length === 0; })(), null);
+
+assert('TC-U-022 new_per_day=0 -> no new injected',
+  (() => { const qs = [{ id: 'q1' }, { id: 'q2' }];
+    const deck = SRS.buildDeck({}, qs, { new_per_day: 0, session_cap: null, order: 'reviews_first' }, t0, 0);
+    return deck.length === 0; })(), null);
+
+assert('TC-U-023 empty questions array',
+  (() => { const deck = SRS.buildDeck({}, [], { new_per_day: 5, session_cap: null, order: 'reviews_first' }, t0, 0);
+    return deck.length === 0; })(), null);
+
+// --- summary edge cases ---
+assert('TC-U-025 all new',
+  (() => { const qs = [{ id: 'q1' }, { id: 'q2' }, { id: 'q3' }];
+    const s = SRS.summary({}, qs, t0);
+    return s.new === 3 && s.due === 3 && s.learning === 0 && s.review === 0 && s.graduated === 0; })(), null);
+
+assert('TC-U-026 future due not counted as due',
+  (() => { const qs = [{ id: 'q1' }];
+    const state = { q1: { stage: 'review', due_at: t0 + 86400000, interval_minutes: 1440, consecutive_correct: 1, total_seen: 1, total_correct: 1 } };
+    const s = SRS.summary(state, qs, t0);
+    return s.due === 0 && s.review === 1; })(), null);
+
+assert('TC-U-027 graduated future not due; past due counted',
+  (() => { const qs = [{ id: 'q1' }, { id: 'q2' }];
+    const state = {
+      q1: { stage: 'graduated', due_at: t0 + 1e9, interval_minutes: 43200, consecutive_correct: 3, total_seen: 5, total_correct: 5 },
+      q2: { stage: 'graduated', due_at: t0 - 1, interval_minutes: 43200, consecutive_correct: 3, total_seen: 5, total_correct: 5 },
+    };
+    const s = SRS.summary(state, qs, t0);
+    return s.due === 1 && s.graduated === 2; })(), null);
+
+// --- migrate edge cases ---
+assert('TC-U-030 wrongPool id overlap answered does not duplicate',
+  (() => { const seeded = SRS.migrate({ q1: { correct: false } }, ['q1', 'q2'], t0);
+    return Object.keys(seeded).length === 2 && seeded.q1.total_correct === 0; })(), null);
+
+assert('TC-U-031 null inputs do not crash',
+  (() => { const seeded = SRS.migrate(null, null, t0);
+    return seeded && Object.keys(seeded).length === 0; })(), null);
+
+// --- buildCurriculum edge cases ---
+assert('TC-U-034 per_day larger than total -> 1 day',
+  (() => { const qs = [{ id: 'a', source: 'UL2755', category: 'X' }, { id: 'b', source: 'UL2755', category: 'Y' }];
+    const c = SRS.buildCurriculum(qs, 10, '2026-04-20');
+    return c.days.length === 1 && c.days[0].question_ids.length === 2; })(), null);
+
+assert('TC-U-035 empty questions -> days=[]',
+  (() => { const c = SRS.buildCurriculum([], 5, '2026-04-20');
+    return c.days.length === 0 && c.start_date === '2026-04-20'; })(), null);
+
+assert('TC-U-036 same source+category stable by id',
+  (() => { const qs = [
+      { id: 'z', source: 'UL2755', category: 'X' },
+      { id: 'a', source: 'UL2755', category: 'X' },
+      { id: 'm', source: 'UL2755', category: 'X' },
+    ];
+    const c = SRS.buildCurriculum(qs, 5, '2026-04-20');
+    return c.days[0].question_ids[0] === 'a' && c.days[0].question_ids[1] === 'm' && c.days[0].question_ids[2] === 'z'; })(), null);
+
+// --- curriculum helpers ---
+assert('TC-U-039 null curriculum -> safe defaults',
+  (() => { return SRS.getDayForQuestion(null, 'x') === null && SRS.completedDays(null, {}).size === 0; })(), null);
+
+assert('TC-U-040 stage=new with total_seen>0 does not mark day completed',
+  (() => { const qs = [{ id: 'q1', source: 'UL2755', category: 'X' }];
+    const c = SRS.buildCurriculum(qs, 5, '2026-04-20');
+    const state = { q1: { stage: 'new', total_seen: 3 } };
+    return !SRS.completedDays(c, state).has(1); })(), null);
+
+// --- computeFinishedYmd / computeNewPerDay ---
+assert('TC-U-041 finished=start+2 for 30 Qs / 10 per day',
+  SRS.computeFinishedYmd(10, 30, '2026-04-21') === '2026-04-23', null);
+
+assert('TC-U-042 new_per_day=3 for 30 Qs over 10 days',
+  SRS.computeNewPerDay('2026-04-30', 30, '2026-04-21') === 3, null);
+
+assert('TC-U-043 remaining=0 -> finish equals start (single day)',
+  SRS.computeFinishedYmd(10, 0, '2026-04-21') === '2026-04-21', null);
+
+assert('TC-U-044 newPerDay=0 -> treated as 1',
+  (() => { const f = SRS.computeFinishedYmd(0, 5, '2026-04-21');
+    return f === '2026-04-25'; })(), null);
+
+assert('TC-U-045 finish earlier than start -> 1 day (clamped)',
+  SRS.computeNewPerDay('2026-04-19', 10, '2026-04-21') === 10, null);
+
+assert('TC-U-046 forward/backward consistency for divisors of 30',
+  (() => {
+    for (const x of [1, 2, 3, 5, 6, 10, 15, 30]) {
+      const f = SRS.computeFinishedYmd(x, 30, '2026-04-21');
+      const back = SRS.computeNewPerDay(f, 30, '2026-04-21');
+      if (back !== x) return false;
+    }
+    return true;
+  })(), null);
+
+// --- ymd helper ---
+assert('TC-U-047 ymd formats local date correctly',
+  SRS.ymd(new Date(2026, 3, 21)) === '2026-04-21', null);
+
 const summary = document.createElement('h2');
 summary.textContent = pass + ' passed, ' + fail + ' failed';
 summary.style.color = fail ? '#ef4444' : '#10b981';

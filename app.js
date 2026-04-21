@@ -443,9 +443,7 @@ function updateHeader() {
 
 // ---------- Dashboard ----------
 function startOfToday() { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
-function ymd(d) {
-  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-}
+const ymd = SRS.ymd;
 
 function renderDashboard() {
   stopAudioCleanup();
@@ -676,18 +674,8 @@ function remainingNewCount() {
   for (const q of State.questions) if (state[q.id]) seen++;
   return Math.max(0, State.questions.length - seen);
 }
-function computeFinishedYmd(newPerDay, remainingNew, startYmd) {
-  const days = Math.max(1, Math.ceil(remainingNew / Math.max(1, newPerDay)));
-  const d = new Date(startYmd + 'T00:00:00');
-  d.setDate(d.getDate() + days - 1);
-  return ymd(d);
-}
-function computeNewPerDay(finishedYmd, remainingNew, startYmd) {
-  const a = new Date(startYmd + 'T00:00:00').getTime();
-  const b = new Date(finishedYmd + 'T00:00:00').getTime();
-  const days = Math.max(1, Math.round((b - a) / 86400000) + 1);
-  return Math.max(1, Math.ceil(remainingNew / days));
-}
+const computeFinishedYmd = SRS.computeFinishedYmd;
+const computeNewPerDay = SRS.computeNewPerDay;
 
 // ---------- Settings modal ----------
 window.openSettings = () => {
