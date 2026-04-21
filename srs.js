@@ -186,5 +186,25 @@ const SRS = (() => {
     return Math.max(1, Math.ceil(effRem / days));
   }
 
-  return { nextState, buildDeck, summary, migrate, buildCurriculum, getDayForQuestion, completedDays, ymd, computeFinishedYmd, computeNewPerDay };
+  function questionList(questions, state, nowMs) {
+    const DAY = 86400000;
+    const t = new Date(nowMs); t.setHours(0, 0, 0, 0);
+    const startToday = t.getTime();
+    const rows = questions.map(q => {
+      const r = state[q.id];
+      const dueAt = r && r.due_at != null ? r.due_at : nowMs;
+      const daysFromToday = Math.floor((dueAt - startToday) / DAY);
+      const raw = q.question || '';
+      return {
+        id: q.id,
+        text: raw.slice(0, 40) + (raw.length > 40 ? '…' : ''),
+        dueAtMs: dueAt,
+        daysFromToday,
+      };
+    });
+    rows.sort((a, b) => a.dueAtMs - b.dueAtMs);
+    return rows;
+  }
+
+  return { nextState, buildDeck, summary, migrate, buildCurriculum, getDayForQuestion, completedDays, ymd, computeFinishedYmd, computeNewPerDay, questionList };
 })();

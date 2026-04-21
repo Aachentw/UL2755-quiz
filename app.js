@@ -508,6 +508,7 @@ function renderDashboard() {
         <button class="primary"${(dueReviews + newAvailable) === 0 ? ' disabled title="All done for today — come back tomorrow"' : ''} onclick="enterQuiz()">Quiz</button>
         <button class="primary"${(dueReviews + newAvailable) === 0 ? ' disabled title="All done for today — come back tomorrow"' : ''} onclick="enterRiding()">Riding</button>
         <button class="ghost" onclick="location.hash='calendar'">📅 Calendar</button>
+        <button class="ghost" onclick="location.hash='list'">📋 Question List</button>
         <button class="ghost" onclick="openSettings()">⚙ Settings</button>
       </div>
     </div>
@@ -843,11 +844,68 @@ function renderDatePage(dateYmd) {
   updateHeader();
 }
 
+// ---------- Question List ----------
+function renderQuestionList() {
+  stopAudioCleanup();
+  const state = SrsStore.loadState();
+  const list = SRS.questionList(State.questions, state, Date.now());
+  const offsets = [0, 1, 3, 7, 30, 90, 180];
+
+  $('#card').innerHTML = `
+    <div class="day-header">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="margin:0;color:#f8fafc;">Question List</h2>
+        <button class="ghost" style="flex:0;padding:0.4rem 0.7rem;margin:0;" onclick="location.hash='home'">‹ Back</button>
+      </div>
+      <div class="sub">${list.length} questions · sorted by next review</div>
+    </div>
+
+    <div class="offset-bar" id="offsetBar">
+      ${offsets.map(n => {
+        const label = n === 0 ? 'Today' : `+${n}`;
+        const matchIdx = list.findIndex(r => r.daysFromToday >= n);
+        const disabled = matchIdx < 0;
+        return `<button data-offset="${n}"${disabled ? ' disabled' : ''} onclick="jumpToOffset(${n})">${label}</button>`;
+      }).join('')}
+    </div>
+
+    <div class="q-list">
+      ${list.map((r, i) => {
+        const cls = r.daysFromToday < 0 ? 'overdue' : (r.daysFromToday === 0 ? 'today' : '');
+        const label = r.daysFromToday < 0
+          ? `Overdue ${-r.daysFromToday}d`
+          : r.daysFromToday === 0 ? 'Today' : `+${r.daysFromToday} day${r.daysFromToday === 1 ? '' : 's'}`;
+        return `<div class="q-row" id="qrow-${i}" data-days="${r.daysFromToday}" onclick="openQuestionFromList('${r.id}')">
+          <span class="q-text">${r.text}</span>
+          <span class="q-days ${cls}">${label}</span>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+  updateHeader();
+}
+
+window.jumpToOffset = (n) => {
+  const rows = [...document.querySelectorAll('.q-row')];
+  const target = rows.find(el => parseInt(el.dataset.days, 10) >= n);
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('#offsetBar button').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.offset, 10) === n);
+  });
+};
+
+window.openQuestionFromList = (qId) => {
+  const curr = SrsStore.loadCurriculum();
+  const dayN = SRS.getDayForQuestion(curr, qId);
+  if (dayN != null) location.hash = 'day=' + dayN;
+};
+
 // ---------- Router ----------
 function route() {
   const hash = location.hash.replace(/^#/, '') || 'home';
   if (hash === 'home') return renderDashboard();
   if (hash === 'calendar') return renderCalendar();
+  if (hash === 'list') return renderQuestionList();
   const mDay = hash.match(/^day=(\d+)$/);
   if (mDay) return renderDayPage(parseInt(mDay[1], 10));
   const mDate = hash.match(/^date=(\d{4}-\d{2}-\d{2})$/);

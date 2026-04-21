@@ -261,6 +261,39 @@ assert('TC-U-046 forward/backward consistency for divisors of 30',
 assert('TC-U-047 ymd formats local date correctly',
   SRS.ymd(new Date(2026, 3, 21)) === '2026-04-21', null);
 
+// --- Question list pure function ---
+const QL_QS = [
+  { id: 'a', question: 'A'.repeat(50), category: 'X', source: 'UL2755' },
+  { id: 'b', question: 'B long', category: 'Y', source: 'UL2755' },
+  { id: 'c', question: 'C', category: 'Z', source: 'NEC' },
+];
+assert('TC-U-048 questionList sorts by dueAt ascending',
+  (() => {
+    const tNow = 1700000000000;
+    const DAY = 86400000;
+    const state = {
+      a: { stage: 'review', due_at: tNow + 2*DAY, interval_minutes: 4320, consecutive_correct: 1, total_seen: 2, total_correct: 2 },
+      c: { stage: 'learning', due_at: tNow + 10*DAY, interval_minutes: 14400, consecutive_correct: 0, total_seen: 1, total_correct: 1 },
+    };
+    const list = SRS.questionList(QL_QS, state, tNow);
+    return list.length === 3 && list[0].id === 'b' && list[1].id === 'a' && list[2].id === 'c'
+      && list[0].daysFromToday === 0 && list[1].daysFromToday === 2 && list[2].daysFromToday === 10;
+  })(), null);
+
+assert('TC-U-049 questionList overdue returns negative daysFromToday',
+  (() => {
+    const tNow = 1700000000000;
+    const state = { a: { stage: 'review', due_at: tNow - 3*86400000, interval_minutes: 1440, consecutive_correct: 1, total_seen: 1, total_correct: 1 } };
+    const list = SRS.questionList(QL_QS.slice(0,1), state, tNow);
+    return list[0].daysFromToday === -3;
+  })(), null);
+
+assert('TC-U-050 questionList empty state -> all daysFromToday 0',
+  (() => {
+    const list = SRS.questionList(QL_QS, {}, 1700000000000);
+    return list.length === 3 && list.every(x => x.daysFromToday === 0);
+  })(), null);
+
 const summary = document.createElement('h2');
 summary.textContent = pass + ' passed, ' + fail + ' failed';
 summary.style.color = fail ? '#ef4444' : '#10b981';
