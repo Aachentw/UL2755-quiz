@@ -758,7 +758,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   tickStreak();
   warmVoices();
 
-  $('.brand').addEventListener('click', () => { location.hash = 'home'; });
+  $('.brand').addEventListener('click', () => {
+    // Force home render regardless of current hash (mode entries like enterRiding
+    // don't change the hash, so just setting location.hash='home' wouldn't fire
+    // hashchange when we're already on #home).
+    stopAudioCleanup();
+    if (location.hash === '' || location.hash === '#home') {
+      renderDashboard();
+    } else {
+      location.hash = 'home';
+    }
+  });
   $('.brand').style.cursor = 'pointer';
 
   route();
