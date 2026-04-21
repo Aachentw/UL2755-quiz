@@ -12,8 +12,8 @@
 | L1 Unit (`srs.test.html`) | 47 | 47 | 0 | srs.js 全分支 |
 | L2 Integration (SrsStore/migration/router) | 12 | 12 | 0 | SrsStore 7 fn、migration 3 分支、router 4 hash |
 | L3 DOM Render | 25 | 25 | 0 | Dashboard 7、Calendar 7、Day 6、Settings 5 |
-| L4 E2E（自動化子集） | 17 | 17 | 0 | Quiz 答對/答錯、Calendar→Day、Day→Quiz/Riding、Settings 雙向連動/Reset/Keep/Cancel、Riding Intro/Start/Speed/Stop/playMp3 |
-| **自動化合計** | **101** | **101** | **0** | — |
+| L4 E2E（自動化子集） | 22 | 22 | 0 | Quiz 答對/答錯、Calendar→Day、Day→Quiz/Riding、Settings 雙向連動/Reset/Keep/Cancel、Riding Intro/Start/Speed/Stop/playMp3、**Home 共用導覽（TC-E-025~029）** |
+| **自動化合計** | **106** | **106** | **0** | — |
 
 ## L1 Unit 清單（新增的 23 case 已標 ⭐）
 
@@ -43,7 +43,7 @@
 - TC-E-016 Settings finished → new_per_day 即時更新
 - TC-E-020 Reset learning records 清空 state
 
-**新增補強 9 case**：
+**Audio + Settings 補強 9 case**：
 - **TC-E-006** Riding Intro 顯示 Start 按鈕
 - **TC-E-007** primeAndStart 載入正確的 q.mp3
 - **TC-E-007b** playMp3 回 Promise 且 src 正確
@@ -53,6 +53,13 @@
 - **TC-E-017** Settings 未變動不觸發 confirm
 - **TC-E-018** Save Keep 分支：保留 start_date + srs_state
 - **TC-E-019** Save Reset 分支：start_date 重設為今天 + srs_state 清空
+
+**Home 共用導覽 regression 5 case**：
+- **TC-E-025** Dashboard → enterRiding → Home 返回 Dashboard（同 hash bug 情境）
+- **TC-E-026** Dashboard → enterQuiz → Home 返回 Dashboard
+- **TC-E-027** day=1 → enterRidingDay → Home 返回 Dashboard
+- **TC-E-028** day=2 Day 頁 → Home 返回 Dashboard
+- **TC-E-029** Riding 播放中 → Home → sharedAudio.paused === true
 
 ## 尚未自動化（需手動驗證或擴充 runner）
 
