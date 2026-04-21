@@ -494,8 +494,8 @@ function renderDashboard() {
       </ul>
 
       <div class="dash-actions">
-        <button class="primary" onclick="enterQuiz()">Quiz</button>
-        <button class="primary" onclick="enterRiding()">Riding</button>
+        <button class="primary"${(dueReviews + newAvailable) === 0 ? ' disabled title="All done for today — come back tomorrow"' : ''} onclick="enterQuiz()">Quiz</button>
+        <button class="primary"${(dueReviews + newAvailable) === 0 ? ' disabled title="All done for today — come back tomorrow"' : ''} onclick="enterRiding()">Riding</button>
         <button class="ghost" onclick="location.hash='calendar'">📅 Calendar</button>
         <button class="ghost" onclick="openSettings()">⚙ Settings</button>
       </div>
