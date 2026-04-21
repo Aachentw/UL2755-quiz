@@ -616,6 +616,9 @@ function renderDayPage(dayN) {
   const state = SrsStore.loadState();
   const items = day.question_ids.map(id => ({ q: State.questions.find(qq => qq.id === id), r: state[id] })).filter(x => x.q);
   const graduated = items.filter(x => x.r && x.r.stage === 'graduated').length;
+  // Day is "completed" when every question has been attempted (same rule as Calendar's green check).
+  const dayCompleted = SRS.completedDays(curr, state).has(dayN);
+  const disabledAttr = dayCompleted ? ' disabled title="All questions completed for this day"' : '';
 
   const badge = (r) => {
     if (!r || r.stage === 'new') return `<span class="sbadge new">🆕 New</span>`;
@@ -650,8 +653,8 @@ function renderDayPage(dayN) {
     `).join('')}
 
     <div class="day-actions">
-      <button class="primary" onclick="enterRidingDay(${dayN})">🏍️ Riding this day</button>
-      <button class="primary" onclick="enterQuizDay(${dayN})">📱 Quiz this day</button>
+      <button class="primary"${disabledAttr} onclick="enterRidingDay(${dayN})">🏍️ Riding this day</button>
+      <button class="primary"${disabledAttr} onclick="enterQuizDay(${dayN})">📱 Quiz this day</button>
     </div>
   `;
   updateHeader();
