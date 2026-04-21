@@ -96,6 +96,7 @@
   .cal-cell {
     position: relative;
     aspect-ratio: 1;
+    container-type: inline-size;
     background: var(--future-bg);
     border: 1px solid var(--future-border);
     border-radius: 10px;
@@ -118,7 +119,7 @@
     width: 100%;
   }
   .date {
-    font-size: 0.82rem;
+    font-size: max(0.66rem, 16cqw);
     font-weight: 700;
     line-height: 1;
     color: var(--text);
@@ -132,15 +133,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8rem;
+    font-size: max(0.58rem, 16cqw);
     font-weight: 700;
     color: var(--muted);
     line-height: 1;
+    min-width: 0;
   }
   .cell-center.done-check {
     color: var(--done);
-    font-size: 1.9rem;
+    font-size: max(1.3rem, 50cqw);
     font-weight: 900;
+    line-height: 0.8;
     text-shadow: 0 0 12px rgba(16, 185, 129, 0.55);
   }
 
