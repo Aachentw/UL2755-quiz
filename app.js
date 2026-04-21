@@ -686,8 +686,8 @@ function renderDayPage(dayN) {
     `).join('')}
 
     <div class="day-actions">
-      <button class="primary"${disabledAttr} onclick="enterRidingDay(${dayN})">🏍️ Riding this day</button>
       <button class="primary"${disabledAttr} onclick="enterQuizDay(${dayN})">📱 Quiz this day</button>
+      <button class="primary"${disabledAttr} onclick="enterRidingDay(${dayN})">🏍️ Riding this day</button>
     </div>
   `;
   updateHeader();
@@ -836,8 +836,8 @@ function renderDatePage(dateYmd) {
     `).join('')}
 
     <div class="day-actions">
-      <button class="primary"${disabledAttr} onclick="enterRidingDate('${dateYmd}')">🏍️ Riding these reviews</button>
       <button class="primary"${disabledAttr} onclick="enterQuizDate('${dateYmd}')">📱 Quiz these reviews</button>
+      <button class="primary"${disabledAttr} onclick="enterRidingDate('${dateYmd}')">🏍️ Riding these reviews</button>
     </div>
   `;
   updateHeader();
