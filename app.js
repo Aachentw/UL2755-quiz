@@ -1,6 +1,8 @@
 // UL2755 Quiz — Stage 1 MVP
 // Modes: MCQ (interactive) / Audio (motorcycle hands-free)
 
+const APP_VERSION = 'v0.13';
+
 const State = {
   questions: [],
   order: [],
@@ -833,6 +835,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   SrsStore.ensureCurriculum(State.questions, SrsStore.loadSettings());
   tickStreak();
   warmVoices();
+  $('#appVer').textContent = APP_VERSION;
 
   $('.brand').addEventListener('click', () => {
     // Force home render regardless of current hash (mode entries like enterRiding
