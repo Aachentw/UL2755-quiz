@@ -139,9 +139,11 @@
   .q-row { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 0.7rem 0.9rem; cursor: pointer; transition: border-color 0.15s; }
   .q-row:hover { border-color: #3b82f6; }
   .q-row .q-text { color: #f1f5f9; font-size: 0.92rem; line-height: 1.4; min-width: 0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .q-row .q-days { color: #94a3b8; font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
+  .q-row .q-date { color: #cbd5e1; font-size: 0.78rem; font-weight: 600; white-space: nowrap; flex: 0 0 auto; }
+  .q-row .q-days { color: #94a3b8; font-size: 0.8rem; font-weight: 600; white-space: nowrap; flex: 0 0 auto; min-width: 3.8rem; text-align: right; }
   .q-row .q-days.overdue { color: #f87171; }
   .q-row .q-days.today { color: #6ee7b7; }
+  .q-row .q-days.scheduled { color: #60a5fa; }
   .offset-bar { position: sticky; top: 0; background: #0f172a; padding: 0.5rem 0; display: flex; gap: 0.3rem; overflow-x: auto; margin-bottom: 0.4rem; z-index: 5; }
   .offset-bar button { flex: 0 0 auto; background: #1e293b; border: 1px solid #334155; color: #cbd5e1; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
   .offset-bar button.active { background: #c8102e; border-color: #c8102e; color: white; }

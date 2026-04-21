@@ -848,8 +848,13 @@ function renderDatePage(dateYmd) {
 function renderQuestionList() {
   stopAudioCleanup();
   const state = SrsStore.loadState();
-  const list = SRS.questionList(State.questions, state, Date.now());
+  const curr = SrsStore.loadCurriculum();
+  const list = SRS.questionList(State.questions, state, Date.now(), curr);
   const offsets = [0, 1, 3, 7, 30, 90, 180];
+  const fmtMd = (ms) => {
+    const d = new Date(ms);
+    return d.toLocaleString('en-US', { month: 'short', day: 'numeric' });
+  };
 
   $('#card').innerHTML = `
     <div class="day-header">
@@ -871,12 +876,14 @@ function renderQuestionList() {
 
     <div class="q-list">
       ${list.map((r, i) => {
-        const cls = r.daysFromToday < 0 ? 'overdue' : (r.daysFromToday === 0 ? 'today' : '');
-        const label = r.daysFromToday < 0
-          ? `Overdue ${-r.daysFromToday}d`
-          : r.daysFromToday === 0 ? 'Today' : `+${r.daysFromToday} day${r.daysFromToday === 1 ? '' : 's'}`;
+        let cls = '', label = '';
+        if (r.scheduled) { cls = 'scheduled'; label = 'Scheduled'; }
+        else if (r.daysFromToday < 0) { cls = 'overdue'; label = `Overdue ${-r.daysFromToday}d`; }
+        else if (r.daysFromToday === 0) { cls = 'today'; label = 'Today'; }
+        else { label = `+${r.daysFromToday} day${r.daysFromToday === 1 ? '' : 's'}`; }
         return `<div class="q-row" id="qrow-${i}" data-days="${r.daysFromToday}" onclick="openQuestionFromList('${r.id}')">
           <span class="q-text">${r.text}</span>
+          <span class="q-date">${fmtMd(r.scheduledDateMs)}</span>
           <span class="q-days ${cls}">${label}</span>
         </div>`;
       }).join('')}

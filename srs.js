@@ -186,20 +186,50 @@ const SRS = (() => {
     return Math.max(1, Math.ceil(effRem / days));
   }
 
-  function questionList(questions, state, nowMs) {
+  function questionList(questions, state, nowMs, curriculum) {
     const DAY = 86400000;
     const t = new Date(nowMs); t.setHours(0, 0, 0, 0);
     const startToday = t.getTime();
+
+    // Precompute effective (slip-forward) date per curriculum day
+    const dayDates = {};
+    if (curriculum && curriculum.days && curriculum.start_date) {
+      const doneSet = completedDays(curriculum, state);
+      const firstIncomplete = curriculum.days.find(d => !doneSet.has(d.day));
+      let cursor = new Date(curriculum.start_date + 'T00:00:00').getTime();
+      for (const d of curriculum.days) {
+        if (doneSet.has(d.day)) {
+          dayDates[d.day] = cursor;
+        } else {
+          if (firstIncomplete && d.day === firstIncomplete.day) {
+            cursor = Math.max(cursor, startToday);
+          }
+          dayDates[d.day] = cursor;
+        }
+        cursor += DAY;
+      }
+    }
+
     const rows = questions.map(q => {
       const r = state[q.id];
-      const dueAt = r && r.due_at != null ? r.due_at : nowMs;
-      const daysFromToday = Math.floor((dueAt - startToday) / DAY);
+      let scheduledMs;
+      let scheduled = false;
+      if (r && r.due_at != null) {
+        scheduledMs = r.due_at;
+      } else {
+        scheduled = true;
+        const dayN = getDayForQuestion(curriculum, q.id);
+        scheduledMs = (dayN != null && dayDates[dayN] != null) ? dayDates[dayN] : nowMs;
+      }
+      const daysFromToday = Math.floor((scheduledMs - startToday) / DAY);
       const raw = q.question || '';
       return {
         id: q.id,
         text: raw.slice(0, 40) + (raw.length > 40 ? '…' : ''),
-        dueAtMs: dueAt,
+        dueAtMs: scheduledMs,
+        scheduledDateMs: scheduledMs,
         daysFromToday,
+        scheduled,
       };
     });
     rows.sort((a, b) => a.dueAtMs - b.dueAtMs);
