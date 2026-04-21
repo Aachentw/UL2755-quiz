@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calendar Style A — Mockup</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --border: #334155;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --red: #c8102e;
+    --red-dark: #7f1d1d;
+    --done: #10b981;
+    --done-bg: rgba(16, 185, 129, 0.12);
+    --done-border: rgba(16, 185, 129, 0.45);
+    --today: #3b82f6;
+    --today-bg: rgba(59, 130, 246, 0.22);
+    --today-border: rgba(59, 130, 246, 0.9);
+    --today-glow: rgba(59, 130, 246, 0.55);
+    --slip: #f59e0b;
+    --slip-bg: rgba(245, 158, 11, 0.13);
+    --slip-border: rgba(245, 158, 11, 0.55);
+    --future-bg: #0f172a;
+    --future-border: rgba(51, 65, 85, 0.65);
+    --future-text: #64748b;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; font-family: -apple-system, "Segoe UI", "Microsoft JhengHei", "PingFang TC", sans-serif; background: #05060e; color: var(--text); }
+  body { max-width: 740px; margin: 0 auto; padding: 1.2rem; }
+
+  h1 { color: #fca5a5; font-size: 1.1rem; margin: 0 0 0.6rem; }
+  .sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 1rem; }
+
+  /* ---- Calendar container ---- */
+  .cal-panel {
+    background: var(--panel);
+    border-radius: 14px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.9rem;
+  }
+  .cal-header button {
+    background: #0f172a;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.08s;
+  }
+  .cal-header button:hover { border-color: var(--today); }
+  .cal-header button:active { transform: scale(0.95); }
+  .cal-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---- Weekday header ---- */
+  .cal-dow-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .cal-dow {
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 0.35rem 0;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .cal-dow.weekend { color: #fca5a5; }
+
+  /* ---- Cells ---- */
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  .cal-cell {
+    position: relative;
+    aspect-ratio: 1;
+    background: var(--future-bg);
+    border: 1px solid var(--future-border);
+    border-radius: 10px;
+    padding: 5px 6px;
+    color: var(--future-text);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    transition: transform 0.08s, border-color 0.15s, box-shadow 0.2s;
+    min-width: 0;
+  }
+  .cal-cell:not(.empty) { cursor: pointer; }
+  .cal-cell:not(.empty):hover { border-color: var(--today); transform: translateY(-1px); }
+  .cal-cell:not(.empty):active { transform: scale(0.97); }
+
+  .cell-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+  }
+  .date {
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text);
+  }
+  .cal-cell.empty { background: transparent; border-color: transparent; cursor: default; }
+  .cal-cell.empty .date { visibility: hidden; }
+
+  /* Day badge: small pill top-right */
+  .day-badge {
+    font-size: 0.58rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 8px;
+    background: rgba(100, 116, 139, 0.35);
+    color: #cbd5e1;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+
+  /* Progress strip (thin line at bottom) */
+  .progress-strip {
+    height: 3px;
+    background: rgba(148, 163, 184, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 2px 0 3px;
+  }
+  .progress-strip .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--today), #60a5fa);
+    transition: width 0.3s ease;
+  }
+
+  .cell-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.58rem;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .cell-foot .qcount { font-weight: 600; }
+  .cell-foot .check {
+    color: var(--done);
+    font-weight: 800;
+    font-size: 0.72rem;
+  }
+
+  /* ---- State variants ---- */
+
+  /* done */
+  .cal-cell.done {
+    background: var(--done-bg);
+    border-color: var(--done-border);
+    color: #d1fae5;
+  }
+  .cal-cell.done .date,
+  .cal-cell.done .qcount { color: #d1fae5; }
+  .cal-cell.done .day-badge { background: rgba(16, 185, 129, 0.35); color: #a7f3d0; }
+  .cal-cell.done .progress-strip .fill { background: var(--done); }
+
+  /* today */
+  .cal-cell.today {
+    background: var(--today-bg);
+    border: 1.5px solid var(--today-border);
+    color: #dbeafe;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18), 0 4px 18px -4px var(--today-glow);
+  }
+  .cal-cell.today .date,
+  .cal-cell.today .qcount { color: #ffffff; }
+  .cal-cell.today .day-badge { background: var(--today); color: white; }
+
+  /* slipped */
+  .cal-cell.slip {
+    background: var(--slip-bg);
+    border-color: var(--slip-border);
+    color: #fef3c7;
+  }
+  .cal-cell.slip .date,
+  .cal-cell.slip .qcount { color: #fef3c7; }
+  .cal-cell.slip .day-badge { background: rgba(245, 158, 11, 0.45); color: #fde68a; }
+  .cal-cell.slip .progress-strip .fill { background: var(--slip); }
+
+  /* no curriculum (month bleed) */
+  .cal-cell.blank .date { color: var(--muted); opacity: 0.4; }
+  .cal-cell.blank .progress-strip,
+  .cal-cell.blank .cell-foot { display: none; }
+
+  /* ---- Swatches below for reference ---- */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 0.8rem 0 1.5rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .swatch {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .swatch .dot {
+    width: 12px; height: 12px; border-radius: 3px;
+  }
+  .swatch.done   .dot { background: var(--done-bg); border: 1px solid var(--done-border); }
+  .swatch.today  .dot { background: var(--today-bg); border: 1px solid var(--today-border); box-shadow: 0 0 6px var(--today-glow); }
+  .swatch.slip   .dot { background: var(--slip-bg); border: 1px solid var(--slip-border); }
+  .swatch.future .dot { background: var(--future-bg); border: 1px solid var(--future-border); }
+
+  /* ---- "close-up" comparison row ---- */
+  .closeup {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .closeup .cell-wrap {
+    aspect-ratio: 1;
+  }
+  .closeup h3 {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin: 0.5rem 0 0.2rem;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .closeup .cal-cell { aspect-ratio: 1; }
+
+  /* ---- Phone preview frame ---- */
+  .phone-frame {
+    max-width: 375px;
+    margin: 1rem auto;
+    border: 10px solid #1f2937;
+    border-radius: 36px;
+    overflow: hidden;
+    background: #05060e;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .phone-frame .cal-panel { border-radius: 0; padding: 0.8rem; }
+</style>
+</head>
+<body>
+
+<h1>Calendar Style A — Mockup</h1>
+<div class="sub">Apple Calendar-inspired dark palette for UL2755 Sprint. All four states + progress strip.</div>
+
+<h2 style="font-size:0.8rem;color:var(--muted);letter-spacing:0.08em;margin:1rem 0 0.5rem;">STATE SWATCHES (CLOSE-UP)</h2>
+<div class="closeup">
+  <div>
+    <h3>Done</h3>
+    <div class="cell-wrap">
+      <div class="cal-cell done">
+        <div class="cell-top"><span class="date">20</span><span class="day-badge">D1</span></div>
+        <div>
+          <div class="progress-strip"><div class="fill" style="width:100%;"></div></div>
+          <div class="cell-foot"><span class="qcount">10/10</span><span class="check">✓</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <h3>Today</h3>
+    <div class="cell-wrap">
+      <div class="cal-cell today">
+        <div class="cell-top"><span class="date">21</span><span class="day-badge">D2</span></div>
+        <div>
+          <div class="progress-strip"><div class="fill" style="width:30%;"></div></div>
+          <div class="cell-foot"><span class="qcount">3/10</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <h3>Slipped</h3>
+    <div class="cell-wrap">
+      <div class="cal-cell slip">
+        <div class="cell-top"><span class="date">22</span><span class="day-badge">D3</span></div>
+        <div>
+          <div class="progress-strip"><div class="fill" style="width:10%;"></div></div>
+          <div class="cell-foot"><span class="qcount">1/10</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <h3>Upcoming</h3>
+    <div class="cell-wrap">
+      <div class="cal-cell">
+        <div class="cell-top"><span class="date">23</span><span class="day-badge">D4</span></div>
+        <div>
+          <div class="progress-strip"><div class="fill" style="width:0;"></div></div>
+          <div class="cell-foot"><span class="qcount">10Q</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="swatch done"><span class="dot"></span>Done</div>
+  <div class="swatch today"><span class="dot"></span>Today</div>
+  <div class="swatch slip"><span class="dot"></span>Slipped</div>
+  <div class="swatch future"><span class="dot"></span>Upcoming</div>
+</div>
+
+<h2 style="font-size:0.8rem;color:var(--muted);letter-spacing:0.08em;margin:1rem 0 0.5rem;">FULL CALENDAR (APRIL 2026 SAMPLE)</h2>
+
+<div class="cal-panel">
+  <div class="cal-header">
+    <button>‹</button>
+    <span class="cal-title">April 2026</span>
+    <button>›</button>
+  </div>
+
+  <div class="cal-dow-row">
+    <div class="cal-dow weekend">S</div>
+    <div class="cal-dow">M</div>
+    <div class="cal-dow">T</div>
+    <div class="cal-dow">W</div>
+    <div class="cal-dow">T</div>
+    <div class="cal-dow">F</div>
+    <div class="cal-dow weekend">S</div>
+  </div>
+
+  <div class="cal-grid" id="grid"></div>
+</div>
+
+<h2 style="font-size:0.8rem;color:var(--muted);letter-spacing:0.08em;margin:1rem 0 0.5rem;">IPHONE PREVIEW (375PX)</h2>
+<div class="phone-frame">
+  <div class="cal-panel">
+    <div class="cal-header">
+      <button>‹</button>
+      <span class="cal-title">April 2026</span>
+      <button>›</button>
+    </div>
+    <div class="cal-dow-row">
+      <div class="cal-dow weekend">S</div>
+      <div class="cal-dow">M</div>
+      <div class="cal-dow">T</div>
+      <div class="cal-dow">W</div>
+      <div class="cal-dow">T</div>
+      <div class="cal-dow">F</div>
+      <div class="cal-dow weekend">S</div>
+    </div>
+    <div class="cal-grid" id="grid-phone"></div>
+  </div>
+</div>
+
+<script>
+  // April 2026: day-1 is Wednesday.
+  const days = [];
+  // Prepend 3 empty (Sun, Mon, Tue before April 1)
+  for (let i = 0; i < 3; i++) days.push({ empty: true });
+  // April 1-30
+  for (let d = 1; d <= 30; d++) days.push({ date: d });
+  // Pad to 35 cells (5 rows)
+  while (days.length < 35) days.push({ empty: true });
+
+  // Sprint starts Day 1 = Apr 20 (Monday). 10 days total, new_per_day = 10, 100 questions imaginary scenario.
+  // Completed: Day 1 (Apr 20). Today: Apr 21 -> Day 2. Slipped example: Apr 22 -> Day 3 user skipped previously.
+  // Show 10 days D1..D10 on Apr 20..Apr 29.
+  const sprintStart = 20;
+  const todayDate = 21;
+  const dayCount = 10;
+  const doneDays = new Set([1]);   // Day 1 done
+  const slippedDates = new Set([]); // none here since today is first incomplete
+
+  function render(containerId) {
+    const c = document.getElementById(containerId);
+    c.innerHTML = days.map(d => {
+      if (d.empty) return `<div class="cal-cell empty"><span class="date"></span></div>`;
+      const dayN = d.date - sprintStart + 1;
+      const inSprint = dayN >= 1 && dayN <= dayCount;
+      if (!inSprint) {
+        return `<div class="cal-cell blank"><div class="cell-top"><span class="date">${d.date}</span></div></div>`;
+      }
+      let cls = '', widthPct = 0, qText = '10Q', check = '';
+      if (doneDays.has(dayN)) {
+        cls = 'done'; widthPct = 100; qText = '10/10'; check = '<span class="check">✓</span>';
+      } else if (d.date === todayDate) {
+        cls = 'today'; widthPct = 30; qText = '3/10';
+      } else if (d.date < todayDate) {
+        cls = 'slip'; widthPct = 10; qText = '1/10';
+      }
+      return `
+        <div class="cal-cell ${cls}">
+          <div class="cell-top">
+            <span class="date">${d.date}</span>
+            <span class="day-badge">D${dayN}</span>
+          </div>
+          <div>
+            <div class="progress-strip"><div class="fill" style="width:${widthPct}%;"></div></div>
+            <div class="cell-foot"><span class="qcount">${qText}</span>${check}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+  render('grid');
+  render('grid-phone');
+</script>
+</body>
+</html>
