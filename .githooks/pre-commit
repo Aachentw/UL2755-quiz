@@ -1,0 +1,3 @@
+#!/bin/sh
+# Auto-update version.json before each commit.
+exec sh scripts/update_version.sh

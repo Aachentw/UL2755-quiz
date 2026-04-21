@@ -182,7 +182,14 @@
   </div>
 </div>
 
-<script src="srs.js"></script>
-<script src="app.js"></script>
+<script>
+  // Cache-bust srs.js / app.js so browsers pick up the latest on each load.
+  // Service worker still handles offline via network-first strategy.
+  (function(){
+    const v = Date.now();
+    document.write('<script src="srs.js?v=' + v + '"><\/script>');
+    document.write('<script src="app.js?v=' + v + '"><\/script>');
+  })();
+</script>
 </body>
 </html>

@@ -16,8 +16,12 @@ const SRS = (() => {
     next.last_answered_at = now;
 
     if (r.stage === 'new' || !r.stage) {
-      if (correct) { next.stage = 'learning'; next.due_at = now + LEARNING_MIN; next.interval_minutes = minutesOf(LEARNING_MIN); }
-      else { next.stage = 'new'; next.consecutive_correct = 0; }
+      // Both correct and wrong advance to 'learning'. Correct OR wrong consumes
+      // the "new" status; wrong simply restarts the learning timer.
+      next.stage = 'learning';
+      next.consecutive_correct = 0;
+      next.due_at = now + LEARNING_MIN;
+      next.interval_minutes = minutesOf(LEARNING_MIN);
       return next;
     }
 

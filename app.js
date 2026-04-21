@@ -1,7 +1,16 @@
 // UL2755 Quiz — Stage 1 MVP
 // Modes: MCQ (interactive) / Audio (motorcycle hands-free)
 
-const APP_VERSION = 'v0.13';
+let APP_VERSION = 'dev';
+async function loadVersion() {
+  try {
+    const r = await fetch('version.json?t=' + Date.now());
+    if (r.ok) {
+      const v = await r.json();
+      APP_VERSION = v.version || 'dev';
+    }
+  } catch (_) { /* keep dev */ }
+}
 
 const State = {
   questions: [],
@@ -830,7 +839,7 @@ function warmVoices() {
 
 // ---------- init ----------
 document.addEventListener('DOMContentLoaded', async () => {
-  await loadQuestions();
+  await Promise.all([loadQuestions(), loadVersion()]);
   runMigration();
   SrsStore.ensureCurriculum(State.questions, SrsStore.loadSettings());
   tickStreak();

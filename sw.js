@@ -1,5 +1,5 @@
-const CACHE = 'ul2755-v13';
-const SHELL = ['./', './index.html', './app.js', './srs.js', './manifest.webmanifest', './questions.json'];
+const CACHE = 'ul2755-v14';
+const SHELL = ['./', './index.html', './app.js', './srs.js', './manifest.webmanifest', './questions.json', './version.json'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

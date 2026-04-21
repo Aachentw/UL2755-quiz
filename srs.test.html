@@ -4,7 +4,7 @@
 .ok{color:#10b981}.fail{color:#ef4444;font-weight:700}</style>
 </head><body>
 <h1>SRS Unit Tests</h1><div id="out"></div>
-<script src="srs.js"></script>
+<script>document.write('<script src="srs.js?t=' + Date.now() + '"><\/script>');</script>
 <script>
 const out = document.getElementById('out');
 let pass = 0, fail = 0;
@@ -21,8 +21,8 @@ const t0 = 1_700_000_000_000;
 assert('new -> correct -> learning +10min',
   (() => { const s = SRS.nextState(null, true, t0); return s.stage === 'learning' && s.due_at === t0 + 10*60*1000; })(),
   SRS.nextState(null, true, t0));
-assert('new -> wrong -> still new',
-  (() => { const s = SRS.nextState(null, false, t0); return s.stage === 'new' && s.consecutive_correct === 0; })(),
+assert('new -> wrong -> learning +10min (consumes new)',
+  (() => { const s = SRS.nextState(null, false, t0); return s.stage === 'learning' && s.consecutive_correct === 0 && s.due_at === t0 + 10*60*1000; })(),
   SRS.nextState(null, false, t0));
 assert('learning -> correct -> review 1 day',
   (() => { const start = { stage: 'learning', consecutive_correct: 0, interval_minutes: 10, total_seen: 1, total_correct: 1 };
