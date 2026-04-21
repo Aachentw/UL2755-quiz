@@ -571,26 +571,55 @@ function renderCalendar() {
         const day = curr.days.find(d => d.day === c.dayN);
         const isToday = ymd(c.date) === ymd(today);
         const isDone = day && done.has(day.day);
-        const isSlipped = day && !isDone && c.date < today;
-        const cls = ['cal-cell'];
-        if (!day) cls.push('blank');
-        if (isDone) cls.push('done');
-        else if (isToday && day) cls.push('today');
-        else if (isSlipped) cls.push('slip');
-        const clickAttr = day ? `onclick="location.hash='day=${day.day}'"` : '';
-        // Count answered questions for this day (progress display)
-        let answered = 0;
+
+        // Count all questions that should be acted on this calendar date:
+        //   (a) unseen curriculum new questions assigned to this day, PLUS
+        //   (b) any question whose SRS due_at falls within this date window
+        //       (and is not already counted in (a) to avoid double counting).
+        const cellStart = new Date(c.date); cellStart.setHours(0, 0, 0, 0);
+        const cellEnd = cellStart.getTime() + 86400000;
+        const cellStartMs = cellStart.getTime();
+        const counted = new Set();
+        let total = 0;
         if (day) {
           for (const qid of day.question_ids) {
-            const r = state[qid];
-            if (r && (r.total_seen || 0) > 0) answered++;
+            if (!state[qid]) { total++; counted.add(qid); }
           }
         }
-        const centerHtml = !day
+        for (const q of State.questions) {
+          if (counted.has(q.id)) continue;
+          const r = state[q.id];
+          if (r && r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd) {
+            total++;
+            counted.add(q.id);
+          }
+        }
+        // Answered = questions in this cell's bucket that were last answered today
+        let answered = 0;
+        for (const qid of counted) {
+          const r = state[qid];
+          if (r && (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd) answered++;
+        }
+
+        // Cell is interactive if it has curriculum day OR reviews scheduled
+        const hasReviewsOnly = !day && total > 0;
+        const isClickable = !!day; // Day page only exists for curriculum days
+        const isSlipped = day && !isDone && c.date < today;
+
+        const cls = ['cal-cell'];
+        if (!day && !hasReviewsOnly) cls.push('blank');
+        if (isDone) cls.push('done');
+        else if (isToday && (day || hasReviewsOnly)) cls.push('today');
+        else if (isSlipped) cls.push('slip');
+
+        const clickAttr = isClickable ? `onclick="location.hash='day=${day.day}'"` : '';
+        const centerHtml = (!day && !hasReviewsOnly)
           ? ''
           : isDone
             ? `<div class="cell-center done-check">✓</div>`
-            : `<div class="cell-center">${answered}/${day.question_ids.length}</div>`;
+            : total > 0
+              ? `<div class="cell-center">${answered}/${total}</div>`
+              : '';
         const inner = `<span class="cell-top"><span class="date">${c.date.getDate()}</span></span>${centerHtml}`;
         return `<div class="${cls.join(' ')}" ${clickAttr}>${inner}</div>`;
       }).join('')}
