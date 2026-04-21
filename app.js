@@ -554,21 +554,33 @@ function renderCalendar() {
       <button onclick="calNav(1)">›</button>
     </div>
     <div class="cal-grid">
-      ${['S','M','T','W','T','F','S'].map(x => `<div class="cal-dow">${x}</div>`).join('')}
+      ${[{l:'S',w:1},{l:'M',w:0},{l:'T',w:0},{l:'W',w:0},{l:'T',w:0},{l:'F',w:0},{l:'S',w:1}].map(x => `<div class="cal-dow${x.w?' weekend':''}">${x.l}</div>`).join('')}
       ${cells.map(c => {
-        if (!c.inMonth) return `<div class="cal-cell empty"></div>`;
+        if (!c.inMonth) return `<div class="cal-cell empty"><span class="cell-top"><span class="date"></span></span></div>`;
         const day = curr.days.find(d => d.day === c.dayN);
         const isToday = ymd(c.date) === ymd(today);
         const isDone = day && done.has(day.day);
         const isSlipped = day && !isDone && c.date < today;
         const cls = ['cal-cell'];
+        if (!day) cls.push('blank');
         if (isDone) cls.push('done');
         else if (isToday && day) cls.push('today');
         else if (isSlipped) cls.push('slip');
         const clickAttr = day ? `onclick="location.hash='day=${day.day}'"` : '';
-        const inner = day
-          ? `<span class="cell-top"><span class="date">${c.date.getDate()}</span><span class="day-num">D${day.day}</span></span><span class="qcount">${day.question_ids.length}Q</span>`
-          : `<span class="cell-top"><span class="date">${c.date.getDate()}</span></span>`;
+        // Count answered questions for this day (progress display)
+        let answered = 0;
+        if (day) {
+          for (const qid of day.question_ids) {
+            const r = state[qid];
+            if (r && (r.total_seen || 0) > 0) answered++;
+          }
+        }
+        const centerHtml = !day
+          ? ''
+          : isDone
+            ? `<div class="cell-center done-check">✓</div>`
+            : `<div class="cell-center">${answered}/${day.question_ids.length}</div>`;
+        const inner = `<span class="cell-top"><span class="date">${c.date.getDate()}</span></span>${centerHtml}`;
         return `<div class="${cls.join(' ')}" ${clickAttr}>${inner}</div>`;
       }).join('')}
     </div>
