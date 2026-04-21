@@ -370,7 +370,8 @@ function wait(ms) { return new Promise(r => State.audioTimer = setTimeout(r, ms)
 function stopAudioCleanup() {
   State.audioStopped = true;
   clearTimeout(State.audioTimer);
-  if (currentAudio) { try { currentAudio.pause(); currentAudio.src = ''; } catch (_) {} currentAudio = null; }
+  if (sharedAudio) { try { sharedAudio.pause(); sharedAudio.src = ''; sharedAudio.removeAttribute('src'); } catch (_) {} }
+  currentAudio = null;
   if ('speechSynthesis' in window) speechSynthesis.cancel();
   releaseWakeLock();
 }

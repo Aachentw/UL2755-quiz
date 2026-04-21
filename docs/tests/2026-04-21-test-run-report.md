@@ -12,8 +12,8 @@
 | L1 Unit (`srs.test.html`) | 47 | 47 | 0 | srs.js 全分支 |
 | L2 Integration (SrsStore/migration/router) | 12 | 12 | 0 | SrsStore 7 fn、migration 3 分支、router 4 hash |
 | L3 DOM Render | 25 | 25 | 0 | Dashboard 7、Calendar 7、Day 6、Settings 5 |
-| L4 E2E（自動化子集） | 8 | 8 | 0 | Quiz 答對/答錯、Calendar→Day、Day→Quiz/Riding、Settings 雙向連動、Reset |
-| **自動化合計** | **92** | **92** | **0** | — |
+| L4 E2E（自動化子集） | 17 | 17 | 0 | Quiz 答對/答錯、Calendar→Day、Day→Quiz/Riding、Settings 雙向連動/Reset/Keep/Cancel、Riding Intro/Start/Speed/Stop/playMp3 |
+| **自動化合計** | **101** | **101** | **0** | — |
 
 ## L1 Unit 清單（新增的 23 case 已標 ⭐）
 
@@ -33,6 +33,7 @@
 
 ## 已通過的 L4 E2E 子集
 
+**原 8 case**：
 - TC-E-001 Quiz 答對寫入 SRS state
 - TC-E-003 答錯觸發 shake-no 動畫
 - TC-E-011 Calendar → Day 1 載入 10 卡片
@@ -42,14 +43,23 @@
 - TC-E-016 Settings finished → new_per_day 即時更新
 - TC-E-020 Reset learning records 清空 state
 
+**新增補強 9 case**：
+- **TC-E-006** Riding Intro 顯示 Start 按鈕
+- **TC-E-007** primeAndStart 載入正確的 q.mp3
+- **TC-E-007b** playMp3 回 Promise 且 src 正確
+- **TC-E-008** playbackRate 套用 stored speed
+- **TC-E-009** setSpeed 即時更新 sharedAudio.playbackRate 與 localStorage
+- **TC-E-010** stopAudio 暫停 sharedAudio + 清空 src + 回 Intro
+- **TC-E-017** Settings 未變動不觸發 confirm
+- **TC-E-018** Save Keep 分支：保留 start_date + srs_state
+- **TC-E-019** Save Reset 分支：start_date 重設為今天 + srs_state 清空
+
 ## 尚未自動化（需手動驗證或擴充 runner）
 
 | ID | 原因 |
 |---|---|
 | TC-E-002, 004-005 | Quiz flow 後續題、Combo 音效觸發、Done 畫面 |
-| TC-E-006~010 | Riding 模式音效播放、Audio 元素 src 變化、Stop/Resume |
 | TC-E-014 | 偷跑未來日（需模擬時鐘）|
-| TC-E-017~019 | Settings Save 兩分支（需 confirm dialog 互動）|
 | TC-E-021~024 | Service Worker 註冊、離線、快取命中 |
 | TC-M-001~011 | 手動實機（iPhone 靜音開關、Bluetooth、PWA install）|
 
