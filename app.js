@@ -12,6 +12,7 @@ const State = {
   wakeLock: null,
   audioTimer: null,
   audioStopped: false,
+  session: { correct: 0, total: 0 },
 };
 
 const $ = (s) => document.querySelector(s);
@@ -141,7 +142,9 @@ function handleAnswer(picked) {
   state[q.id] = updated;
   SrsStore.saveState(state);
 
+  State.session.total++;
   if (correct) {
+    State.session.correct++;
     State.combo++;
     if (State.combo >= 3) burst(); else playRight();
     tryVibrate(30);
@@ -182,25 +185,24 @@ function currentQuestion() {
 
 function renderDone() {
   const state = SrsStore.loadState();
-  const now = Date.now();
-  const s = SRS.summary(state, State.questions, now);
-  const total = Object.values(state).length;
-  const right = Object.values(state).reduce((n, r) => n + (r.total_correct || 0), 0);
-  const moreAvailable = s.due > 0 || s.new > 0;
+  const startToday = startOfToday();
+  const todayAnswered = Object.values(state).filter(r => (r.last_answered_at || 0) >= startToday).length;
+  const sess = State.session;
+  const pct = sess.total > 0 ? Math.round((sess.correct / sess.total) * 100) : 0;
   $('#card').innerHTML = `
     <div class="done">
       <h2>🏆 Round Complete</h2>
-      <p>Correct answers so far: ${right} / ${total}</p>
-      <p>🔥 Streak: ${State.streak} days</p>
-      ${moreAvailable
-        ? '<button class="primary" onclick="restart()">Continue</button>'
-        : '<p class="muted">No more questions due. Great job — come back later!</p>'}
+      <p style="font-size:1.1rem;margin:0.5rem 0;">This session: <b>${sess.correct} / ${sess.total}</b> correct · ${pct}%</p>
+      <p class="muted">📈 Today: ${todayAnswered} answered · 🔥 ${State.streak}-day streak</p>
       <button class="ghost" onclick="renderDashboard()">Back to Dashboard</button>
     </div>
   `;
 }
 
+function resetSession() { State.session = { correct: 0, total: 0 }; }
+
 window.restart = () => {
+  resetSession();
   rebuildDeck();
   if (State.order.length === 0) {
     renderDashboard();
@@ -639,6 +641,7 @@ window.enterQuizDay = (dayN) => {
   State.order = day.question_ids.map(id => State.questions.findIndex(q => q.id === id)).filter(i => i >= 0);
   State.idx = 0;
   State.mode = 'mcq';
+  resetSession();
   renderMCQ();
 };
 
@@ -664,7 +667,7 @@ function route() {
 }
 window.addEventListener('hashchange', route);
 
-window.enterQuiz = () => { State.mode = 'mcq'; rebuildDeck(); renderMCQ(); };
+window.enterQuiz = () => { State.mode = 'mcq'; resetSession(); rebuildDeck(); renderMCQ(); };
 window.enterRiding = () => { State.mode = 'audio'; stopAudio(); rebuildDeck(); renderAudioIntro(); };
 
 // ---------- Two-way binding helpers ----------
