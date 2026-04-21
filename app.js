@@ -705,23 +705,70 @@ window.openSettings = () => {
   };
 };
 window.closeSettings = () => { $('#settingsModal').hidden = true; };
-window.saveSettingsFromForm = () => {
+
+// ---------- confirmDialog ----------
+let _confirmResolve = null;
+function confirmDialog({ title, body = '', actions }) {
+  return new Promise((resolve) => {
+    if (_confirmResolve) _confirmResolve(null);
+    _confirmResolve = resolve;
+
+    $('#confirmTitle').textContent = title;
+    $('#confirmBody').textContent = body;
+    const cls = { primary: 'primary', danger: 'primary-danger', ghost: 'ghost' };
+    $('#confirmActions').innerHTML = actions.map((a, i) =>
+      `<button class="${cls[a.style] || 'ghost'}" data-idx="${i}">${a.label}</button>`
+    ).join('');
+
+    [...$('#confirmActions').querySelectorAll('button')].forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        const r = _confirmResolve;
+        closeConfirm();
+        if (r) r(actions[i].value);
+      }, { once: true });
+    });
+
+    $('#confirmModal').hidden = false;
+    document.addEventListener('keydown', confirmEscHandler);
+    $('#confirmModal').addEventListener('click', confirmBackdropHandler);
+  });
+}
+function closeConfirm() {
+  $('#confirmModal').hidden = true;
+  _confirmResolve = null;
+  document.removeEventListener('keydown', confirmEscHandler);
+  $('#confirmModal').removeEventListener('click', confirmBackdropHandler);
+}
+function confirmEscHandler(e) {
+  if (e.key === 'Escape' && _confirmResolve) {
+    const r = _confirmResolve; closeConfirm(); r(null);
+  }
+}
+function confirmBackdropHandler(e) {
+  if (e.target.id === 'confirmModal' && _confirmResolve) {
+    const r = _confirmResolve; closeConfirm(); r(null);
+  }
+}
+window.saveSettingsFromForm = async () => {
   const stored = SrsStore.loadSettings();
   const n = parseInt($('#newPerDay').value, 10);
   const newPerDay = isNaN(n) ? 10 : Math.max(1, Math.min(50, n));
-  const changed = newPerDay !== stored.new_per_day;
+  if (newPerDay === stored.new_per_day) { closeSettings(); return; }
 
-  if (!changed) { closeSettings(); return; }
-
-  const keep = confirm(
-    'Rebuild curriculum?\n\n' +
-    'OK = Keep current progress (redistribute remaining questions)\n' +
-    'Cancel = Reset to Day 1 starting today (erases learning records)'
-  );
+  const choice = await confirmDialog({
+    title: 'Rebuild curriculum?',
+    body: 'Changing daily pace will reorganize your remaining questions.',
+    actions: [
+      { label: 'Keep Progress',  style: 'primary', value: 'keep'  },
+      { label: '⚠ Start Over',   style: 'danger',  value: 'reset' },
+      { label: 'Cancel',         style: 'ghost',   value: null    },
+    ],
+  });
+  if (choice == null) return;
 
   SrsStore.saveSettings({ new_per_day: newPerDay, session_cap: null, order: 'reviews_first' });
 
-  if (keep) {
+  if (choice === 'keep') {
     const prevCurr = SrsStore.loadCurriculum();
     const prevStart = prevCurr && prevCurr.start_date ? prevCurr.start_date : todayYmd();
     localStorage.removeItem('srs_curriculum');
@@ -736,8 +783,22 @@ window.saveSettingsFromForm = () => {
   closeSettings();
   renderDashboard();
 };
-window.resetAllSrs = () => {
-  if (!confirm('Reset all learning records? This cannot be undone.')) return;
+window.resetAllSrs = async () => {
+  const state = SrsStore.loadState();
+  const answered = Object.keys(state).length;
+  const curr = SrsStore.loadCurriculum();
+  const dayStr = curr ? `Day ${SRS.completedDays(curr, state).size} of ${curr.days.length}` : '';
+  const body = `You'll lose:\n· ${answered} answered record${answered === 1 ? '' : 's'}\n· ${State.streak}-day streak\n· ${dayStr}`;
+  const choice = await confirmDialog({
+    title: '⚠️ Reset all learning records?',
+    body,
+    actions: [
+      { label: 'Reset Everything', style: 'danger', value: 'yes' },
+      { label: 'Cancel',           style: 'ghost',  value: null  },
+    ],
+  });
+  if (choice !== 'yes') return;
+
   localStorage.removeItem('srs_state');
   localStorage.removeItem('srs_new_today');
   localStorage.removeItem('srs_curriculum');
