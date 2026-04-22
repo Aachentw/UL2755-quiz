@@ -519,60 +519,65 @@ function renderDashboard() {
 // ---------- Shared cell-stats helper (keeps Calendar / Day / Date views aligned) ----------
 function computeCellStats(cellStartMs, day, state, todayStart) {
   const cellEnd = cellStartMs + 86400000;
-  let total = 0, answered = 0;
+  const counted = new Set();
+  let answered = 0;
 
   if (cellStartMs < todayStart) {
+    // Past: count questions answered on D, plus unanswered-due-on-D only when no curriculum day.
     for (const q of State.questions) {
       const r = state[q.id];
-      if (r && (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd) answered++;
-    }
-    if (day) total = day.question_ids.length;
-    else {
-      total = answered;
-      for (const q of State.questions) {
-        const r = state[q.id];
-        if (!r) continue;
-        const answeredOnD = (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd;
-        const dueOnD = r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd;
-        if (!answeredOnD && dueOnD) total++;
+      if (r && (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd) {
+        counted.add(q.id);
+        answered++;
       }
     }
-  } else if (cellStartMs === todayStart) {
-    const counted = new Set();
-    if (day) for (const qid of day.question_ids) {
-      if (!state[qid]) { total++; counted.add(qid); }
+    if (day) {
+      // For past curriculum days, the "bucket" of cards is the curriculum itself.
+      for (const qid of day.question_ids) counted.add(qid);
+    } else {
+      for (const q of State.questions) {
+        if (counted.has(q.id)) continue;
+        const r = state[q.id];
+        if (!r) continue;
+        const dueOnD = r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd;
+        if (dueOnD) counted.add(q.id);
+      }
+    }
+    return { total: counted.size, answered, ids: [...counted] };
+  }
+
+  if (cellStartMs === todayStart) {
+    if (day) for (const qid of day.question_ids) { if (!state[qid]) counted.add(qid); }
+    for (const q of State.questions) {
+      if (counted.has(q.id)) continue;
+      const r = state[q.id];
+      if (r && r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd) counted.add(q.id);
     }
     for (const q of State.questions) {
       if (counted.has(q.id)) continue;
       const r = state[q.id];
-      if (r && r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd) { total++; counted.add(q.id); }
+      if (r && r.due_at != null && r.due_at < cellStartMs) counted.add(q.id);
     }
     for (const q of State.questions) {
       if (counted.has(q.id)) continue;
       const r = state[q.id];
-      if (r && r.due_at != null && r.due_at < cellStartMs) { total++; counted.add(q.id); }
-    }
-    for (const q of State.questions) {
-      if (counted.has(q.id)) continue;
-      const r = state[q.id];
-      if (r && r.due_at == null) { total++; counted.add(q.id); }
+      if (r && r.due_at == null) counted.add(q.id);
     }
     for (const q of State.questions) {
       const r = state[q.id];
       if (r && (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd) answered++;
     }
-  } else {
-    const counted = new Set();
-    if (day) for (const qid of day.question_ids) {
-      if (!state[qid]) { total++; counted.add(qid); }
-    }
-    for (const q of State.questions) {
-      if (counted.has(q.id)) continue;
-      const r = state[q.id];
-      if (r && r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd) { total++; counted.add(q.id); }
-    }
+    return { total: counted.size, answered, ids: [...counted] };
   }
-  return { total, answered };
+
+  // Future
+  if (day) for (const qid of day.question_ids) { if (!state[qid]) counted.add(qid); }
+  for (const q of State.questions) {
+    if (counted.has(q.id)) continue;
+    const r = state[q.id];
+    if (r && r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd) counted.add(q.id);
+  }
+  return { total: counted.size, answered: 0, ids: [...counted] };
 }
 
 function effectiveDateForDay(curr, state, dayN) {
@@ -700,9 +705,14 @@ function renderDayPage(dayN) {
   const day = curr.days.find(d => d.day === dayN);
   if (!day) { location.hash = 'calendar'; return; }
   const state = SrsStore.loadState();
-  const items = day.question_ids.map(id => ({ q: State.questions.find(qq => qq.id === id), r: state[id] })).filter(x => x.q);
+  // Items shown on this page must exactly equal the set that Calendar counts for this day's
+  // effective date (so header A/B, card count, and QL per-date sum agree).
+  const eff = effectiveDateForDay(curr, state, dayN);
+  const stats = eff != null
+    ? computeCellStats(eff, day, state, startOfToday())
+    : { total: day.question_ids.length, answered: 0, ids: day.question_ids.slice() };
+  const items = stats.ids.map(id => ({ q: State.questions.find(qq => qq.id === id), r: state[id] })).filter(x => x.q);
   const graduated = items.filter(x => x.r && x.r.stage === 'graduated').length;
-  // Day is "completed" when every question has been attempted (same rule as Calendar's green check).
   const dayCompleted = SRS.completedDays(curr, state).has(dayN);
   const disabledAttr = dayCompleted ? ' disabled title="All questions completed for this day"' : '';
 
