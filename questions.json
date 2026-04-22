@@ -1,397 +1,3557 @@
 [
   {
-    "id": "ul2755-scope-001",
-    "source": "UL2755 §1.1 Scope",
+    "id": "ul2755-1.1",
+    "source": "UL2755 §1.1",
     "category": "Scope",
     "difficulty": "basic",
-    "question": "UL2755 primarily uses which of the following as the enclosure for an MDC?",
-    "options": ["Steel-framed building", "ISO containers", "Glass curtain-wall modules", "No specific requirement"],
+    "question": "Under UL2755 §1.1, an MDC primarily uses which enclosure type?",
+    "options": [
+      "Steel-framed building",
+      "ISO containers",
+      "Glass modules",
+      "Any enclosure"
+    ],
     "answer_index": 1,
-    "explanation": "Per §1.1, an MDC uses ISO containers as the enclosure, housing ITE or NEC-certified power distribution components, UPS, and HVAC systems."
+    "explanation": "§1.1: MDC uses ISO containers with ITE or NEC-certified power distribution, UPS, and HVAC inside."
   },
   {
-    "id": "ul2755-6.1.6-001",
+    "id": "ul2755-6.1.6",
     "source": "UL2755 §6.1.6",
     "category": "Electrical",
     "difficulty": "intermediate",
-    "question": "In service access areas, bare live parts of AC or DC main circuits must be?",
+    "question": "Per §6.1.6, bare live parts in service access areas must be?",
     "options": [
-      "Color-coded only",
-      "Guarded to prevent shorting or contact with SELV circuits",
-      "Coated with insulating paint",
-      "Kept at least 2 meters above floor"
+      "Color-coded",
+      "Guarded to prevent shorts / SELV contact",
+      "Coated",
+      "Above 2m"
     ],
     "answer_index": 1,
-    "explanation": "Per §6.1.6, bare live parts in service access areas must be guarded to prevent shorting or contact with SELV circuits."
+    "explanation": "§6.1.6 requires guarding to prevent shorts and contact with SELV circuits."
   },
   {
-    "id": "ul2755-6.2.3-001",
+    "id": "ul2755-6.2.3",
     "source": "UL2755 §6.2.3",
     "category": "Transformers",
     "difficulty": "basic",
-    "question": "Which types of premise transformers are permitted inside an MDC?",
+    "question": "Premise transformers in an MDC must be?",
     "options": [
-      "Any oil-filled transformer",
-      "Dry-type, or filled with a noncombustible dielectric medium",
-      "Dry-type only",
-      "Oil-filled only"
+      "Any oil-filled",
+      "Dry or noncombustible dielectric",
+      "Dry only",
+      "Oil only"
     ],
     "answer_index": 1,
-    "explanation": "Per §6.2.3, premise transformers must be dry-type or filled with a noncombustible dielectric medium, installed per NEC and NFPA 70."
+    "explanation": "§6.2.3: premise transformers must be dry-type or filled with noncombustible dielectric medium."
   },
   {
-    "id": "ul2755-6.2.4-001",
+    "id": "ul2755-6.2.4",
     "source": "UL2755 §6.2.4",
     "category": "Transformers",
     "difficulty": "basic",
-    "question": "Which of the following is NOT permitted to be installed inside an MDC?",
+    "question": "Which is NOT permitted inside the MDC?",
     "options": [
-      "Dry-type transformer",
-      "Service entrance transformer, OC: IV",
-      "Branch circuit overcurrent protection",
-      "Emergency lighting UPS"
+      "Dry transformer",
+      "Service entrance OC IV transformer",
+      "Branch OCPD",
+      "UPS"
     ],
     "answer_index": 1,
-    "explanation": "§6.2.4 explicitly prohibits service entrance transformers (OC: IV) from being installed inside an MDC."
+    "explanation": "§6.2.4 prohibits service entrance transformers (OC: IV)."
   },
   {
-    "id": "ul2755-6.2.5-001",
+    "id": "ul2755-6.2.5",
     "source": "UL2755 §6.2.5",
     "category": "Electrical",
     "difficulty": "basic",
-    "question": "Lightning surge protection for an MDC must comply with which standards?",
-    "options": ["NFPA 75 only", "NEC and NFPA 70", "IEC 62305 only", "UL 1449 alone"],
+    "question": "Lightning surge protection must comply with?",
+    "options": [
+      "NFPA 75",
+      "NEC + NFPA 70",
+      "IEC 62305 only",
+      "UL 1449 alone"
+    ],
     "answer_index": 1,
-    "explanation": "Per §6.2.5, lightning surge protection must comply with NEC and NFPA 70."
+    "explanation": "§6.2.5: must follow NEC and NFPA 70."
   },
   {
-    "id": "ul2755-6.2.6-001",
+    "id": "ul2755-6.2.6",
     "source": "UL2755 §6.2.6",
     "category": "Electrical",
     "difficulty": "basic",
-    "question": "Junction boxes in an MDC must meet which combined requirements?",
+    "question": "Junction boxes must satisfy which combined requirements?",
     "options": [
-      "Approved, fully enclosed, fastened, accessible, and grounded",
+      "Approved, fully enclosed, fastened, accessible, grounded",
       "Grounded only",
       "Accessible only",
-      "May expose live terminals for easier inspection"
+      "Exposed terminals OK"
     ],
     "answer_index": 0,
-    "explanation": "Per §6.2.6, junction boxes must satisfy five criteria: approved, fully enclosed, fastened, accessible, and grounded."
+    "explanation": "§6.2.6 lists all five."
   },
   {
-    "id": "ul2755-6.4.2-001",
-    "source": "UL2755 §6.4.2",
-    "category": "Wiring Methods",
-    "difficulty": "intermediate",
-    "question": "Which of the following wiring methods is PROHIBITED inside an MDC?",
+    "id": "ul2755-6.3.2",
+    "source": "UL2755 §6.3.2",
+    "category": "Wiring",
+    "difficulty": "basic",
+    "question": "Wiring protection must comply with which chapter of NEC?",
     "options": [
-      "Type MC cable",
-      "Rigid Metal Conduit (RMC)",
-      "Integrated Gas Spacer Cable, NEC Article 326",
-      "Electrical Metallic Tubing (EMT)"
+      "Chapter 2",
+      "Chapter 3",
+      "Chapter 4",
+      "Chapter 5"
+    ],
+    "answer_index": 0,
+    "explanation": "§6.3.2: Wiring and protection per NEC Chapter 2."
+  },
+  {
+    "id": "ul2755-6.4.1",
+    "source": "UL2755 §6.4.1",
+    "category": "Wiring Methods",
+    "difficulty": "basic",
+    "question": "Wiring methods and materials must comply with NEC?",
+    "options": [
+      "Chapter 1",
+      "Chapter 2",
+      "Chapter 3",
+      "Chapter 9"
     ],
     "answer_index": 2,
-    "explanation": "§6.4.2 prohibits: Integrated Gas Spacer Cable (Art. 326), Knob-and-Tube (Art. 394), Messenger-Supported Wiring (Art. 396), and Open Wiring (Art. 398)."
+    "explanation": "§6.4.1: Chapter 3 of NEC."
   },
   {
-    "id": "ul2755-6.4.2-002",
+    "id": "ul2755-6.4.2a",
     "source": "UL2755 §6.4.2",
     "category": "Wiring Methods",
     "difficulty": "intermediate",
-    "question": "Which of the following wiring methods is NOT on the UL2755 prohibited list?",
+    "question": "Which wiring method is PROHIBITED in an MDC?",
     "options": [
-      "Concealed Knob-and-Tube Wiring, Article 394",
-      "Messenger-Supported Wiring, Article 396",
-      "Open Wiring on Insulators, Article 398",
-      "Metal-Clad Cable Type MC, Article 330"
+      "Type MC",
+      "RMC",
+      "IGS Cable (Art. 326)",
+      "EMT"
+    ],
+    "answer_index": 2,
+    "explanation": "§6.4.2 prohibits IGS, Knob-and-Tube, Messenger-Supported, Open Wiring on Insulators."
+  },
+  {
+    "id": "ul2755-6.4.2b",
+    "source": "UL2755 §6.4.2",
+    "category": "Wiring Methods",
+    "difficulty": "intermediate",
+    "question": "Which is NOT on the §6.4.2 prohibited list?",
+    "options": [
+      "Knob-and-Tube (Art. 394)",
+      "Messenger-Supported (Art. 396)",
+      "Open Wiring (Art. 398)",
+      "Type MC (Art. 330)"
     ],
     "answer_index": 3,
-    "explanation": "Type MC is a standard permitted method; the other three are all on the §6.4.2 prohibited list."
+    "explanation": "Type MC is permitted."
   },
   {
-    "id": "nec646-1-001",
-    "source": "NEC §646.1 Scope",
-    "category": "Scope",
-    "difficulty": "basic",
-    "question": "What does NEC Article 646 cover inside an MDC?",
-    "options": [
-      "ITE servers only",
-      "ITE, support equipment, power supply and distribution, wiring protection, workspace, grounding, and HVAC",
-      "Power systems only",
-      "Fire protection only"
-    ],
-    "answer_index": 1,
-    "explanation": "Per §646.1, Article 646 covers all components located inside the enclosure: ITE, support equipment, power supply and distribution, wiring protection, workspace, grounding, and HVAC."
-  },
-  {
-    "id": "nec646-4-001",
-    "source": "NEC §646.4",
-    "category": "Listing",
-    "difficulty": "basic",
-    "question": "An MDC must be listed by which type of organization, and labeled? Example:",
-    "options": ["UL 2755", "UL 1973", "UL 60950", "NEC's own listing"],
-    "answer_index": 0,
-    "explanation": "Per §646.4, an MDC must be listed (UL 2755 is an example) and labeled, complying with 646.3(M) and 646.5 through 646.9."
-  },
-  {
-    "id": "nec646-5-001",
-    "source": "NEC §646.5 Nameplate",
-    "category": "Nameplate",
+    "id": "ul2755-6.5.1",
+    "source": "UL2755 §6.5.1",
+    "category": "Wiring",
     "difficulty": "intermediate",
-    "question": "The nameplate full-load current on an MDC must not be less than what percentage of the load?",
-    "options": ["100 percent", "110 percent", "125 percent", "150 percent"],
-    "answer_index": 2,
-    "explanation": "Per §646.5, nameplate full-load current must be at least 125 percent of the load, and must also show voltage and short-circuit current rating."
-  },
-  {
-    "id": "nec646-6-001",
-    "source": "NEC §646.6 Supply Conductors",
-    "category": "Conductor Sizing",
-    "difficulty": "intermediate",
-    "question": "Supply conductors for an MDC must have an ampacity of at least what multiple of the full-load current?",
-    "options": ["100 percent", "115 percent", "125 percent", "200 percent"],
-    "answer_index": 2,
-    "explanation": "Per §646.6, conductor ampacity must be at least 125 percent of full-load current; overcurrent protection follows NEC 230.90 through 230.95."
-  },
-  {
-    "id": "nec646-7-001",
-    "source": "NEC §646.7 SCCR",
-    "category": "Short Circuit",
-    "difficulty": "intermediate",
-    "question": "The short-circuit current rating of an MDC must?",
-    "options": [
-      "Be fixed at 10 kA",
-      "Match the available fault current at the point of connection",
-      "Exceed 100 kA",
-      "Be independent of MDC capacity"
-    ],
-    "answer_index": 1,
-    "explanation": "Per §646.7, the SCCR must match the available fault current at both the service and the branch-circuit connections to the MDC."
-  },
-  {
-    "id": "nec646-9-001",
-    "source": "NEC §646.9 Flexible Cord",
-    "category": "Flexible Cord",
-    "difficulty": "intermediate",
-    "question": "Flexible cord used in outdoor MDCs must be listed for which two characteristics?",
-    "options": [
-      "Light-duty and heat-resistant",
-      "Hard usage and sunlight resistant",
-      "Low-smoke halogen-free and rodent-resistant",
-      "Sunlight resistant only"
-    ],
-    "answer_index": 1,
-    "explanation": "Per §646.9, flexible cord for outdoor MDCs must be listed for hard usage and be sunlight-resistant."
-  },
-  {
-    "id": "nec646-11-001",
-    "source": "NEC §646.11 Transformers",
-    "category": "Transformers",
-    "difficulty": "intermediate",
-    "question": "Can a utility transformer be installed inside an MDC enclosure?",
-    "options": [
-      "Yes, per NEC Article 450 only",
-      "No. Only a dry-type premise transformer is allowed inside the enclosure",
-      "Yes, with a fire-resistant barrier",
-      "It depends on the MDC capacity"
-    ],
-    "answer_index": 1,
-    "explanation": "Per §646.11, utility and premises transformers are not permitted inside the MDC. Only a dry-type premise transformer may be installed inside the enclosure, in accordance with Article 450."
-  },
-  {
-    "id": "nec646-12-001",
-    "source": "NEC §646.12 Receptacles",
-    "category": "Receptacles",
-    "difficulty": "basic",
-    "question": "Per NEC §646.12, how many 125-volt, 15- or 20-ampere duplex receptacles are required in each work area of an MDC, at minimum?",
-    "options": ["1", "2", "Calculated by work-area size", "Not required"],
-    "answer_index": 0,
-    "explanation": "Per §646.12, at least one 125-volt, 15- or 20-ampere duplex receptacle is required in each work area."
-  },
-  {
-    "id": "nec646-15-001",
-    "source": "NEC §646.15 General Lighting",
-    "category": "Lighting",
-    "difficulty": "intermediate",
-    "question": "What is the single-fault principle for general lighting design in an MDC?",
-    "options": [
-      "A single fault may cause total darkness",
-      "A single fault shall not cause total loss of lighting in work spaces and egress paths",
-      "A backup generator is required",
-      "All luminaires must be on a UPS"
-    ],
-    "answer_index": 1,
-    "explanation": "Per §646.15, a single fault must not cause total loss of lighting in work spaces and egress paths. This typically requires circuit redundancy."
-  },
-  {
-    "id": "nec646-16-001",
-    "source": "NEC §646.16 Emergency Lighting",
-    "category": "Emergency Lighting",
-    "difficulty": "basic",
-    "question": "What listing status is required for emergency lighting equipment in an MDC?",
-    "options": ["Self-assembly is fine", "It must be listed", "It must be explosion-proof", "An NFPA 110 certificate is required"],
-    "answer_index": 1,
-    "explanation": "Per §646.16, emergency lighting equipment must be listed, and egress paths must have emergency lighting."
-  },
-  {
-    "id": "nec646-17-001",
-    "source": "NEC §646.17 Emergency Lighting Circuits",
-    "category": "Emergency Lighting",
-    "difficulty": "intermediate",
-    "question": "What is the power-supply requirement for emergency lighting circuits?",
-    "options": [
-      "May share a circuit with general lighting",
-      "Must be independently supplied, for example by battery or UPS, and clearly identified",
-      "Must use a diesel generator",
-      "No specific requirement"
-    ],
-    "answer_index": 1,
-    "explanation": "Per §646.17, emergency lighting circuits must be supplied independently, such as from a battery or UPS, used only for emergency purposes, and clearly identified or labeled."
-  },
-  {
-    "id": "nec646-18-001",
-    "source": "NEC §646.18 Workspace",
-    "category": "Workspace",
-    "difficulty": "basic",
-    "question": "Workspace around electrical equipment in an MDC follows which section?",
-    "options": ["NEC §100.7", "NEC §110.26", "NEC §240.24", "NFPA 75"],
-    "answer_index": 1,
-    "explanation": "Per §646.18, workspace depth, width, and height must comply with NEC §110.26."
-  },
-  {
-    "id": "nec646-19-001",
-    "source": "NEC §646.19 Entry and Egress",
-    "category": "Egress",
-    "difficulty": "intermediate",
-    "question": "Per NEC §646.19, if the equipment exceeds 1.8 meters in width or depth, what egress is required?",
-    "options": [
-      "A single exit is sufficient",
-      "Two means of egress, each at least 61 centimeters wide and 2 meters tall, with panic hardware",
-      "A 90-centimeter-wide exit on either side",
-      "No specific requirement"
-    ],
-    "answer_index": 1,
-    "explanation": "Per §646.19, for equipment exceeding 1.8 meters, two means of egress are required. Each must be at least 61 centimeters by 2 meters, equipped with emergency (panic) hardware."
-  },
-  {
-    "id": "nec646-19-002",
-    "source": "NEC §646.19",
-    "category": "Egress",
-    "difficulty": "intermediate",
-    "question": "If an MDC has only a single entry or exit, what is the requirement?",
-    "options": [
-      "50 centimeters wide is sufficient",
-      "The path must be unobstructed, or the workspace depth must be doubled",
-      "An alarm must be installed",
-      "A revolving door is required"
-    ],
-    "answer_index": 1,
-    "explanation": "Per §646.19, with a single entrance or exit, the path must be unobstructed or the surrounding workspace depth must be doubled."
-  },
-  {
-    "id": "nec646-20-001",
-    "source": "NEC §646.20 ITE Workspace",
-    "category": "Workspace",
-    "difficulty": "intermediate",
-    "question": "At what voltage level is an ITE workspace exempt from §646.19 egress requirements?",
-    "options": [
-      "Less than 30 volts rms or 60 volts DC",
-      "Less than 50 volts rms or 120 volts DC",
-      "Less than 100 volts rms or 200 volts DC",
-      "Required at any voltage"
-    ],
-    "answer_index": 0,
-    "explanation": "Per §646.20, ITE work areas at less than 30 volts rms or 60 volts DC are exempt from §646.19. Above that voltage, §646.19 applies."
-  },
-  {
-    "id": "nec646-21-001",
-    "source": "NEC §646.21 Battery Space",
-    "category": "Battery",
-    "difficulty": "basic",
-    "question": "Workspace around batteries in an MDC is measured per which section?",
-    "options": ["§110.26", "§480.10", "NFPA 75", "UL 1973"],
-    "answer_index": 0,
-    "explanation": "Per §646.21, battery-space workspace is measured per NEC §110.26."
-  },
-  {
-    "id": "nec110.26-001",
-    "source": "NEC §110.26(A)(1)",
-    "category": "Workspace Clearance",
-    "difficulty": "intermediate",
-    "question": "For equipment rated below 600 volts, what is the minimum workspace depth when live parts face an ungrounded wall, Condition 1?",
-    "options": ["762 millimeters, 2 and a half feet", "900 millimeters, 3 feet", "1067 millimeters, 3 and a half feet", "1220 millimeters, 4 feet"],
-    "answer_index": 1,
-    "explanation": "Per Table 110.26(A)(1): Condition 1, live parts facing an ungrounded surface, requires 3 feet. Condition 2 is 3 and a half feet. Condition 3 is 4 feet."
-  },
-  {
-    "id": "nec110.26-002",
-    "source": "NEC §110.26(A)(1)",
-    "category": "Workspace Clearance",
-    "difficulty": "intermediate",
-    "question": "For equipment below 600 volts with exposed live parts on both sides of the worker, what is the minimum workspace depth?",
-    "options": ["900 millimeters", "1067 millimeters, 3 and a half feet", "1220 millimeters, 4 feet", "1525 millimeters, 5 feet"],
-    "answer_index": 2,
-    "explanation": "Condition 3 applies when exposed live parts exist on both sides of the worker without guarding. The minimum depth is 4 feet, or 1220 millimeters."
-  },
-  {
-    "id": "fxx-walkin-001",
-    "source": "FXX 800Vdc PTU Audit",
-    "category": "Walk-In Equipment",
-    "difficulty": "intermediate",
-    "question": "In the CSA audit of the 800-volt DC PTU walk-in space, the minimum service clearance width is determined by which code?",
-    "options": [
-      "NEC §110.26 workspace",
-      "NFPA 75 cooling spacing",
-      "UL 2755 §6.15 lighting",
-      "NEC §230.90 overcurrent"
-    ],
-    "answer_index": 0,
-    "explanation": "A walk-in walkway is classified as electrical workspace, so minimum depth is determined by NEC §110.26(A)(1). For below 600 volts, Condition 1, the minimum is 900 millimeters."
-  },
-  {
-    "id": "fxx-walkin-002",
-    "source": "FXX 800Vdc PTU Audit",
-    "category": "Walk-In Equipment",
-    "difficulty": "intermediate",
-    "question": "During the audit, the inspector asked whether the IT rack, power shelf, and BBU qualify as dead-front assemblies. What is the judgment rule?",
-    "options": [
-      "The front side has no exposed live parts",
-      "Having a door automatically qualifies it as dead-front",
-      "No current flow inside qualifies it as dead-front",
-      "Only applies to low-voltage equipment"
-    ],
-    "answer_index": 0,
-    "explanation": "A dead-front assembly has no exposed live parts on the operator's front side. Live terminals are hidden inside the enclosure. This classification affects the §110.26 Condition selection."
-  },
-  {
-    "id": "fxx-egress-001",
-    "source": "FXX Audit: Egress",
-    "category": "Egress",
-    "difficulty": "intermediate",
-    "question": "What are the minimum door width and height for two means of egress inside an MDC?",
-    "options": [
-      "50 centimeters wide by 180 centimeters tall",
-      "61 centimeters wide by 2 meters tall",
-      "90 centimeters wide by 210 centimeters tall",
-      "No specific requirement"
-    ],
-    "answer_index": 1,
-    "explanation": "Per NEC §646.19, each egress door must be at least 61 centimeters, or 24 inches, wide and 2 meters, or 6 and a half feet, tall, equipped with panic hardware."
-  },
-  {
-    "id": "ul2755-grounding-001",
-    "source": "UL2755 §6.2 Grounding",
-    "category": "Grounding",
-    "difficulty": "basic",
-    "question": "All exposed metal enclosures of an MDC must be?",
+    "question": "Field wiring compartments must be?",
     "options": [
       "Painted",
-      "Effectively grounded and bonded",
-      "Labeled with warning signs",
-      "Kept at least 1 meter above floor"
+      "Accessible",
+      "Protected and organized per §6.5.1",
+      "Covered"
+    ],
+    "answer_index": 2,
+    "explanation": "§6.5.1 specifies field wiring compartment requirements for access and protection."
+  },
+  {
+    "id": "ul2755-6.5.4",
+    "source": "UL2755 §6.5.4",
+    "category": "Wiring",
+    "difficulty": "intermediate",
+    "question": "Supply wiring shall NOT occupy the same space as?",
+    "options": [
+      "Grounding wiring",
+      "Class 2 / low voltage / signal wiring",
+      "Main panel",
+      "None of above"
     ],
     "answer_index": 1,
-    "explanation": "UL2755 follows NEC §250: all non-current-carrying conductive parts must be bonded and grounded to form a low-impedance fault current path."
+    "explanation": "§6.5.4 segregates supply from Class 2, low-voltage, or signal wiring."
+  },
+  {
+    "id": "ul2755-6.6.1.4",
+    "source": "UL2755 §6.6.1.4",
+    "category": "Field Terminals",
+    "difficulty": "intermediate",
+    "question": "Field wiring terminals must indicate?",
+    "options": [
+      "Voltage only",
+      "Current only",
+      "Suitable conductor material",
+      "Brand name"
+    ],
+    "answer_index": 2,
+    "explanation": "§6.6.1.4 requires marking of suitable conductor material (Cu/Al/Cu-Al)."
+  },
+  {
+    "id": "ul2755-6.6.3.1",
+    "source": "UL2755 §6.6.3.1",
+    "category": "Field Terminals",
+    "difficulty": "intermediate",
+    "question": "Field wiring terminals must not be smaller than?",
+    "options": [
+      "10 AWG",
+      "12 AWG",
+      "14 AWG",
+      "18 AWG"
+    ],
+    "answer_index": 2,
+    "explanation": "§6.6.3.1: minimum 14 AWG, with ampacity calculations per 6.6.3.2–6.6.3.6 or Table 6.1."
+  },
+  {
+    "id": "ul2755-6.6.3.2",
+    "source": "UL2755 §6.6.3.2",
+    "category": "Field Terminals",
+    "difficulty": "intermediate",
+    "question": "Motors, space heating and lighting loads — field wiring ampacity must be at least?",
+    "options": [
+      "100%",
+      "115%",
+      "125% of full-load current",
+      "150%"
+    ],
+    "answer_index": 2,
+    "explanation": "§6.6.3.2 requires 125% of full-load current."
+  },
+  {
+    "id": "ul2755-6.6.3.3",
+    "source": "UL2755 §6.6.3.3",
+    "category": "Field Terminals",
+    "difficulty": "intermediate",
+    "question": "Multiple motors or motor+other: field wiring ampacity requirement?",
+    "options": [
+      "125% of smallest motor + others",
+      "125% of largest motor FLA + sum of other FLAs",
+      "100% of all",
+      "125% sum of all"
+    ],
+    "answer_index": 1,
+    "explanation": "§6.6.3.3: 125% of the largest motor full-load current plus the full-load current of other loads."
+  },
+  {
+    "id": "ul2755-6.6.3.4",
+    "source": "UL2755 §6.6.3.4",
+    "category": "Field Terminals",
+    "difficulty": "expert",
+    "question": "For DC motors, field wiring ampacity is specified in?",
+    "options": [
+      "Table 6.1 only",
+      "§6.6.3.4",
+      "NEC Art. 430",
+      "NFPA 110"
+    ],
+    "answer_index": 1,
+    "explanation": "§6.6.3.4 provides specific DC motor field-wiring ampacity values."
+  },
+  {
+    "id": "ul2755-6.7.1",
+    "source": "UL2755 §6.7.1",
+    "category": "Clearance",
+    "difficulty": "intermediate",
+    "question": "Distance from pressure wire connector/terminal block to enclosure wall must be?",
+    "options": [
+      "Any",
+      "Not less than Table 6 minimum",
+      "50 mm",
+      "100 mm"
+    ],
+    "answer_index": 1,
+    "explanation": "§6.7.1: not less than the minimum indicated in Table 6 for the gauge and voltage."
+  },
+  {
+    "id": "ul2755-6.8.2",
+    "source": "UL2755 §6.8.2",
+    "category": "Flexible Cord",
+    "difficulty": "intermediate",
+    "question": "Flexible cord for MDC internal use must be?",
+    "options": [
+      "Listed for hard usage",
+      "Rated for 600 V",
+      "Silver-plated",
+      "Low-smoke"
+    ],
+    "answer_index": 0,
+    "explanation": "§6.8.2: flexible cord listed for hard usage (and sunlight-resistant if outdoor)."
+  },
+  {
+    "id": "ul2755-6.8.3",
+    "source": "UL2755 §6.8.3",
+    "category": "Flexible Cord",
+    "difficulty": "intermediate",
+    "question": "Single-conductor cables minimum size?",
+    "options": [
+      "4 AWG",
+      "2 AWG",
+      "1/0 AWG",
+      "6 AWG"
+    ],
+    "answer_index": 1,
+    "explanation": "§6.8.3: single-conductor cables must be 2 AWG or larger."
+  },
+  {
+    "id": "ul2755-6.10.1",
+    "source": "UL2755 §6.10.1",
+    "category": "Disconnect",
+    "difficulty": "intermediate",
+    "question": "Disconnecting means requirements focus on?",
+    "options": [
+      "Isolation capability",
+      "Cosmetic",
+      "Labeling only",
+      "Battery only"
+    ],
+    "answer_index": 0,
+    "explanation": "§6.10.1 specifies means to isolate supply conductors."
+  },
+  {
+    "id": "ul2755-6.10.3",
+    "source": "UL2755 §6.10.3",
+    "category": "Disconnect",
+    "difficulty": "intermediate",
+    "question": "Disconnect switch must open?",
+    "options": [
+      "Grounded conductor",
+      "All ungrounded conductors",
+      "One phase only",
+      "Neutral only"
+    ],
+    "answer_index": 1,
+    "explanation": "§6.10.3: all ungrounded conductors of incoming supply."
+  },
+  {
+    "id": "ul2755-6.10.6",
+    "source": "UL2755 §6.10.6",
+    "category": "Overcurrent",
+    "difficulty": "intermediate",
+    "question": "Circuit breaker requirements include?",
+    "options": [
+      "Listed + correct rating + proper installation",
+      "Colored handle",
+      "Transparent cover",
+      "No rating label"
+    ],
+    "answer_index": 0,
+    "explanation": "§6.10.6 lists listing, rating, installation, marking."
+  },
+  {
+    "id": "ul2755-6.10.9",
+    "source": "UL2755 §6.10.9",
+    "category": "Motor",
+    "difficulty": "expert",
+    "question": "Motor control switches rating formula?",
+    "options": [
+      "100% motor FLA",
+      "100% non-motor + 115% motor load current (Table 6.3 HP)",
+      "125% motor FLA",
+      "150% sum"
+    ],
+    "answer_index": 1,
+    "explanation": "§6.10.9 uses 100% non-motor plus 115% motor current."
+  },
+  {
+    "id": "ul2755-6.12.9",
+    "source": "UL2755 §6.12.9",
+    "category": "Grounding",
+    "difficulty": "intermediate",
+    "question": "With non-metallic raceways you must?",
+    "options": [
+      "Skip grounding",
+      "Use separate equipment grounding conductor",
+      "Ground only neutral",
+      "Add surge protection"
+    ],
+    "answer_index": 1,
+    "explanation": "§6.12.9: separate equipment grounding conductor connected to enclosure, etc."
+  },
+  {
+    "id": "ul2755-6.12.11",
+    "source": "UL2755 §6.12.11",
+    "category": "Overcurrent",
+    "difficulty": "intermediate",
+    "question": "Branch circuit overcurrent devices must meet?",
+    "options": [
+      "One of listed options in §6.12.11",
+      "Visual only",
+      "Panelboard listing only",
+      "Breaker only"
+    ],
+    "answer_index": 0,
+    "explanation": "§6.12.11 has a list of acceptable OCPD approaches."
+  },
+  {
+    "id": "ul2755-6.13.1",
+    "source": "UL2755 §6.13.1",
+    "category": "Transformers",
+    "difficulty": "expert",
+    "question": "Transformers ≤600 V primary OCPD must be rated at not more than?",
+    "options": [
+      "100% primary current",
+      "115%",
+      "125% of primary current",
+      "175%"
+    ],
+    "answer_index": 2,
+    "explanation": "§6.13.1: 125% of primary current (with conditions)."
+  },
+  {
+    "id": "ul2755-6.14.1",
+    "source": "UL2755 §6.14.1",
+    "category": "Receptacles",
+    "difficulty": "basic",
+    "question": "Each work area must have at least?",
+    "options": [
+      "1 duplex 125V 15/20A outlet",
+      "2 outlets",
+      "A 240V outlet",
+      "None required"
+    ],
+    "answer_index": 0,
+    "explanation": "§6.14.1: minimum one 125 V AC, 15/20 A duplex convenience outlet."
+  },
+  {
+    "id": "ul2755-6.15.2",
+    "source": "UL2755 §6.15.2",
+    "category": "Lighting",
+    "difficulty": "intermediate",
+    "question": "Exit access and discharge areas lighting minimum?",
+    "options": [
+      "5 lux",
+      "10.8 lux (1 ft-candle) at floor",
+      "20 lux",
+      "50 lux"
+    ],
+    "answer_index": 1,
+    "explanation": "§6.15.2: 10.8 lux at floor."
+  },
+  {
+    "id": "ul2755-6.15.9",
+    "source": "UL2755 §6.15.9",
+    "category": "Lighting",
+    "difficulty": "expert",
+    "question": "Branch circuit conductors within 3 inches of a ballast must be rated?",
+    "options": [
+      "60°C",
+      "75°C",
+      "90°C",
+      "105°C"
+    ],
+    "answer_index": 2,
+    "explanation": "§6.15.9: not less than 90°C."
+  },
+  {
+    "id": "ul2755-6.15.12",
+    "source": "UL2755 §6.15.12",
+    "category": "Lighting",
+    "difficulty": "basic",
+    "question": "Lighting switches must disconnect?",
+    "options": [
+      "Grounded conductor",
+      "All ungrounded conductors",
+      "Phase only",
+      "Neutral only"
+    ],
+    "answer_index": 1,
+    "explanation": "§6.15.12: all ungrounded conductors."
+  },
+  {
+    "id": "ul2755-6.15.14",
+    "source": "UL2755 §6.15.14",
+    "category": "Lighting",
+    "difficulty": "intermediate",
+    "question": "Lighting disconnect location?",
+    "options": [
+      "Hidden",
+      "Accessible to qualified personnel",
+      "Outside only",
+      "Near entrance"
+    ],
+    "answer_index": 1,
+    "explanation": "§6.15.14: accessible for service/maintenance of ballast."
+  },
+  {
+    "id": "ul2755-6.16.1",
+    "source": "UL2755 §6.16.1",
+    "category": "Emergency Lighting",
+    "difficulty": "basic",
+    "question": "Emergency lighting and exit signs must be?",
+    "options": [
+      "Decorated",
+      "Certified and installed per manufacturer",
+      "Painted red",
+      "Battery only"
+    ],
+    "answer_index": 1,
+    "explanation": "§6.16.1: certified equipment and installed per instructions."
+  },
+  {
+    "id": "ul2755-6.17.1",
+    "source": "UL2755 §6.17.1",
+    "category": "Security",
+    "difficulty": "basic",
+    "question": "Intrusion alarms are?",
+    "options": [
+      "Mandatory",
+      "Not mandatory; if installed, must comply with UL 639",
+      "Prohibited",
+      "Required by NFPA 110"
+    ],
+    "answer_index": 1,
+    "explanation": "§6.17.1: optional; if present, UL 639."
+  },
+  {
+    "id": "ul2755-7.1.1",
+    "source": "UL2755 §7.1.1",
+    "category": "Grounding",
+    "difficulty": "basic",
+    "question": "MDC grounding/bonding must comply with?",
+    "options": [
+      "NEC Art. 250 and NFPA 70",
+      "NFPA 75",
+      "IEC 60364",
+      "NEC Art. 640"
+    ],
+    "answer_index": 0,
+    "explanation": "§7.1.1: NEC Article 250 and NFPA 70."
+  },
+  {
+    "id": "ul2755-7.1.2",
+    "source": "UL2755 §7.1.2",
+    "category": "Grounding",
+    "difficulty": "intermediate",
+    "question": "Non-current-carrying exposed metal parts must be?",
+    "options": [
+      "Painted",
+      "Grounded and bonded to equipment frame",
+      "Labeled only",
+      "Isolated"
+    ],
+    "answer_index": 1,
+    "explanation": "§7.1.2 requires bonding and grounding to equipment frame."
+  },
+  {
+    "id": "ul2755-7.1.4",
+    "source": "UL2755 §7.1.4",
+    "category": "Grounding",
+    "difficulty": "intermediate",
+    "question": "Metallic raceways and wireways must be?",
+    "options": [
+      "Insulated",
+      "Grounded with ensured continuity",
+      "Shielded",
+      "Color-coded"
+    ],
+    "answer_index": 1,
+    "explanation": "§7.1.4: grounded; if insulating enclosure, bonding ensures continuity."
+  },
+  {
+    "id": "ul2755-7.1.7",
+    "source": "UL2755 §7.1.7",
+    "category": "Grounding",
+    "difficulty": "intermediate",
+    "question": "Electrical and non-electrical metal parts must be connected to?",
+    "options": [
+      "Ground rod only",
+      "Grounding bus in MDC panelboard via green conductor",
+      "Building steel",
+      "Neutral bar"
+    ],
+    "answer_index": 1,
+    "explanation": "§7.1.7: green-insulated conductor to grounding bus in MDC panelboard."
+  },
+  {
+    "id": "ul2755-7.2.1d",
+    "source": "UL2755 §7.2.1(d)",
+    "category": "Grounding",
+    "difficulty": "intermediate",
+    "question": "A wire-binding screw may be used for conductors up to?",
+    "options": [
+      "14 AWG",
+      "10 AWG",
+      "8 AWG",
+      "6 AWG"
+    ],
+    "answer_index": 1,
+    "explanation": "§7.2.1(d): conductors of 10 AWG or smaller."
+  },
+  {
+    "id": "ul2755-7.2.2",
+    "source": "UL2755 §7.2.2",
+    "category": "Grounding",
+    "difficulty": "basic",
+    "question": "Connections between devices must not rely solely on?",
+    "options": [
+      "Bolting",
+      "Soldering",
+      "Welding",
+      "Clamping"
+    ],
+    "answer_index": 1,
+    "explanation": "§7.2.2: not solely on soldering."
+  },
+  {
+    "id": "ul2755-7.3.4",
+    "source": "UL2755 §7.3.4",
+    "category": "Grounding",
+    "difficulty": "intermediate",
+    "question": "Grounding terminal shall be identified by?",
+    "options": [
+      "Any method",
+      "One of the methods listed in §7.3.4",
+      "Color only",
+      "Not required"
+    ],
+    "answer_index": 1,
+    "explanation": "§7.3.4 lists approved identification methods (letters, green color, symbol)."
+  },
+  {
+    "id": "ul2755-8.1.3",
+    "source": "UL2755 §8.1.3",
+    "category": "Workspace",
+    "difficulty": "intermediate",
+    "question": "Doors/hinged panels must open at least?",
+    "options": [
+      "45°",
+      "60°",
+      "90°",
+      "180°"
+    ],
+    "answer_index": 2,
+    "explanation": "§8.1.3: minimum 90-degree opening."
+  },
+  {
+    "id": "ul2755-8.2.2",
+    "source": "UL2755 §8.2.2",
+    "category": "Workspace",
+    "difficulty": "intermediate",
+    "question": "Workspace width (≤600V) in front of equipment must be?",
+    "options": [
+      "Width of equipment or 762 mm, whichever greater",
+      "500 mm",
+      "1 m",
+      "Same as depth"
+    ],
+    "answer_index": 0,
+    "explanation": "§8.2.2: at least equipment width or 30 in / 762 mm, whichever greater."
+  },
+  {
+    "id": "ul2755-8.2.3",
+    "source": "UL2755 §8.2.3",
+    "category": "Workspace",
+    "difficulty": "intermediate",
+    "question": "Workspace height (≤600V) minimum?",
+    "options": [
+      "1.5 m",
+      "2.0 m (6.5 ft) above floor",
+      "2.4 m",
+      "No requirement"
+    ],
+    "answer_index": 1,
+    "explanation": "§8.2.3: 2.0 m; if equipment taller, use equipment height."
+  },
+  {
+    "id": "ul2755-9.1.1",
+    "source": "UL2755 §9.1.1",
+    "category": "Battery",
+    "difficulty": "basic",
+    "question": "Storage battery systems comply with?",
+    "options": [
+      "NFPA 110",
+      "NEC Art. 480 + this section + NFPA 70",
+      "UL 60950",
+      "IEC 60086"
+    ],
+    "answer_index": 1,
+    "explanation": "§9.1.1: NEC Art. 480 + NFPA 70 + §9."
+  },
+  {
+    "id": "ul2755-9.2.2",
+    "source": "UL2755 §9.2.2",
+    "category": "Battery",
+    "difficulty": "intermediate",
+    "question": "Battery supply circuit must include?",
+    "options": [
+      "DC overcurrent protection",
+      "AC MCB only",
+      "Surge arrester only",
+      "Motor starter"
+    ],
+    "answer_index": 0,
+    "explanation": "§9.2.2: DC OCPD appropriately rated for fire/shock risk."
+  },
+  {
+    "id": "ul2755-9.3.1",
+    "source": "UL2755 §9.3.1",
+    "category": "Battery",
+    "difficulty": "intermediate",
+    "question": "Batteries must be installed to prevent terminals from contacting?",
+    "options": [
+      "Adjacent cells or metal parts",
+      "Ground",
+      "The ceiling",
+      "Each other's labels"
+    ],
+    "answer_index": 0,
+    "explanation": "§9.3.1: avoid short circuits by isolation from adjacent cells / battery compartment metals."
+  },
+  {
+    "id": "ul2755-9.4.3",
+    "source": "UL2755 §9.4.3",
+    "category": "Battery",
+    "difficulty": "expert",
+    "question": "Metallic battery enclosures must have?",
+    "options": [
+      "One paint layer",
+      "Two baked acid/alkali-resistant paint layers",
+      "Galvanized only",
+      "Plastic liner only"
+    ],
+    "answer_index": 1,
+    "explanation": "§9.4.3: two layers individually baked."
+  },
+  {
+    "id": "ul2755-9.4.4",
+    "source": "UL2755 §9.4.4",
+    "category": "Battery",
+    "difficulty": "intermediate",
+    "question": "Battery enclosures must prevent?",
+    "options": [
+      "Electrolyte leakage",
+      "Electrolyte leakage + listed hazards",
+      "Noise",
+      "Magnetic fields"
+    ],
+    "answer_index": 1,
+    "explanation": "§9.4.4: prevent leakage and avoid listed hazards."
+  },
+  {
+    "id": "ul2755-9.4.7",
+    "source": "UL2755 §9.4.7",
+    "category": "Battery",
+    "difficulty": "intermediate",
+    "question": "Vented/valve-regulated batteries must NOT vent gases into?",
+    "options": [
+      "Outside",
+      "Closed MDC spaces",
+      "Battery trays",
+      "Ventilation ducts"
+    ],
+    "answer_index": 1,
+    "explanation": "§9.4.7: no venting into closed MDC spaces during over/discharge or abnormal."
+  },
+  {
+    "id": "ul2755-9.7.1",
+    "source": "UL2755 §9.7.1",
+    "category": "Battery",
+    "difficulty": "basic",
+    "question": "Replaceable battery with explosion risk needs?",
+    "options": [
+      "Label or instruction warning",
+      "Red paint",
+      "Key lock",
+      "No warning"
+    ],
+    "answer_index": 0,
+    "explanation": "§9.7.1: warning marking near the battery or in servicing instructions."
+  },
+  {
+    "id": "ul2755-9.8.2",
+    "source": "UL2755 §9.8.2",
+    "category": "Battery",
+    "difficulty": "basic",
+    "question": "Battery supply integrated with certified ITE needs?",
+    "options": [
+      "Full evaluation",
+      "No further evaluation",
+      "NFPA 110 approval",
+      "NRTL re-test"
+    ],
+    "answer_index": 1,
+    "explanation": "§9.8.2: does not require further evaluation."
+  },
+  {
+    "id": "ul2755-9.8.4",
+    "source": "UL2755 §9.8.4",
+    "category": "Battery",
+    "difficulty": "intermediate",
+    "question": "Battery equipment must prevent?",
+    "options": [
+      "Fire, explosion, chemical leak, incorrect install",
+      "Just fire",
+      "Just chemical leak",
+      "Overheat only"
+    ],
+    "answer_index": 0,
+    "explanation": "§9.8.4: all listed plus reverse-polarity risk mitigation."
+  },
+  {
+    "id": "ul2755-9.8.8",
+    "source": "UL2755 §9.8.8",
+    "category": "Battery",
+    "difficulty": "expert",
+    "question": "Overcharging test conditions are defined in?",
+    "options": [
+      "§9.8.8",
+      "§9.8.10",
+      "§9.8.12",
+      "§18.4"
+    ],
+    "answer_index": 0,
+    "explanation": "§9.8.8 lists overcharging test conditions."
+  },
+  {
+    "id": "ul2755-9.8.10",
+    "source": "UL2755 §9.8.10",
+    "category": "Battery",
+    "difficulty": "expert",
+    "question": "Reverse-charging test duration?",
+    "options": [
+      "1 hour",
+      "4 hours",
+      "7 hours",
+      "24 hours"
+    ],
+    "answer_index": 2,
+    "explanation": "§9.8.10: reverse charging for 7 hours after simulating a single-fault."
+  },
+  {
+    "id": "ul2755-9.8.11",
+    "source": "UL2755 §9.8.11",
+    "category": "Battery",
+    "difficulty": "expert",
+    "question": "Excessive discharging test method?",
+    "options": [
+      "Open-circuit",
+      "Short-circuit current/voltage limiter",
+      "Open or short the limiting component",
+      "None"
+    ],
+    "answer_index": 2,
+    "explanation": "§9.8.11: open or short-circuit the limiting components."
+  },
+  {
+    "id": "ul2755-9.8.12",
+    "source": "UL2755 §9.8.12",
+    "category": "Battery",
+    "difficulty": "intermediate",
+    "question": "Battery tests must NOT result in?",
+    "options": [
+      "Any listed hazard (fire/explosion/leak)",
+      "Noise",
+      "Color change",
+      "Dimming"
+    ],
+    "answer_index": 0,
+    "explanation": "§9.8.12 lists prohibited test outcomes."
+  },
+  {
+    "id": "ul2755-9.8.13",
+    "source": "UL2755 §9.8.13",
+    "category": "Battery",
+    "difficulty": "intermediate",
+    "question": "After battery tests, equipment must undergo?",
+    "options": [
+      "Repaint",
+      "Dielectric withstand tests",
+      "Reboot",
+      "Weigh-in"
+    ],
+    "answer_index": 1,
+    "explanation": "§9.8.13: dielectric withstand test after testing."
+  },
+  {
+    "id": "ul2755-10.1.1",
+    "source": "UL2755 §10.1.1",
+    "category": "Construction",
+    "difficulty": "basic",
+    "question": "Enclosure/frame material requirement?",
+    "options": [
+      "Low-cost",
+      "No injury-risk upon breakage; meets use demands",
+      "Transparent only",
+      "Recyclable"
+    ],
+    "answer_index": 1,
+    "explanation": "§10.1.1 requires mechanical suitability and safety on breakage."
+  },
+  {
+    "id": "ul2755-10.1.2",
+    "source": "UL2755 §10.1.2",
+    "category": "Construction",
+    "difficulty": "intermediate",
+    "question": "Polymeric parts >0.93 m² or 1.83 m linear must comply with?",
+    "options": [
+      "No standard",
+      "UL 94 tests",
+      "Listed requirements in §10.1.2",
+      "Paint code"
+    ],
+    "answer_index": 2,
+    "explanation": "§10.1.2 requires compliance with listed test criteria."
+  },
+  {
+    "id": "ul2755-10.2.1",
+    "source": "UL2755 §10.2.1",
+    "category": "Construction",
+    "difficulty": "intermediate",
+    "question": "Glass covering openings must be?",
+    "options": [
+      "Removable easily",
+      "Secured to prevent displacement; meet size requirements",
+      "Filmed",
+      "Tinted"
+    ],
+    "answer_index": 1,
+    "explanation": "§10.2.1: secured and sized correctly."
+  },
+  {
+    "id": "ul2755-10.2.2.1",
+    "source": "UL2755 §10.2.2.1",
+    "category": "Construction",
+    "difficulty": "intermediate",
+    "question": "Glass impact resistance?",
+    "options": [
+      "1 J",
+      "2 J",
+      "3.38 J without cracking or displacement",
+      "5 J"
+    ],
+    "answer_index": 2,
+    "explanation": "§10.2.2.1: 3.38 J impact test."
+  },
+  {
+    "id": "ul2755-10.3.4",
+    "source": "UL2755 §10.3.4",
+    "category": "Construction",
+    "difficulty": "intermediate",
+    "question": "Shipping supports must pass?",
+    "options": [
+      "Dielectric",
+      "Vertical impact test per 18.4 if uncertain",
+      "Drop only",
+      "Temperature"
+    ],
+    "answer_index": 1,
+    "explanation": "§10.3.4 references 18.4 vertical impact."
+  },
+  {
+    "id": "ul2755-10.3.9",
+    "source": "UL2755 §10.3.9",
+    "category": "Certification",
+    "difficulty": "basic",
+    "question": "Equipment in MDC must be?",
+    "options": [
+      "Self-declared",
+      "UL certified (except 10.3.10)",
+      "CE marked",
+      "Untested"
+    ],
+    "answer_index": 1,
+    "explanation": "§10.3.9 requires UL certification for most equipment."
+  },
+  {
+    "id": "ul2755-10.3.10",
+    "source": "UL2755 §10.3.10",
+    "category": "Certification",
+    "difficulty": "basic",
+    "question": "ITE must comply with?",
+    "options": [
+      "UL 2755",
+      "UL 60950-1",
+      "UL 1973",
+      "UL 1778"
+    ],
+    "answer_index": 1,
+    "explanation": "§10.3.10: ITE follows UL 60950-1."
+  },
+  {
+    "id": "ul2755-10.4.1",
+    "source": "UL2755 §10.4.1",
+    "category": "Construction",
+    "difficulty": "intermediate",
+    "question": "Moving parts hazards evaluated per?",
+    "options": [
+      "UL 60950-1 Sec. 4.4",
+      "NEC 110",
+      "NFPA 70",
+      "UL 2755 §4"
+    ],
+    "answer_index": 0,
+    "explanation": "§10.4.1 references UL 60950-1 Section 4.4."
+  },
+  {
+    "id": "ul2755-11.1.2.1",
+    "source": "UL2755 §11.1.2.1",
+    "category": "Enclosure",
+    "difficulty": "intermediate",
+    "question": "Thermal insulation inside enclosure must be?",
+    "options": [
+      "Adhesive-only",
+      "Mechanically supported; not contact uninsulated live parts",
+      "Poured",
+      "Painted"
+    ],
+    "answer_index": 1,
+    "explanation": "§11.1.2.1(a): mechanically supported + no uninsulated live part contact."
+  },
+  {
+    "id": "ul2755-11.2.1.1",
+    "source": "UL2755 §11.2.1.1",
+    "category": "Enclosure",
+    "difficulty": "intermediate",
+    "question": "ISO container MDC safety approval reference?",
+    "options": [
+      "IEC 60529",
+      "International Convention for Safe Containers (Geneva 1972)",
+      "NFPA 1",
+      "UL 94"
+    ],
+    "answer_index": 1,
+    "explanation": "§11.2.1.1 references 1972 Geneva CSC Convention."
+  },
+  {
+    "id": "ul2755-11.2.2.1",
+    "source": "UL2755 §11.2.2.1",
+    "category": "Enclosure",
+    "difficulty": "intermediate",
+    "question": "Safety Approval Plate must be?",
+    "options": [
+      "Paper sticker",
+      "Permanently affixed, corrosion/fire resistant",
+      "Hidden",
+      "Optional"
+    ],
+    "answer_index": 1,
+    "explanation": "§11.2.2.1: permanent, visible, corrosion/fire resistant rectangular plate."
+  },
+  {
+    "id": "ul2755-11.2.2.2",
+    "source": "UL2755 §11.2.2.2",
+    "category": "Enclosure",
+    "difficulty": "intermediate",
+    "question": "Safety Approval Plate language?",
+    "options": [
+      "Chinese required",
+      "At least English or French",
+      "Korean only",
+      "Silent"
+    ],
+    "answer_index": 1,
+    "explanation": "§11.2.2.2: minimum English or French."
+  },
+  {
+    "id": "ul2755-11.2.4.1",
+    "source": "UL2755 §11.2.4.1",
+    "category": "Enclosure",
+    "difficulty": "intermediate",
+    "question": "Modifications affecting safety must be?",
+    "options": [
+      "Skipped",
+      "Submitted to authorized organization for approval",
+      "Documented only",
+      "Painted"
+    ],
+    "answer_index": 1,
+    "explanation": "§11.2.4.1 requires submission for approval."
+  },
+  {
+    "id": "ul2755-11.3.1.3",
+    "source": "UL2755 §11.3.1.3",
+    "category": "Enclosure",
+    "difficulty": "basic",
+    "question": "For section-shipped MDCs, manufacturers provide?",
+    "options": [
+      "Nothing",
+      "Hardware, splice plates, flashing for assembly",
+      "Just drawings",
+      "Only bolts"
+    ],
+    "answer_index": 1,
+    "explanation": "§11.3.1.3: all assembly materials."
+  },
+  {
+    "id": "ul2755-11.3.1.4",
+    "source": "UL2755 §11.3.1.4",
+    "category": "Enclosure",
+    "difficulty": "basic",
+    "question": "Installation drawings must include?",
+    "options": [
+      "Walls, framing, anchoring, assembly instructions",
+      "Just walls",
+      "Just framing",
+      "Just anchors"
+    ],
+    "answer_index": 0,
+    "explanation": "§11.3.1.4 comprehensive drawings."
+  },
+  {
+    "id": "ul2755-11.3.1.10",
+    "source": "UL2755 §11.3.1.10",
+    "category": "Enclosure",
+    "difficulty": "basic",
+    "question": "Metal surfaces must be protected by?",
+    "options": [
+      "Nothing",
+      "Painting or plating",
+      "Oil",
+      "PVC wrap"
+    ],
+    "answer_index": 1,
+    "explanation": "§11.3.1.10 corrosion protection."
+  },
+  {
+    "id": "ul2755-11.3.1.12",
+    "source": "UL2755 §11.3.1.12",
+    "category": "Enclosure",
+    "difficulty": "intermediate",
+    "question": "Inspection cover plates without lifting means must not exceed?",
+    "options": [
+      "0.5 m² / 10 kg",
+      "1.1 m² / 27.2 kg",
+      "2 m² / 50 kg",
+      "No limit"
+    ],
+    "answer_index": 1,
+    "explanation": "§11.3.1.12: 1.1 m² or 27.2 kg."
+  },
+  {
+    "id": "ul2755-11.3.1.13",
+    "source": "UL2755 §11.3.1.13",
+    "category": "Enclosure",
+    "difficulty": "basic",
+    "question": "Outdoor MDC external joints must be?",
+    "options": [
+      "Taped",
+      "Welded or sealed with outdoor caulking",
+      "Sprayed",
+      "Left open"
+    ],
+    "answer_index": 1,
+    "explanation": "§11.3.1.13 welded or sealed."
+  },
+  {
+    "id": "ul2755-11.3.4.2",
+    "source": "UL2755 §11.3.4.2",
+    "category": "Enclosure",
+    "difficulty": "expert",
+    "question": "Roof strength test load?",
+    "options": [
+      "100 lbs / 1 min",
+      "660 lbs (300 kg) / 2 ft × 1 ft / 1 min / no deformation",
+      "1000 lbs / 5 min",
+      "Per manufacturer"
+    ],
+    "answer_index": 1,
+    "explanation": "§11.3.4.2 specifies 660 lbs over 2 ft × 1 ft for 1 min."
+  },
+  {
+    "id": "ul2755-11.3.5.1",
+    "source": "UL2755 §11.3.5.1",
+    "category": "Enclosure",
+    "difficulty": "intermediate",
+    "question": "Lifting points must meet?",
+    "options": [
+      "Any of two listed options",
+      "Both listed",
+      "Third-party",
+      "No requirement"
+    ],
+    "answer_index": 0,
+    "explanation": "§11.3.5.1 offers two acceptable options for lifting compliance."
+  },
+  {
+    "id": "ul2755-11.3.5.2",
+    "source": "UL2755 §11.3.5.2",
+    "category": "Enclosure",
+    "difficulty": "expert",
+    "question": "MDC structure must withstand?",
+    "options": [
+      "Transport + handling forces/impacts per one of two tests",
+      "Only drop test",
+      "Only vibration",
+      "Nothing"
+    ],
+    "answer_index": 0,
+    "explanation": "§11.3.5.2 lists two acceptable tests."
+  },
+  {
+    "id": "ul2755-11.5.2",
+    "source": "UL2755 §11.5.2",
+    "category": "Enclosure",
+    "difficulty": "intermediate",
+    "question": "Combustible floors under open-bottom equipment require?",
+    "options": [
+      "Fire extinguisher",
+      "Secured metal plates under all open bottom edges",
+      "Foam",
+      "No requirement"
+    ],
+    "answer_index": 1,
+    "explanation": "§11.5.2: metal plates secured."
+  },
+  {
+    "id": "ul2755-11.6.1",
+    "source": "UL2755 §11.6.1",
+    "category": "Enclosure",
+    "difficulty": "intermediate",
+    "question": "Stackable enclosures must be tested per?",
+    "options": [
+      "11.6.2–11.6.4",
+      "15.4",
+      "9.8",
+      "None"
+    ],
+    "answer_index": 0,
+    "explanation": "§11.6.1 references stack-test sections 11.6.2–11.6.4."
+  },
+  {
+    "id": "ul2755-11.6.2",
+    "source": "UL2755 §11.6.2",
+    "category": "Enclosure",
+    "difficulty": "expert",
+    "question": "Stack load test weight?",
+    "options": [
+      "1×",
+      "1.5×",
+      "1.8× fully loaded MDC weight",
+      "3×"
+    ],
+    "answer_index": 2,
+    "explanation": "§11.6.2: 1.8× fully loaded weight with doors/panels open."
+  },
+  {
+    "id": "ul2755-12.1.1",
+    "source": "UL2755 §12.1.1",
+    "category": "Exit",
+    "difficulty": "basic",
+    "question": "Primary exit route must?",
+    "options": [
+      "Lead to kitchen",
+      "Be a door leading outside",
+      "Be a window",
+      "Be locked"
+    ],
+    "answer_index": 1,
+    "explanation": "§12.1.1 requires door leading outside."
+  },
+  {
+    "id": "ul2755-12.2.1",
+    "source": "UL2755 §12.2.1",
+    "category": "Exit",
+    "difficulty": "basic",
+    "question": "Exit route door operable from inside?",
+    "options": [
+      "Via key",
+      "At all times without keys/tools",
+      "Only during day",
+      "With admin permission"
+    ],
+    "answer_index": 1,
+    "explanation": "§12.2.1: inside-operable at all times without keys or tools."
+  },
+  {
+    "id": "ul2755-12.2.4",
+    "source": "UL2755 §12.2.4",
+    "category": "Exit",
+    "difficulty": "intermediate",
+    "question": "Max force to open exit door?",
+    "options": [
+      "10 lb",
+      "15 lb",
+      "20 lb (89 N)",
+      "30 lb"
+    ],
+    "answer_index": 2,
+    "explanation": "§12.2.4: 20 lb / 89 N."
+  },
+  {
+    "id": "ul2755-12.2.5",
+    "source": "UL2755 §12.2.5",
+    "category": "Exit",
+    "difficulty": "intermediate",
+    "question": "Threshold height at door openings max?",
+    "options": [
+      "5 mm",
+      "10 mm",
+      "13 mm (1/2 in)",
+      "25 mm"
+    ],
+    "answer_index": 2,
+    "explanation": "§12.2.5: 13 mm."
+  },
+  {
+    "id": "ul2755-12.6.1",
+    "source": "UL2755 §12.6.1",
+    "category": "Exit",
+    "difficulty": "basic",
+    "question": "Exits must be?",
+    "options": [
+      "Hidden",
+      "Clearly marked, visible from any direction",
+      "Red door",
+      "Locked"
+    ],
+    "answer_index": 1,
+    "explanation": "§12.6.1 clear visibility."
+  },
+  {
+    "id": "ul2755-12.6.2a",
+    "source": "UL2755 §12.6.2(a)",
+    "category": "Exit",
+    "difficulty": "basic",
+    "question": "Emergency exit symbols comply with?",
+    "options": [
+      "ANSI Z535",
+      "NFPA 170",
+      "ISO 7010",
+      "NEC 110"
+    ],
+    "answer_index": 1,
+    "explanation": "§12.6.2(a): NFPA 170."
+  },
+  {
+    "id": "ul2755-12.6.3",
+    "source": "UL2755 §12.6.3",
+    "category": "Exit",
+    "difficulty": "intermediate",
+    "question": "Secondary exits label text requirement?",
+    "options": [
+      "Any text",
+      "Waterproof, 'EXIT' red letters ≥25 mm high on contrasting background",
+      "Black text",
+      "Paint mark"
+    ],
+    "answer_index": 1,
+    "explanation": "§12.6.3 specific label requirement."
+  },
+  {
+    "id": "ul2755-13.1.1",
+    "source": "UL2755 §13.1.1",
+    "category": "Fire",
+    "difficulty": "basic",
+    "question": "Smoke detection must comply with?",
+    "options": [
+      "NFPA 72",
+      "NEC 110",
+      "UL 1973",
+      "IEC 60079"
+    ],
+    "answer_index": 0,
+    "explanation": "§13.1.1: NFPA 72."
+  },
+  {
+    "id": "ul2755-13.2.1",
+    "source": "UL2755 §13.2.1",
+    "category": "Fire",
+    "difficulty": "basic",
+    "question": "Each separate space must have at least?",
+    "options": [
+      "One approved fire extinguisher (CO2 or halogenated) per NFPA 10",
+      "Smoke hood",
+      "Water bucket",
+      "Alarm only"
+    ],
+    "answer_index": 0,
+    "explanation": "§13.2.1 specifies listed extinguisher type per NFPA 10."
+  },
+  {
+    "id": "ul2755-14.1.1",
+    "source": "UL2755 §14.1.1",
+    "category": "Environmental",
+    "difficulty": "basic",
+    "question": "Outdoor equipment must?",
+    "options": [
+      "Be warranty-free",
+      "Provide adequate weather protection",
+      "Include heater",
+      "Be transparent"
+    ],
+    "answer_index": 1,
+    "explanation": "§14.1.1 weather protection required."
+  },
+  {
+    "id": "ul2755-14.1.2",
+    "source": "UL2755 §14.1.2",
+    "category": "Environmental",
+    "difficulty": "intermediate",
+    "question": "MDC must meet?",
+    "options": [
+      "No test",
+      "One of the listed environmental ratings",
+      "Both ratings always",
+      "Audio test"
+    ],
+    "answer_index": 1,
+    "explanation": "§14.1.2 lists acceptable environmental compliance options."
+  },
+  {
+    "id": "ul2755-15.1.1",
+    "source": "UL2755 §15.1.1",
+    "category": "HVAC",
+    "difficulty": "basic",
+    "question": "HVAC in MDC can be?",
+    "options": [
+      "Room type (window/console) or large central",
+      "Only central",
+      "Only window",
+      "None"
+    ],
+    "answer_index": 0,
+    "explanation": "§15.1.1 allows both categories."
+  },
+  {
+    "id": "ul2755-15.2.1",
+    "source": "UL2755 §15.2.1",
+    "category": "HVAC",
+    "difficulty": "basic",
+    "question": "Room-type AC must comply with?",
+    "options": [
+      "UL 484",
+      "UL 60950",
+      "UL 1995",
+      "NEC 640"
+    ],
+    "answer_index": 0,
+    "explanation": "§15.2.1: UL 484."
+  },
+  {
+    "id": "ul2755-15.2.2",
+    "source": "UL2755 §15.2.2",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Room-type AC voltage/current limit?",
+    "options": [
+      "120 V 15 A",
+      "250 V 1φ 40 A",
+      "480 V 60 A",
+      "No limit"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.2.2: 250 V single-phase 40 A; above → central HVAC standards."
+  },
+  {
+    "id": "ul2755-15.2.3",
+    "source": "UL2755 §15.2.3",
+    "category": "HVAC",
+    "difficulty": "basic",
+    "question": "Room AC enclosures must be?",
+    "options": [
+      "Painted",
+      "Grounded",
+      "Insulated",
+      "Vented"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.2.3 ground the enclosure."
+  },
+  {
+    "id": "ul2755-15.2.4",
+    "source": "UL2755 §15.2.4",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Cord-connected AC load limit?",
+    "options": [
+      "100%",
+      "≤80% of branch circuit (50% if with lighting)",
+      "150%",
+      "60%"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.2.4: ≤80% / 50%."
+  },
+  {
+    "id": "ul2755-15.2.5",
+    "source": "UL2755 §15.2.5",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Flexible cord length limit 120 V?",
+    "options": [
+      "1 m",
+      "2 m",
+      "3 m",
+      "4.5 m"
+    ],
+    "answer_index": 2,
+    "explanation": "§15.2.5: 120 V ≤3 m; 208/240 V ≤1.8 m."
+  },
+  {
+    "id": "ul2755-15.2.7",
+    "source": "UL2755 §15.2.7",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Single-phase AC protection requirement?",
+    "options": [
+      "Fuse only",
+      "LCDI or AFCI within 300 mm of plug",
+      "GFCI only",
+      "No requirement"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.2.7: LCDI or AFCI within 300 mm."
+  },
+  {
+    "id": "ul2755-15.3.1",
+    "source": "UL2755 §15.3.1",
+    "category": "HVAC",
+    "difficulty": "basic",
+    "question": "Stationary AC comply with?",
+    "options": [
+      "UL 484",
+      "UL 1995",
+      "UL 1778",
+      "NEC 230"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.3.1: UL 1995."
+  },
+  {
+    "id": "ul2755-15.3.3",
+    "source": "UL2755 §15.3.3",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "AC disconnect location?",
+    "options": [
+      "Any panel",
+      "Visible and accessible near equipment; not obscuring nameplate",
+      "Inside wall",
+      "Outside only"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.3.3 near equipment."
+  },
+  {
+    "id": "ul2755-15.3.4",
+    "source": "UL2755 §15.3.4",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "AC disconnect ampere rating?",
+    "options": [
+      "100%",
+      "115% of rated load current or BC selection current",
+      "125%",
+      "175%"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.3.4: ≥115%."
+  },
+  {
+    "id": "ul2755-15.3.5",
+    "source": "UL2755 §15.3.5",
+    "category": "HVAC",
+    "difficulty": "expert",
+    "question": "Motor compressor BC protective device max?",
+    "options": [
+      "125%",
+      "175% (may increase but no more than listed max)",
+      "200%",
+      "300%"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.3.5: 175% max (with starting exception)."
+  },
+  {
+    "id": "ul2755-15.3.6",
+    "source": "UL2755 §15.3.6",
+    "category": "HVAC",
+    "difficulty": "expert",
+    "question": "For multi-compressor systems, BC protective device not to exceed?",
+    "options": [
+      "Calculated value per §15.3.5 (largest compressor + 125% others)",
+      "Largest motor only",
+      "Sum of all",
+      "200% largest"
+    ],
+    "answer_index": 0,
+    "explanation": "§15.3.6 extends §15.3.5 formula."
+  },
+  {
+    "id": "ul2755-15.3.7",
+    "source": "UL2755 §15.3.7",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Protective device size shall not exceed?",
+    "options": [
+      "Per § 15.3.4 always",
+      "Marking on equipment, if less than §15.3.4 calc",
+      "125%",
+      "Free choice"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.3.7: device size ≤ equipment marking if marking < calc."
+  },
+  {
+    "id": "ul2755-15.3.8",
+    "source": "UL2755 §15.3.8",
+    "category": "HVAC",
+    "difficulty": "expert",
+    "question": "Conductors for 2+ compressors ampacity?",
+    "options": [
+      "Sum of FLAs",
+      "Sum FLAs + 25% largest motor",
+      "Largest × 125%",
+      "Max × 175%"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.3.8: sum + 25% of largest."
+  },
+  {
+    "id": "ul2755-15.4.1",
+    "source": "UL2755 §15.4.1",
+    "category": "HVAC",
+    "difficulty": "basic",
+    "question": "Fixed electric heating per?",
+    "options": [
+      "UL 1995",
+      "UL 484",
+      "UL 1973",
+      "NEC 424"
+    ],
+    "answer_index": 0,
+    "explanation": "§15.4.1: UL 1995."
+  },
+  {
+    "id": "ul2755-15.4.3",
+    "source": "UL2755 §15.4.3",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Heating disconnect must?",
+    "options": [
+      "Disconnect heaters only",
+      "Simultaneously disconnect heaters + motors + OCPD; ≥125% total",
+      "Leave motor",
+      "No requirement"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.4.3: simultaneous ≥125% total load."
+  },
+  {
+    "id": "ul2755-15.4.4",
+    "source": "UL2755 §15.4.4",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "BC conductors and OCPD ampacity for heaters?",
+    "options": [
+      "100%",
+      "115%",
+      "≥125% heater + motor load",
+      "150%"
+    ],
+    "answer_index": 2,
+    "explanation": "§15.4.4: ≥125%."
+  },
+  {
+    "id": "ul2755-15.4.5",
+    "source": "UL2755 §15.4.5",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Resistance heating elements protection max?",
+    "options": [
+      "40 A",
+      "48 A",
+      "60 A (sections ≤48 A if >48 A rated)",
+      "100 A"
+    ],
+    "answer_index": 2,
+    "explanation": "§15.4.5: 60 A max; sections ≤48 A if rated higher."
+  },
+  {
+    "id": "ul2755-15.4.6",
+    "source": "UL2755 §15.4.6",
+    "category": "HVAC",
+    "difficulty": "basic",
+    "question": "Exposed metal parts on heating must be?",
+    "options": [
+      "Painted",
+      "Grounded",
+      "Sprayed",
+      "Taped"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.4.6: grounded."
+  },
+  {
+    "id": "ul2755-15.5.1.1",
+    "source": "UL2755 §15.5.1.1",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Liquid coolant system must have?",
+    "options": [
+      "Temperature probe",
+      "Alarm for fluid loss",
+      "Pressure gauge only",
+      "Speed sensor"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.5.1.1: fluid-loss alarm."
+  },
+  {
+    "id": "ul2755-15.5.1.3",
+    "source": "UL2755 §15.5.1.3",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Uninsulated piping / refrigerant lines must be?",
+    "options": [
+      "Painted",
+      "Bonded for grounding",
+      "Sprayed",
+      "Wrapped"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.5.1.3: bond for grounding."
+  },
+  {
+    "id": "ul2755-15.5.2.1",
+    "source": "UL2755 §15.5.2.1",
+    "category": "HVAC",
+    "difficulty": "expert",
+    "question": "Permitted pipe materials?",
+    "options": [
+      "Standard-weight brass, galvanized wrought iron, galv. steel, K/L/M copper, plastic or approved",
+      "Only copper",
+      "Only steel",
+      "PVC only"
+    ],
+    "answer_index": 0,
+    "explanation": "§15.5.2.1 lists approved materials."
+  },
+  {
+    "id": "ul2755-15.5.6.2",
+    "source": "UL2755 §15.5.6.2",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Piping must be installed with?",
+    "options": [
+      "No provision",
+      "Expansion/contraction provisions",
+      "Heat tape",
+      "Fire resistance"
+    ],
+    "answer_index": 1,
+    "explanation": "§15.5.6.2: provisions for expansion/contraction."
+  },
+  {
+    "id": "ul2755-15.5.8.1",
+    "source": "UL2755 §15.5.8.1",
+    "category": "HVAC",
+    "difficulty": "expert",
+    "question": "Piping pressure test duration?",
+    "options": [
+      "1 min",
+      "5 min",
+      "10 min no leak, no pressure loss",
+      "30 min"
+    ],
+    "answer_index": 2,
+    "explanation": "§15.5.8.1: 10 min pressure test."
+  },
+  {
+    "id": "ul2755-16.1",
+    "source": "UL2755 §16.1",
+    "category": "Noise",
+    "difficulty": "basic",
+    "question": "Sound level in occupied space (continuous) max?",
+    "options": [
+      "70 dB",
+      "80 dB",
+      "85 dB",
+      "95 dB"
+    ],
+    "answer_index": 2,
+    "explanation": "§16.1: 85 dB max."
+  },
+  {
+    "id": "ul2755-16.2",
+    "source": "UL2755 §16.2",
+    "category": "Noise",
+    "difficulty": "basic",
+    "question": "If >85 dB, what must be at entrance?",
+    "options": [
+      "Alarm",
+      "Hearing-protection sign",
+      "Fire extinguisher",
+      "PPE cart"
+    ],
+    "answer_index": 1,
+    "explanation": "§16.2: prominent sign instructing hearing protection."
+  },
+  {
+    "id": "ul2755-17.1.1",
+    "source": "UL2755 §17.1.1",
+    "category": "Assembly",
+    "difficulty": "basic",
+    "question": "MDC default assembly?",
+    "options": [
+      "Field only",
+      "Factory-assembled complete unit",
+      "Split",
+      "Self-erecting"
+    ],
+    "answer_index": 1,
+    "explanation": "§17.1.1: factory-assembled except where permitted."
+  },
+  {
+    "id": "ul2755-17.2.1.1",
+    "source": "UL2755 §17.2.1.1",
+    "category": "Assembly",
+    "difficulty": "intermediate",
+    "question": "Partial assembly/disassembly for shipping allowed if?",
+    "options": [
+      "Provisions for field completion are met",
+      "Never",
+      "Only if approved verbally",
+      "Only for military"
+    ],
+    "answer_index": 0,
+    "explanation": "§17.2.1.1 lists conditions."
+  },
+  {
+    "id": "ul2755-17.3.2.1",
+    "source": "UL2755 §17.3.2.1",
+    "category": "Markings",
+    "difficulty": "basic",
+    "question": "Accessory / conversion equipment marks must show?",
+    "options": [
+      "Manufacturer name + model",
+      "Just brand",
+      "Just serial",
+      "Nothing"
+    ],
+    "answer_index": 0,
+    "explanation": "§17.3.2.1: name + model/catalog."
+  },
+  {
+    "id": "ul2755-17.3.2.2",
+    "source": "UL2755 §17.3.2.2",
+    "category": "Markings",
+    "difficulty": "basic",
+    "question": "Separately powered accessory must indicate?",
+    "options": [
+      "Size",
+      "Input ratings",
+      "Color",
+      "Weight"
+    ],
+    "answer_index": 1,
+    "explanation": "§17.3.2.2 input electrical ratings."
+  },
+  {
+    "id": "ul2755-17.3.2.3",
+    "source": "UL2755 §17.3.2.3",
+    "category": "Markings",
+    "difficulty": "basic",
+    "question": "Accessory intended-use label example?",
+    "options": [
+      "'Universal'",
+      "'For use only with MDC model 1234'",
+      "'General'",
+      "'Beta'"
+    ],
+    "answer_index": 1,
+    "explanation": "§17.3.2.3: intended-use statement."
+  },
+  {
+    "id": "ul2755-18.1.1",
+    "source": "UL2755 §18.1.1",
+    "category": "Performance",
+    "difficulty": "basic",
+    "question": "Related tests are described in?",
+    "options": [
+      "Earlier sections of the standard",
+      "NEC",
+      "UL 60950",
+      "Manufacturer brochure"
+    ],
+    "answer_index": 0,
+    "explanation": "§18.1.1 references earlier sections."
+  },
+  {
+    "id": "ul2755-18.2.1",
+    "source": "UL2755 §18.2.1",
+    "category": "Performance",
+    "difficulty": "intermediate",
+    "question": "Surrounding air temperature must?",
+    "options": [
+      "Exceed max",
+      "Not exceed tested max range",
+      "Be 0 °C",
+      "Be 60 °C"
+    ],
+    "answer_index": 1,
+    "explanation": "§18.2.1: shall not exceed tested max."
+  },
+  {
+    "id": "ul2755-18.2.2",
+    "source": "UL2755 §18.2.2",
+    "category": "Performance",
+    "difficulty": "expert",
+    "question": "If component temperature in doubt, test under?",
+    "options": [
+      "Idle load",
+      "Max load, min cooling, highest ambient (or chamber sim)",
+      "Random",
+      "Typical"
+    ],
+    "answer_index": 1,
+    "explanation": "§18.2.2 spells out test conditions."
+  },
+  {
+    "id": "ul2755-18.3.1.1",
+    "source": "UL2755 §18.3.1.1",
+    "category": "Performance",
+    "difficulty": "expert",
+    "question": "Dielectric withstand test duration at max operating temp?",
+    "options": [
+      "10 s",
+      "30 s",
+      "1 min without breakdown",
+      "5 min"
+    ],
+    "answer_index": 2,
+    "explanation": "§18.3.1.1: 1 minute."
+  },
+  {
+    "id": "ul2755-18.3.1.2",
+    "source": "UL2755 §18.3.1.2",
+    "category": "Performance",
+    "difficulty": "expert",
+    "question": "AC test voltages for DC dielectric?",
+    "options": [
+      "1× DC",
+      "1.414× DC value",
+      "0.707× DC",
+      "2× DC"
+    ],
+    "answer_index": 1,
+    "explanation": "§18.3.1.2: 1.414×."
+  },
+  {
+    "id": "ul2755-18.3.1.3",
+    "source": "UL2755 §18.3.1.3",
+    "category": "Performance",
+    "difficulty": "expert",
+    "question": "During dielectric test, transformers/coils between opposite polarity lines should be?",
+    "options": [
+      "Energized",
+      "Disconnected from one side",
+      "Shorted",
+      "Heated"
+    ],
+    "answer_index": 1,
+    "explanation": "§18.3.1.3: disconnect one side."
+  },
+  {
+    "id": "ul2755-18.3.1.4",
+    "source": "UL2755 §18.3.1.4",
+    "category": "Performance",
+    "difficulty": "expert",
+    "question": "Meter dielectric test condition?",
+    "options": [
+      "Included in main test",
+      "Disconnect and test separately at 1000 V + 2× rated",
+      "Skip",
+      "Manual only"
+    ],
+    "answer_index": 1,
+    "explanation": "§18.3.1.4: disconnect and separate test."
+  },
+  {
+    "id": "ul2755-18.4.2",
+    "source": "UL2755 §18.4.2",
+    "category": "Performance",
+    "difficulty": "expert",
+    "question": "Shipping configuration tests?",
+    "options": [
+      "Vibration only",
+      "Drop (18.4.3) or lowering (18.4.4) onto concrete",
+      "Impact only",
+      "Heat only"
+    ],
+    "answer_index": 1,
+    "explanation": "§18.4.2: either Test A or B."
+  },
+  {
+    "id": "ul2755-18.4.3",
+    "source": "UL2755 §18.4.3",
+    "category": "Performance",
+    "difficulty": "expert",
+    "question": "Drop test A inclination?",
+    "options": [
+      "0°",
+      "≥5° rails to floor",
+      "45°",
+      "90°"
+    ],
+    "answer_index": 1,
+    "explanation": "§18.4.3: ≥5° angle on rails."
+  },
+  {
+    "id": "ul2755-18.4.4",
+    "source": "UL2755 §18.4.4",
+    "category": "Performance",
+    "difficulty": "expert",
+    "question": "Lowering test B inclination?",
+    "options": [
+      "0°",
+      "≥5° (same as drop)",
+      "30°",
+      "60°"
+    ],
+    "answer_index": 1,
+    "explanation": "§18.4.4: ≥5°, rapid lowering."
+  },
+  {
+    "id": "ul2755-19.1.4",
+    "source": "UL2755 §19.1.4",
+    "category": "Markings",
+    "difficulty": "basic",
+    "question": "After installation, unit must be marked with?",
+    "options": [
+      "Brand only",
+      "Clear, permanent nameplate info in visible location",
+      "Price",
+      "Date"
+    ],
+    "answer_index": 1,
+    "explanation": "§19.1.4: full nameplate requirements."
+  },
+  {
+    "id": "ul2755-19.1.6",
+    "source": "UL2755 §19.1.6",
+    "category": "Markings",
+    "difficulty": "basic",
+    "question": "If multiple electrical sources exist, what warning is required?",
+    "options": [
+      "Color tape",
+      "Visible warning marking before entering MDC",
+      "None",
+      "Audible alert"
+    ],
+    "answer_index": 1,
+    "explanation": "§19.1.6: warning marking at entry."
+  },
+  {
+    "id": "ul2755-19.1.7",
+    "source": "UL2755 §19.1.7",
+    "category": "Markings",
+    "difficulty": "intermediate",
+    "question": "Receptacles must be marked with?",
+    "options": [
+      "Voltage only",
+      "Max current rating; sum included in overall MDC rating",
+      "Brand",
+      "Nothing"
+    ],
+    "answer_index": 1,
+    "explanation": "§19.1.7 receptacle marking."
+  },
+  {
+    "id": "ul2755-19.1.9",
+    "source": "UL2755 §19.1.9",
+    "category": "Markings",
+    "difficulty": "intermediate",
+    "question": "Field-assembly bonding marking must?",
+    "options": [
+      "Not matter",
+      "Meet listed requirements",
+      "Be paper",
+      "Be voluntary"
+    ],
+    "answer_index": 1,
+    "explanation": "§19.1.9 lists mandatory marking requirements."
+  },
+  {
+    "id": "ul2755-19.1.12",
+    "source": "UL2755 §19.1.12",
+    "category": "Markings",
+    "difficulty": "basic",
+    "question": "AC/heat exchanger marking includes?",
+    "options": [
+      "BTU rating for heat removed",
+      "Color",
+      "Weight",
+      "Speed"
+    ],
+    "answer_index": 0,
+    "explanation": "§19.1.12: BTU rating for heat elimination."
+  },
+  {
+    "id": "ul2755-19.4.1",
+    "source": "UL2755 §19.4.1",
+    "category": "Markings",
+    "difficulty": "intermediate",
+    "question": "4-wire delta w/ grounded phase mid-point needs which mark?",
+    "options": [
+      "Warning per §19.4.1",
+      "Free choice",
+      "Paint only",
+      "None"
+    ],
+    "answer_index": 0,
+    "explanation": "§19.4.1 specific marking text."
+  },
+  {
+    "id": "ul2755-19.4.2",
+    "source": "UL2755 §19.4.2",
+    "category": "Markings",
+    "difficulty": "intermediate",
+    "question": "Ungrounded electrical panelboard needs?",
+    "options": [
+      "Label per §19.4.2",
+      "Free choice",
+      "No marking",
+      "Blue color"
+    ],
+    "answer_index": 0,
+    "explanation": "§19.4.2 specific text for ungrounded system."
+  },
+  {
+    "id": "ul2755-19.4.3",
+    "source": "UL2755 §19.4.3",
+    "category": "Markings",
+    "difficulty": "basic",
+    "question": "All circuits must be?",
+    "options": [
+      "Numbered",
+      "Clearly identified by purpose/distinction",
+      "Colored",
+      "Unmarked"
+    ],
+    "answer_index": 1,
+    "explanation": "§19.4.3: clear identification."
+  },
+  {
+    "id": "ul2755-20.1",
+    "source": "UL2755 §20.1",
+    "category": "Instructions",
+    "difficulty": "basic",
+    "question": "Manual must contain?",
+    "options": [
+      "Nothing mandatory",
+      "Sufficient info to avoid injuries/hazards",
+      "Just photos",
+      "Legal disclaimer only"
+    ],
+    "answer_index": 1,
+    "explanation": "§20.1: sufficient info requirement."
+  },
+  {
+    "id": "ul2755-20.4",
+    "source": "UL2755 §20.4",
+    "category": "Instructions",
+    "difficulty": "basic",
+    "question": "Complete what-type diagrams required?",
+    "options": [
+      "Mechanical",
+      "Schematic diagrams of all circuits",
+      "Floor plan only",
+      "Pictures only"
+    ],
+    "answer_index": 1,
+    "explanation": "§20.4: complete schematics of all circuits."
+  },
+  {
+    "id": "nec646-1-1",
+    "source": "NEC §646.1",
+    "category": "NEC Scope",
+    "difficulty": "basic",
+    "question": "NEC Article 646 covers which in an MDC?",
+    "options": [
+      "ITE only",
+      "ITE, support, power, wiring, workspace, grounding, HVAC",
+      "Just fire",
+      "Just HVAC"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.1: all listed subsystems inside the enclosure."
+  },
+  {
+    "id": "nec646-3",
+    "source": "NEC §646.3",
+    "category": "NEC Scope",
+    "difficulty": "intermediate",
+    "question": "If §646 conflicts with other NEC articles?",
+    "options": [
+      "Other articles win",
+      "§646 takes precedence (within scope)",
+      "Must go to AHJ",
+      "Ignore both"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.3 makes §646 prevail where conflict occurs."
+  },
+  {
+    "id": "nec646-4",
+    "source": "NEC §646.4",
+    "category": "NEC Listing",
+    "difficulty": "basic",
+    "question": "MDC must be listed — example standard?",
+    "options": [
+      "UL 2755",
+      "UL 1973",
+      "UL 60950",
+      "UL 94"
+    ],
+    "answer_index": 0,
+    "explanation": "§646.4: example UL 2755, labeled, compliant with 646.3(M) and 646.5–646.9."
+  },
+  {
+    "id": "nec646-5",
+    "source": "NEC §646.5",
+    "category": "NEC Nameplate",
+    "difficulty": "intermediate",
+    "question": "Nameplate full-load current minimum?",
+    "options": [
+      "100%",
+      "115%",
+      "125% of load",
+      "150%"
+    ],
+    "answer_index": 2,
+    "explanation": "§646.5: ≥125% of load; shows voltage + SCCR."
+  },
+  {
+    "id": "nec646-6",
+    "source": "NEC §646.6",
+    "category": "NEC Conductors",
+    "difficulty": "intermediate",
+    "question": "Supply conductors capacity ≥?",
+    "options": [
+      "100%",
+      "115%",
+      "125% of full-load current",
+      "200%"
+    ],
+    "answer_index": 2,
+    "explanation": "§646.6: 125% with OCPD per 230.90–230.95."
+  },
+  {
+    "id": "nec646-7",
+    "source": "NEC §646.7",
+    "category": "NEC SCCR",
+    "difficulty": "intermediate",
+    "question": "MDC SCCR must?",
+    "options": [
+      "Be 10 kA fixed",
+      "Match available fault current at service + branch",
+      "Exceed 100 kA",
+      "Be independent"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.7: matches fault current."
+  },
+  {
+    "id": "nec646-8",
+    "source": "NEC §646.8",
+    "category": "NEC Wiring",
+    "difficulty": "basic",
+    "question": "Field wiring compartments must be?",
+    "options": [
+      "Easy to connect/inspect",
+      "Fully sealed",
+      "Concealed only",
+      "Outdoors"
+    ],
+    "answer_index": 0,
+    "explanation": "§646.8: accessible for connection/inspection."
+  },
+  {
+    "id": "nec646-9",
+    "source": "NEC §646.9",
+    "category": "NEC Cord",
+    "difficulty": "intermediate",
+    "question": "Outdoor flexible cord must be?",
+    "options": [
+      "Light-duty only",
+      "Hard usage + sunlight-resistant",
+      "Low-smoke halogen-free",
+      "No listing"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.9: hard usage + sunlight-resistant."
+  },
+  {
+    "id": "nec646-10",
+    "source": "NEC §646.10",
+    "category": "NEC Distribution",
+    "difficulty": "basic",
+    "question": "Power distribution rating must comply with?",
+    "options": [
+      "§100",
+      "§110 + listed label",
+      "§220",
+      "§250"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.10: per §110; equipment listed with label."
+  },
+  {
+    "id": "nec646-11",
+    "source": "NEC §646.11",
+    "category": "NEC Transformers",
+    "difficulty": "intermediate",
+    "question": "Utility transformer inside MDC?",
+    "options": [
+      "Allowed",
+      "NOT allowed; only dry-type premise allowed",
+      "Only if painted",
+      "Only 480 V"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.11: utility/place transformers not permitted; dry-type premise OK per Art. 450."
+  },
+  {
+    "id": "nec646-12",
+    "source": "NEC §646.12",
+    "category": "NEC Receptacles",
+    "difficulty": "basic",
+    "question": "Each work area receptacle requirement?",
+    "options": [
+      "1 duplex 125V 15/20A",
+      "2 duplex",
+      "None",
+      "GFCI only"
+    ],
+    "answer_index": 0,
+    "explanation": "§646.12: at least one."
+  },
+  {
+    "id": "nec646-13",
+    "source": "NEC §646.13",
+    "category": "NEC Equipment",
+    "difficulty": "basic",
+    "question": "Other electrical equipment must be?",
+    "options": [
+      "Listed + installed per its listing",
+      "Exempt",
+      "Unlabeled",
+      "Painted"
+    ],
+    "answer_index": 0,
+    "explanation": "§646.13: ITE/lighting/HVAC listed + per listing."
+  },
+  {
+    "id": "nec646-14",
+    "source": "NEC §646.14",
+    "category": "NEC Install",
+    "difficulty": "basic",
+    "question": "Installation rule?",
+    "options": [
+      "Per tradition",
+      "Per listing instructions",
+      "Per luck",
+      "Per supervisor"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.14: per listing."
+  },
+  {
+    "id": "nec646-15",
+    "source": "NEC §646.15",
+    "category": "NEC Lighting",
+    "difficulty": "intermediate",
+    "question": "General lighting single-fault principle?",
+    "options": [
+      "Single fault = total darkness allowed",
+      "Single fault shall NOT cause total loss in work areas/egress",
+      "No requirement",
+      "Must be LED"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.15 redundancy."
+  },
+  {
+    "id": "nec646-16",
+    "source": "NEC §646.16",
+    "category": "NEC Emergency",
+    "difficulty": "basic",
+    "question": "Emergency lighting must be?",
+    "options": [
+      "Home-built",
+      "Listed; egress has emergency lighting",
+      "Battery only",
+      "Self-test only"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.16: listed."
+  },
+  {
+    "id": "nec646-17",
+    "source": "NEC §646.17",
+    "category": "NEC Emergency",
+    "difficulty": "intermediate",
+    "question": "Emergency lighting circuits?",
+    "options": [
+      "Share with general",
+      "Independent supply (battery/UPS), labeled",
+      "Diesel only",
+      "Unlabeled"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.17: independent + labeled."
+  },
+  {
+    "id": "nec646-18",
+    "source": "NEC §646.18",
+    "category": "NEC Workspace",
+    "difficulty": "basic",
+    "question": "Workspace reference?",
+    "options": [
+      "§100",
+      "§110.26",
+      "§250",
+      "§240.24"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.18: per §110.26."
+  },
+  {
+    "id": "nec646-19a",
+    "source": "NEC §646.19",
+    "category": "NEC Egress",
+    "difficulty": "intermediate",
+    "question": "Equipment width/depth >1.8 m egress rule?",
+    "options": [
+      "1 door OK",
+      "2 means of egress, each ≥61 cm × 2 m + panic hardware",
+      "1 window",
+      "Open air"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.19 two egress, 61 cm × 2 m."
+  },
+  {
+    "id": "nec646-19b",
+    "source": "NEC §646.19",
+    "category": "NEC Egress",
+    "difficulty": "intermediate",
+    "question": "Single entry/exit option?",
+    "options": [
+      "50 cm wide",
+      "Unobstructed OR doubled workspace depth",
+      "Always deny",
+      "Revolving door"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.19: two alternative ways."
+  },
+  {
+    "id": "nec646-20",
+    "source": "NEC §646.20",
+    "category": "NEC ITE Workspace",
+    "difficulty": "intermediate",
+    "question": "ITE workspace exempt from §646.19 at?",
+    "options": [
+      "<30 Vrms / 60 Vdc",
+      "<50 Vrms / 120 Vdc",
+      "<100 Vrms",
+      "No exemption"
+    ],
+    "answer_index": 0,
+    "explanation": "§646.20 low-voltage exemption."
+  },
+  {
+    "id": "nec646-21",
+    "source": "NEC §646.21",
+    "category": "NEC Battery",
+    "difficulty": "basic",
+    "question": "Battery workspace measured by?",
+    "options": [
+      "§110.26",
+      "§480.10",
+      "NFPA 75",
+      "UL 1973"
+    ],
+    "answer_index": 0,
+    "explanation": "§646.21: §110.26."
+  },
+  {
+    "id": "nec646-22",
+    "source": "NEC §646.22",
+    "category": "NEC Maintenance",
+    "difficulty": "basic",
+    "question": "Routine maintenance space must?",
+    "options": [
+      "Be narrow",
+      "Allow maintenance without shock/injury risk",
+      "Be outdoors",
+      "Be unlit"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.22 convenient + safe."
+  },
+  {
+    "id": "nec110.26-1",
+    "source": "NEC §110.26(A)(1) Cond 1",
+    "category": "NEC Workspace",
+    "difficulty": "intermediate",
+    "question": "<600 V Condition 1 depth?",
+    "options": [
+      "762 mm",
+      "900 mm (3 ft)",
+      "1067 mm",
+      "1220 mm"
+    ],
+    "answer_index": 1,
+    "explanation": "C1: 3 ft = 900 mm."
+  },
+  {
+    "id": "nec110.26-2",
+    "source": "NEC §110.26(A)(1) Cond 2",
+    "category": "NEC Workspace",
+    "difficulty": "intermediate",
+    "question": "Condition 2 (grounded surface on other side) depth?",
+    "options": [
+      "900 mm",
+      "1067 mm (3.5 ft)",
+      "1220 mm",
+      "1525 mm"
+    ],
+    "answer_index": 1,
+    "explanation": "C2: 3.5 ft."
+  },
+  {
+    "id": "nec110.26-3",
+    "source": "NEC §110.26(A)(1) Cond 3",
+    "category": "NEC Workspace",
+    "difficulty": "intermediate",
+    "question": "Condition 3 (exposed live on both sides, unguarded) depth?",
+    "options": [
+      "900 mm",
+      "1067 mm",
+      "1220 mm (4 ft)",
+      "1525 mm"
+    ],
+    "answer_index": 2,
+    "explanation": "C3: 4 ft."
+  },
+  {
+    "id": "fxx-walkin-width",
+    "source": "FXX Audit · Walk-In",
+    "category": "Walk-In",
+    "difficulty": "intermediate",
+    "question": "Minimum walkway width in walk-in equipment space?",
+    "options": [
+      "500 mm",
+      "762 mm or equipment width per NEC 110.26(A)",
+      "300 mm",
+      "1500 mm"
+    ],
+    "answer_index": 1,
+    "explanation": "Workspace width per NEC §110.26(A)(2): ≥30 in or equipment width."
+  },
+  {
+    "id": "fxx-walkin-height",
+    "source": "FXX Audit · Walk-In",
+    "category": "Walk-In",
+    "difficulty": "intermediate",
+    "question": "Minimum standing headroom in walk-in?",
+    "options": [
+      "1.5 m",
+      "1.8 m",
+      "2.0 m (6.5 ft per NEC 110.26(A)(3))",
+      "2.4 m"
+    ],
+    "answer_index": 2,
+    "explanation": "§110.26(A)(3): 6.5 ft headroom."
+  },
+  {
+    "id": "fxx-walkin-lines",
+    "source": "FXX Audit · Walk-In",
+    "category": "Walk-In",
+    "difficulty": "intermediate",
+    "question": "How many maintenance lines (paths) are required?",
+    "options": [
+      "0",
+      "1 main + 1 emergency egress",
+      "Only 1",
+      "3+"
+    ],
+    "answer_index": 1,
+    "explanation": "At least one main path plus a compliant egress route."
+  },
+  {
+    "id": "fxx-walkin-occupants",
+    "source": "FXX Audit · Walk-In",
+    "category": "Walk-In",
+    "difficulty": "intermediate",
+    "question": "Max operators simultaneously in walk-in?",
+    "options": [
+      "Unlimited",
+      "Depends on egress capacity (typ. 1–2 per lane)",
+      "Always 4",
+      "Always 10"
+    ],
+    "answer_index": 1,
+    "explanation": "Constrained by egress lane width/capacity."
+  },
+  {
+    "id": "fxx-walkin-dismantle",
+    "source": "FXX Audit · Walk-In",
+    "category": "Walk-In",
+    "difficulty": "intermediate",
+    "question": "Dismantle space for equipment servicing?",
+    "options": [
+      "0",
+      "Equipment footprint + working clearance (≥workspace depth)",
+      "Tight fit",
+      "Only outside"
+    ],
+    "answer_index": 1,
+    "explanation": "Must fit component removal within NEC-compliant workspace."
+  },
+  {
+    "id": "fxx-walkin-path",
+    "source": "FXX Audit · Walk-In",
+    "category": "Walk-In",
+    "difficulty": "intermediate",
+    "question": "Path width for carrying large components?",
+    "options": [
+      "300 mm",
+      "762 mm (≥walkway) or per component",
+      "1 m always",
+      "No rule"
+    ],
+    "answer_index": 1,
+    "explanation": "Path must accommodate largest component; meet walkway min."
+  },
+  {
+    "id": "fxx-walkin-calc",
+    "source": "FXX Audit · Walk-In",
+    "category": "Walk-In",
+    "difficulty": "intermediate",
+    "question": "Maintenance space calculation basis?",
+    "options": [
+      "Entire row of subassemblies at once",
+      "Single subassembly (per-unit clearance)",
+      "Average",
+      "Ignore"
+    ],
+    "answer_index": 1,
+    "explanation": "Per UL2755 each unit gets its own clearance."
+  },
+  {
+    "id": "fxx-door-width",
+    "source": "FXX Audit · Door",
+    "category": "Access Door",
+    "difficulty": "basic",
+    "question": "Minimum clear width of access door?",
+    "options": [
+      "500 mm",
+      "610 mm (24 in, per NEC §110.26)",
+      "800 mm",
+      "1000 mm"
+    ],
+    "answer_index": 1,
+    "explanation": "§110.26(C)(2): 610 mm."
+  },
+  {
+    "id": "fxx-door-height",
+    "source": "FXX Audit · Door",
+    "category": "Access Door",
+    "difficulty": "basic",
+    "question": "Minimum clear door height?",
+    "options": [
+      "1.8 m",
+      "2.0 m (78 in)",
+      "1.5 m",
+      "2.5 m"
+    ],
+    "answer_index": 1,
+    "explanation": "§110.26(C)(2): 2.0 m / 6.5 ft."
+  },
+  {
+    "id": "fxx-door-dir",
+    "source": "FXX Audit · Door",
+    "category": "Access Door",
+    "difficulty": "intermediate",
+    "question": "Access door swing direction?",
+    "options": [
+      "Either way",
+      "Open in direction of egress",
+      "Inward only",
+      "Sliding only"
+    ],
+    "answer_index": 1,
+    "explanation": "§110.26(C)(3): egress direction."
+  },
+  {
+    "id": "fxx-door-clear",
+    "source": "FXX Audit · Door",
+    "category": "Access Door",
+    "difficulty": "intermediate",
+    "question": "Clear space after opening the door?",
+    "options": [
+      "None",
+      "Full door swing + walkway unobstructed",
+      "Just pathway",
+      "Only half"
+    ],
+    "answer_index": 1,
+    "explanation": "Door swing shall not block egress."
+  },
+  {
+    "id": "fxx-door-single",
+    "source": "FXX Audit · Door",
+    "category": "Access Door",
+    "difficulty": "intermediate",
+    "question": "One-person door operation requires?",
+    "options": [
+      "No requirement",
+      "Operable without keys/tools, force ≤89 N (per UL2755 §12.2.4)",
+      "Keycard only",
+      "Two hands"
+    ],
+    "answer_index": 1,
+    "explanation": "UL2755 §12.2.1 + §12.2.4."
+  },
+  {
+    "id": "fxx-door-threshold",
+    "source": "FXX Audit · Door",
+    "category": "Access Door",
+    "difficulty": "basic",
+    "question": "Max threshold height?",
+    "options": [
+      "6 mm",
+      "13 mm (1/2 in) per UL2755 §12.2.5",
+      "25 mm",
+      "None"
+    ],
+    "answer_index": 1,
+    "explanation": "UL2755 §12.2.5."
+  },
+  {
+    "id": "fxx-exit-count",
+    "source": "FXX Audit · Exit",
+    "category": "Egress",
+    "difficulty": "intermediate",
+    "question": "Minimum number of exits?",
+    "options": [
+      "1",
+      "2 (if width/depth >1.8 m per NEC 646.19)",
+      "3",
+      "Free choice"
+    ],
+    "answer_index": 1,
+    "explanation": "NEC §646.19 two means of egress when applicable."
+  },
+  {
+    "id": "fxx-exit-dir",
+    "source": "FXX Audit · Exit",
+    "category": "Egress",
+    "difficulty": "intermediate",
+    "question": "Exit directions required?",
+    "options": [
+      "Same side",
+      "Remote from each other (not one direction only)",
+      "Same door",
+      "Only outside"
+    ],
+    "answer_index": 1,
+    "explanation": "Egress remote from each other per NFPA 101 principle."
+  },
+  {
+    "id": "fxx-exit-travel",
+    "source": "FXX Audit · Exit",
+    "category": "Egress",
+    "difficulty": "intermediate",
+    "question": "Max travel distance to exit?",
+    "options": [
+      "No limit",
+      "Per local code; typical ≤23 m for sprinklered MDC (NFPA 101)",
+      "Always 30 m",
+      "5 m"
+    ],
+    "answer_index": 1,
+    "explanation": "NFPA 101 travel distance; verify with AHJ."
+  },
+  {
+    "id": "fxx-exit-single",
+    "source": "FXX Audit · Exit",
+    "category": "Egress",
+    "difficulty": "intermediate",
+    "question": "Single-exit design compensations?",
+    "options": [
+      "None",
+      "Unobstructed path or doubled workspace depth (NEC 646.19)",
+      "Larger fan",
+      "Fire shutter"
+    ],
+    "answer_index": 1,
+    "explanation": "§646.19 alternative."
+  },
+  {
+    "id": "fxx-exit-route",
+    "source": "FXX Audit · Exit",
+    "category": "Egress",
+    "difficulty": "intermediate",
+    "question": "Minimum egress route width?",
+    "options": [
+      "610 mm (per NEC 110.26(C)(2))",
+      "300 mm",
+      "500 mm",
+      "1 m"
+    ],
+    "answer_index": 0,
+    "explanation": "Same as access door; ≥610 mm."
+  },
+  {
+    "id": "fxx-exit-front",
+    "source": "FXX Audit · Exit",
+    "category": "Egress",
+    "difficulty": "intermediate",
+    "question": "Clearance in front of exit door?",
+    "options": [
+      "None",
+      "Full door swing unobstructed",
+      "1 m always",
+      "0.5 m"
+    ],
+    "answer_index": 1,
+    "explanation": "Maintain door swing free."
+  },
+  {
+    "id": "fxx-firectrl-front",
+    "source": "FXX Audit · Fire Panel",
+    "category": "Fire Control",
+    "difficulty": "intermediate",
+    "question": "Fire control panel front working space?",
+    "options": [
+      "900 mm (per NEC 110.26(A)(1))",
+      "300 mm",
+      "500 mm",
+      "None"
+    ],
+    "answer_index": 0,
+    "explanation": "Standard electrical workspace."
+  },
+  {
+    "id": "fxx-firectrl-side",
+    "source": "FXX Audit · Fire Panel",
+    "category": "Fire Control",
+    "difficulty": "intermediate",
+    "question": "Side clearance for fire control panel?",
+    "options": [
+      "0",
+      "Per manufacturer (typically 100–300 mm)",
+      "1 m",
+      "50 mm"
+    ],
+    "answer_index": 1,
+    "explanation": "Per manufacturer install instructions."
+  },
+  {
+    "id": "fxx-firectrl-hmi",
+    "source": "FXX Audit · Fire Panel",
+    "category": "Fire Control",
+    "difficulty": "intermediate",
+    "question": "HMI mounting height range?",
+    "options": [
+      "0.5–2.5 m",
+      "Typically 1.2–1.6 m (ergonomic, per NFPA 72 commissioning)",
+      "3 m",
+      "Fixed 1.0 m"
+    ],
+    "answer_index": 1,
+    "explanation": "NFPA 72 ergonomic install; 1.2–1.6 m typical."
+  },
+  {
+    "id": "fxx-firectrl-stand",
+    "source": "FXX Audit · Fire Panel",
+    "category": "Fire Control",
+    "difficulty": "basic",
+    "question": "Full standing space in front required?",
+    "options": [
+      "No",
+      "Yes — per §110.26 + headroom 2 m",
+      "Only half",
+      "Sit-only"
+    ],
+    "answer_index": 1,
+    "explanation": "Standing workspace required."
+  },
+  {
+    "id": "fxx-vesda-service",
+    "source": "FXX Audit · VESDA",
+    "category": "Smoke Detection",
+    "difficulty": "intermediate",
+    "question": "VESDA maintenance space?",
+    "options": [
+      "None",
+      "Access for filter replacement + cable routing",
+      "Only top",
+      "Only bottom"
+    ],
+    "answer_index": 1,
+    "explanation": "Maintenance clearance for detector body + piping."
+  },
+  {
+    "id": "fxx-vesda-filter",
+    "source": "FXX Audit · VESDA",
+    "category": "Smoke Detection",
+    "difficulty": "intermediate",
+    "question": "Filter replacement working space?",
+    "options": [
+      "None",
+      "Enough clear reach (≥450 mm) + no live parts interference",
+      "2 m",
+      "Any"
+    ],
+    "answer_index": 1,
+    "explanation": "Per manufacturer + worker reach envelope."
+  },
+  {
+    "id": "fxx-vesda-pipe",
+    "source": "FXX Audit · VESDA",
+    "category": "Smoke Detection",
+    "difficulty": "intermediate",
+    "question": "Sample pipe vs walkway distance?",
+    "options": [
+      "Touching",
+      "Clear of walkway impact zone (≥50 mm typical)",
+      "None",
+      "1 m"
+    ],
+    "answer_index": 1,
+    "explanation": "Avoid accidental knock by passerby."
+  },
+  {
+    "id": "fxx-vesda-height",
+    "source": "FXX Audit · VESDA",
+    "category": "Smoke Detection",
+    "difficulty": "intermediate",
+    "question": "VESDA equipment height placement?",
+    "options": [
+      "Ceiling-only",
+      "Per NFPA 72 Table; sampling coverage dictates",
+      "Floor-only",
+      "Random"
+    ],
+    "answer_index": 1,
+    "explanation": "NFPA 72 coverage tables."
+  },
+  {
+    "id": "fxx-cac-service",
+    "source": "FXX Audit · Clean Agent Cylinder",
+    "category": "Fire Suppression",
+    "difficulty": "intermediate",
+    "question": "Cylinder maintenance space?",
+    "options": [
+      "None",
+      "Clear access for removal + weight check per NFPA 2001",
+      "Only 100 mm",
+      "Fixed"
+    ],
+    "answer_index": 1,
+    "explanation": "Yearly weigh/check access."
+  },
+  {
+    "id": "fxx-cac-walk",
+    "source": "FXX Audit · Clean Agent Cylinder",
+    "category": "Fire Suppression",
+    "difficulty": "intermediate",
+    "question": "Cylinder-to-walkway distance?",
+    "options": [
+      "Touching",
+      "Clear of egress path; protected from impact",
+      "No rule",
+      "Below floor"
+    ],
+    "answer_index": 1,
+    "explanation": "Protect from traffic damage."
+  },
+  {
+    "id": "fxx-cac-swap",
+    "source": "FXX Audit · Clean Agent Cylinder",
+    "category": "Fire Suppression",
+    "difficulty": "intermediate",
+    "question": "Replace-cylinder path width?",
+    "options": [
+      "Fit cylinder + handling tool (≥ cylinder OD + hand clearance)",
+      "Narrow enough",
+      "No rule",
+      "50 mm"
+    ],
+    "answer_index": 0,
+    "explanation": "Required for physical handling."
+  },
+  {
+    "id": "fxx-cac-above",
+    "source": "FXX Audit · Clean Agent Cylinder",
+    "category": "Fire Suppression",
+    "difficulty": "intermediate",
+    "question": "Headroom above cylinder for replacement?",
+    "options": [
+      "Cylinder height + lift tool clearance",
+      "50 mm",
+      "Zero",
+      "1.5 m always"
+    ],
+    "answer_index": 0,
+    "explanation": "Must allow vertical lift / swap."
+  },
+  {
+    "id": "fxx-dehumid-front",
+    "source": "FXX Audit · Dehumidifier",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Dehumidifier front maintenance space?",
+    "options": [
+      "None",
+      "Per manufacturer + UL2755 §8.2.2 workspace",
+      "20 mm",
+      "2 m always"
+    ],
+    "answer_index": 1,
+    "explanation": "Use largest of the two."
+  },
+  {
+    "id": "fxx-dehumid-top",
+    "source": "FXX Audit · Dehumidifier",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Top clearance for dehumidifier?",
+    "options": [
+      "Cable trays OK touching",
+      "Per manufacturer manual + ventilation allowance",
+      "50 mm",
+      "1 m"
+    ],
+    "answer_index": 1,
+    "explanation": "Ventilation + piping access."
+  },
+  {
+    "id": "fxx-dehumid-elec",
+    "source": "FXX Audit · Dehumidifier",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Distance from electrical equipment?",
+    "options": [
+      "Touching",
+      "Per NEC 110.26 + avoid condensation drip on live parts",
+      "100 mm",
+      "No rule"
+    ],
+    "answer_index": 1,
+    "explanation": "Prevent moisture hazard on live parts."
+  },
+  {
+    "id": "fxx-ems-front",
+    "source": "FXX Audit · EMS Panel",
+    "category": "Control Panel",
+    "difficulty": "intermediate",
+    "question": "EMS panel front standing space?",
+    "options": [
+      "0",
+      "Per §110.26 (≥900 mm C1)",
+      "50 mm",
+      "Seat only"
+    ],
+    "answer_index": 1,
+    "explanation": "§110.26 workspace."
+  },
+  {
+    "id": "fxx-ems-hmi",
+    "source": "FXX Audit · EMS Panel",
+    "category": "Control Panel",
+    "difficulty": "intermediate",
+    "question": "Recommended HMI/button mounting height?",
+    "options": [
+      "0.5–0.8 m",
+      "1.2–1.6 m ergonomic",
+      "2.5 m",
+      "Floor"
+    ],
+    "answer_index": 1,
+    "explanation": "Human-factors standard range."
+  },
+  {
+    "id": "fxx-ems-spacing",
+    "source": "FXX Audit · EMS Panel",
+    "category": "Control Panel",
+    "difficulty": "intermediate",
+    "question": "Gap between adjacent EMS panels?",
+    "options": [
+      "Touching",
+      "Per §110.26 workspace between + door swing",
+      "50 mm",
+      "500 mm fixed"
+    ],
+    "answer_index": 1,
+    "explanation": "Each panel needs its own workspace + door swing."
+  },
+  {
+    "id": "fxx-dcrack-front",
+    "source": "FXX Audit · DC Rack",
+    "category": "DC Rack",
+    "difficulty": "intermediate",
+    "question": "DC rack front workspace?",
+    "options": [
+      "<500 mm",
+      "≥900 mm per §110.26 (C1 <600 V)",
+      "20 mm",
+      "2 m always"
+    ],
+    "answer_index": 1,
+    "explanation": "§110.26(A)(1)."
+  },
+  {
+    "id": "fxx-dcrack-rear",
+    "source": "FXX Audit · DC Rack",
+    "category": "DC Rack",
+    "difficulty": "intermediate",
+    "question": "Rear maintenance space?",
+    "options": [
+      "Zero",
+      "Required if rear-serviceable; per §110.26",
+      "Fixed 100 mm",
+      "Outside only"
+    ],
+    "answer_index": 1,
+    "explanation": "If rear access needed, provide workspace."
+  },
+  {
+    "id": "fxx-dcrack-side",
+    "source": "FXX Audit · DC Rack",
+    "category": "DC Rack",
+    "difficulty": "intermediate",
+    "question": "Side-service design minimum aisle?",
+    "options": [
+      "Per §110.26 C1/C2 depending on live-part arrangement",
+      "50 mm",
+      "None",
+      "1 m fixed"
+    ],
+    "answer_index": 0,
+    "explanation": "Aisle depth depends on condition type."
+  },
+  {
+    "id": "fxx-dcrack-live",
+    "source": "FXX Audit · DC Rack",
+    "category": "DC Rack",
+    "difficulty": "expert",
+    "question": "Live-work safety clearance for 800 V DC?",
+    "options": [
+      "Per NFPA 70E approach boundary + §110.26",
+      "<100 mm",
+      "Unrestricted",
+      "PPE skipped"
+    ],
+    "answer_index": 0,
+    "explanation": "NFPA 70E restricted/approach boundaries applied."
+  },
+  {
+    "id": "fxx-intercool-draw",
+    "source": "FXX Audit · In-Row Cooling",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Withdraw distance for component servicing?",
+    "options": [
+      "0",
+      "Full component depth + 100–200 mm finger clearance",
+      "5 mm",
+      "Just cable length"
+    ],
+    "answer_index": 1,
+    "explanation": "Allow pull-out servicing."
+  },
+  {
+    "id": "fxx-intercool-face",
+    "source": "FXX Audit · In-Row Cooling",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Distance between unit face and opposing rack?",
+    "options": [
+      "Touching",
+      "Per §110.26 or manufacturer; typical ≥900 mm",
+      "200 mm",
+      "Free"
+    ],
+    "answer_index": 1,
+    "explanation": "Workspace + airflow path."
+  },
+  {
+    "id": "fxx-intercool-top",
+    "source": "FXX Audit · In-Row Cooling",
+    "category": "HVAC",
+    "difficulty": "intermediate",
+    "question": "Headroom above unit for exhaust?",
+    "options": [
+      "0",
+      "Per manufacturer airflow spec (typ. 300–500 mm)",
+      "2 m always",
+      "No limit"
+    ],
+    "answer_index": 1,
+    "explanation": "Follow manual."
+  },
+  {
+    "id": "fxx-mainbd-front",
+    "source": "FXX Audit · Main Switchboard",
+    "category": "Switchgear",
+    "difficulty": "intermediate",
+    "question": "Main switchboard front working space?",
+    "options": [
+      "Per §110.26 (Table (A)(1) per Condition)",
+      "500 mm always",
+      "Any",
+      "50 mm"
+    ],
+    "answer_index": 0,
+    "explanation": "§110.26 Condition-based."
+  },
+  {
+    "id": "fxx-mainbd-draw",
+    "source": "FXX Audit · Main Switchboard",
+    "category": "Switchgear",
+    "difficulty": "expert",
+    "question": "Circuit breaker draw-out clearance?",
+    "options": [
+      "Full rack length + safe clearance (typ. per manufacturer)",
+      "0",
+      "50 mm",
+      "Fixed 1 m"
+    ],
+    "answer_index": 0,
+    "explanation": "Manufacturer's racking instructions."
+  },
+  {
+    "id": "fxx-mainbd-rear",
+    "source": "FXX Audit · Main Switchboard",
+    "category": "Switchgear",
+    "difficulty": "intermediate",
+    "question": "Rear-service switchboard requires?",
+    "options": [
+      "No rear access",
+      "Rear workspace per §110.26(A)(1) if rear-accessible",
+      "Stalls only",
+      "Outside"
+    ],
+    "answer_index": 1,
+    "explanation": "Rear workspace required if serviceable."
+  },
+  {
+    "id": "fxx-mainbd-wall",
+    "source": "FXX Audit · Main Switchboard",
+    "category": "Switchgear",
+    "difficulty": "intermediate",
+    "question": "Switchboard to wall distance?",
+    "options": [
+      "Touching",
+      "Per §110.26 or manufacturer",
+      "5 mm",
+      "1 m fixed"
+    ],
+    "answer_index": 1,
+    "explanation": "Follow code + manufacturer."
+  },
+  {
+    "id": "fxx-panelbd-front",
+    "source": "FXX Audit · Panelboard",
+    "category": "Panelboard",
+    "difficulty": "intermediate",
+    "question": "Panelboard front working space?",
+    "options": [
+      "Per §110.26 (Condition-based)",
+      "300 mm",
+      "None",
+      "2 m"
+    ],
+    "answer_index": 0,
+    "explanation": "§110.26."
+  },
+  {
+    "id": "fxx-panelbd-door",
+    "source": "FXX Audit · Panelboard",
+    "category": "Panelboard",
+    "difficulty": "basic",
+    "question": "Panel door opening clearance?",
+    "options": [
+      "Door swing + egress unobstructed",
+      "Any",
+      "0",
+      "Outside"
+    ],
+    "answer_index": 0,
+    "explanation": "Clear for full swing."
+  },
+  {
+    "id": "fxx-panelbd-adj",
+    "source": "FXX Audit · Panelboard",
+    "category": "Panelboard",
+    "difficulty": "intermediate",
+    "question": "Side spacing between adjacent panelboards?",
+    "options": [
+      "Touching",
+      "Per listing; typical 25–50 mm plus §110.26 front",
+      "Fixed 300 mm",
+      "Unlimited"
+    ],
+    "answer_index": 1,
+    "explanation": "Listing instructions + front workspace."
+  },
+  {
+    "id": "fxx-cable-below",
+    "source": "FXX Audit · Cable Tray",
+    "category": "Cable Tray",
+    "difficulty": "intermediate",
+    "question": "Headroom below cable tray?",
+    "options": [
+      "≥2 m per NEC 110.26(E) headroom rule",
+      "1 m",
+      "500 mm",
+      "None"
+    ],
+    "answer_index": 0,
+    "explanation": "§110.26(E) 6.5 ft headroom."
+  },
+  {
+    "id": "fxx-cable-bend",
+    "source": "FXX Audit · Cable Tray",
+    "category": "Cable Tray",
+    "difficulty": "intermediate",
+    "question": "Cable bend radius space?",
+    "options": [
+      "Per manufacturer bend radius (typ. 8–12× OD)",
+      "50 mm always",
+      "No rule",
+      "1 m"
+    ],
+    "answer_index": 0,
+    "explanation": "Follow cable manufacturer bend spec."
+  },
+  {
+    "id": "fxx-cable-wire",
+    "source": "FXX Audit · Cable Tray",
+    "category": "Cable Tray",
+    "difficulty": "intermediate",
+    "question": "Cable fill maintenance width?",
+    "options": [
+      "Per NEC 392 tray fill + access",
+      "None",
+      "10%",
+      "100%"
+    ],
+    "answer_index": 0,
+    "explanation": "NEC Article 392 tray fill."
+  },
+  {
+    "id": "fxx-cable-dist",
+    "source": "FXX Audit · Cable Tray",
+    "category": "Cable Tray",
+    "difficulty": "intermediate",
+    "question": "Cable tray vs walkway minimum?",
+    "options": [
+      "Touching",
+      "No obstruction to headroom or egress",
+      "50 mm",
+      "500 mm"
+    ],
+    "answer_index": 1,
+    "explanation": "Keep walkway clear."
+  },
+  {
+    "id": "fxx-lamp-dist",
+    "source": "FXX Audit · Luminaire",
+    "category": "Lighting",
+    "difficulty": "intermediate",
+    "question": "Luminaire to equipment top clearance?",
+    "options": [
+      "Per manufacturer + avoid heat interference",
+      "Touching",
+      "5 mm",
+      "None"
+    ],
+    "answer_index": 0,
+    "explanation": "Avoid heat damage + maintenance access."
+  },
+  {
+    "id": "fxx-lamp-stand",
+    "source": "FXX Audit · Luminaire",
+    "category": "Lighting",
+    "difficulty": "intermediate",
+    "question": "Standing space for lamp replacement?",
+    "options": [
+      "None",
+      "Per §110.26 + headroom for step ladder",
+      "50 mm",
+      "Outside"
+    ],
+    "answer_index": 1,
+    "explanation": "Provide safe access."
+  },
+  {
+    "id": "fxx-lamp-path",
+    "source": "FXX Audit · Luminaire",
+    "category": "Lighting",
+    "difficulty": "basic",
+    "question": "Dedicated lamp service path required?",
+    "options": [
+      "Yes always",
+      "No, but safe access must exist",
+      "Only outdoors",
+      "Laser only"
+    ],
+    "answer_index": 1,
+    "explanation": "Shared path acceptable if safe."
+  },
+  {
+    "id": "fxx-exitsign-loc",
+    "source": "FXX Audit · Exit Sign",
+    "category": "Egress",
+    "difficulty": "basic",
+    "question": "Exit sign locations?",
+    "options": [
+      "Main exit only",
+      "Every exit + along egress route",
+      "Outside",
+      "None"
+    ],
+    "answer_index": 1,
+    "explanation": "NFPA 101 requires throughout egress."
+  },
+  {
+    "id": "fxx-exitsign-dist",
+    "source": "FXX Audit · Exit Sign",
+    "category": "Egress",
+    "difficulty": "intermediate",
+    "question": "Max distance between exit signs?",
+    "options": [
+      "100 m",
+      "Typically ≤30 m visible (per NFPA 101)",
+      "1 m",
+      "No rule"
+    ],
+    "answer_index": 1,
+    "explanation": "NFPA 101 visibility requirement."
+  },
+  {
+    "id": "fxx-emerlight-lux",
+    "source": "FXX Audit · Emergency Light",
+    "category": "Emergency Lighting",
+    "difficulty": "intermediate",
+    "question": "Minimum emergency illumination?",
+    "options": [
+      "0.5 lux",
+      "1 ft-candle (10.8 lux) avg per NFPA 101",
+      "50 lux",
+      "100 lux"
+    ],
+    "answer_index": 1,
+    "explanation": "NFPA 101 7.9."
+  },
+  {
+    "id": "fxx-cctv-service",
+    "source": "FXX Audit · CCTV",
+    "category": "Surveillance",
+    "difficulty": "basic",
+    "question": "Maintenance space around camera?",
+    "options": [
+      "None",
+      "Enough for mount access + cabling",
+      "1 m fixed",
+      "Outside only"
+    ],
+    "answer_index": 1,
+    "explanation": "Per manufacturer + tool access."
+  },
+  {
+    "id": "fxx-cctv-height",
+    "source": "FXX Audit · CCTV",
+    "category": "Surveillance",
+    "difficulty": "intermediate",
+    "question": "Ladder working area for high-mount?",
+    "options": [
+      "None",
+      "Stable footing + clear ≥2 m work envelope",
+      "20 mm",
+      "5 mm"
+    ],
+    "answer_index": 1,
+    "explanation": "OSHA ladder work area."
+  },
+  {
+    "id": "fxx-cctv-mount",
+    "source": "FXX Audit · CCTV",
+    "category": "Surveillance",
+    "difficulty": "basic",
+    "question": "Installation height limit?",
+    "options": [
+      "<1 m",
+      "Per coverage + manufacturer; typ. 2.4–3 m",
+      "<0.5 m",
+      "No limit"
+    ],
+    "answer_index": 1,
+    "explanation": "Typical 2.4–3 m for coverage."
+  },
+  {
+    "id": "fxx-slide-width",
+    "source": "FXX Audit · Sliding Containment Door",
+    "category": "Containment",
+    "difficulty": "intermediate",
+    "question": "Sliding door minimum clear width?",
+    "options": [
+      "610 mm per §110.26(C)(2)",
+      "300 mm",
+      "800 mm",
+      "1 m"
+    ],
+    "answer_index": 0,
+    "explanation": "Egress door standard width."
+  },
+  {
+    "id": "fxx-slide-open",
+    "source": "FXX Audit · Sliding Containment Door",
+    "category": "Containment",
+    "difficulty": "intermediate",
+    "question": "Space required when slider opens?",
+    "options": [
+      "None",
+      "Same as door width along slide rail",
+      "Half",
+      "Unlimited"
+    ],
+    "answer_index": 1,
+    "explanation": "Allow full open length."
+  },
+  {
+    "id": "fxx-slide-exit",
+    "source": "FXX Audit · Sliding Containment Door",
+    "category": "Containment",
+    "difficulty": "intermediate",
+    "question": "Slider vs egress aisle distance?",
+    "options": [
+      "Touching",
+      "Must not block egress when fully open",
+      "500 mm",
+      "1 m"
+    ],
+    "answer_index": 1,
+    "explanation": "Egress path clear at all positions."
+  },
+  {
+    "id": "fxx-slide-height",
+    "source": "FXX Audit · Sliding Containment Door",
+    "category": "Containment",
+    "difficulty": "intermediate",
+    "question": "Sliding door height limit?",
+    "options": [
+      "≥2 m clear height (egress)",
+      "1 m",
+      "No limit",
+      "0.5 m"
+    ],
+    "answer_index": 0,
+    "explanation": "Maintain headroom."
   }
 ]

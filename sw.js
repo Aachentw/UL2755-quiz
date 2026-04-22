@@ -1,4 +1,4 @@
-const CACHE = 'ul2755-v17';
+const CACHE = 'ul2755-v18';
 const SHELL = ['./', './index.html', './app.js', './srs.js', './manifest.webmanifest', './questions.json', './version.json'];
 
 self.addEventListener('install', (e) => {
