@@ -601,7 +601,8 @@ function renderCalendar() {
             }
           }
         } else if (cellStartMs === todayStart) {
-          // TODAY: curriculum unseen + due today + overdue rollover.
+          // TODAY: curriculum unseen + due today + overdue rollover + orphan records
+          // (records with state but no due_at — aligns with Question List's today fallback).
           const counted = new Set();
           if (day) for (const qid of day.question_ids) {
             if (!state[qid]) { total++; counted.add(qid); }
@@ -617,6 +618,14 @@ function renderCalendar() {
             if (counted.has(q.id)) continue;
             const r = state[q.id];
             if (r && r.due_at != null && r.due_at < cellStartMs) {
+              total++; counted.add(q.id);
+            }
+          }
+          // Orphan records (state exists but due_at is null/undefined): count as today.
+          for (const q of State.questions) {
+            if (counted.has(q.id)) continue;
+            const r = state[q.id];
+            if (r && r.due_at == null) {
               total++; counted.add(q.id);
             }
           }
