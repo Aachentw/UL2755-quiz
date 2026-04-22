@@ -465,48 +465,71 @@ function renderDashboard() {
   const now = Date.now();
   const s = SRS.summary(state, State.questions, now);
   const settings = SrsStore.loadSettings();
-  const taken = SrsStore.getNewToday();
-  const dueReviews = Math.max(0, s.due - s.new);
-  const newAvailable = Math.max(0, Math.min(s.new, settings.new_per_day - taken));
-  const todayGoal = dueReviews + newAvailable + taken;
-  const startToday = startOfToday();
-  const todayDone = Object.values(state).filter(r => (r.last_answered_at || 0) >= startToday).length;
-  const pct = todayGoal > 0 ? Math.min(100, (todayDone / todayGoal) * 100) : 0;
+  const todayStart = startOfToday();
+  const todayEnd = todayStart + 86400000;
 
   const curr = SrsStore.ensureCurriculum(State.questions, settings);
   const doneDays = SRS.completedDays(curr, state);
   const totalDays = curr.days.length;
-  const completedCount = doneDays.size;
-  const remainingDays = totalDays - completedCount;
-  const firstIncompleteDay = curr.days.find(d => !doneDays.has(d.day));
+  const remainingDays = totalDays - doneDays.size;
   const projDate = new Date();
   projDate.setDate(projDate.getDate() + Math.max(0, remainingDays - 1));
   const projStr = ymd(projDate);
   const plannedEnd = new Date(curr.start_date + 'T00:00:00');
   plannedEnd.setDate(plannedEnd.getDate() + totalDays - 1);
-  const dayMs = 24 * 60 * 60 * 1000;
+  const dayMs = 86400000;
   const behind = Math.floor((projDate - plannedEnd) / dayMs);
   const badgeText = behind > 0 ? ` (${behind} day${behind > 1 ? 's' : ''} behind)` : (behind < 0 ? ' (ahead)' : ' (on track)');
 
+  // Mastery progress: graduated / total questions
+  const totalQs = State.questions.length;
+  const graduated = s.graduated;
+  const gradPct = totalQs > 0 ? (graduated / totalQs) * 100 : 0;
+
+  // Today A/B via shared helper
+  const homeMap = homeDateByQid(curr, state);
+  const todayDayObj = curr.days.find(d => effectiveDateForDay(curr, state, d.day) === todayStart) || null;
+  const todayStats = computeCellStats(todayStart, todayDayObj, state, todayStart, homeMap);
+  const todayA = todayStats.answered;
+  const todayB = todayStats.total;
+  const todayPct = todayB > 0 ? (todayA / todayB) * 100 : 0;
+
+  // Ahead count (C): questions answered today whose curriculum day's effective date is in future
+  const dayByQid = {};
+  for (const d of curr.days) for (const qid of d.question_ids) dayByQid[qid] = d.day;
+  let aheadCount = 0;
+  for (const q of State.questions) {
+    const r = state[q.id];
+    if (!r) continue;
+    const la = r.last_answered_at || 0;
+    if (la < todayStart || la >= todayEnd) continue;
+    const dayN = dayByQid[q.id];
+    if (dayN == null) continue;
+    const eff = effectiveDateForDay(curr, state, dayN);
+    if (eff != null && eff > todayStart) aheadCount++;
+  }
+
+  const todayDisabled = todayB === 0;
+
   $('#card').innerHTML = `
     <div class="dashboard">
-      <div class="muted" style="margin-bottom:0.4rem;">
-        Projected: <b>${projStr}</b>${badgeText}<br>
-        Day ${firstIncompleteDay ? firstIncompleteDay.day : totalDays} of ${totalDays} · Started ${curr.start_date}
+      <h2 style="margin:0 0 0.3rem;">Summary</h2>
+      <div class="muted" style="margin-bottom:0.6rem;">
+        Started: <b>${curr.start_date}</b><br>
+        Projected: <b>${projStr}</b>${badgeText}
       </div>
-      <h2>Today</h2>
-      <div class="progress-large"><div class="bar" style="width:${pct}%"></div></div>
-      <div class="muted">${todayDone} / ${todayGoal} done</div>
+      <div class="muted" style="font-size:0.85rem;margin-bottom:0.3rem;">Mastery progress</div>
+      <div class="progress-large"><div class="bar bar-grad" style="width:${gradPct}%"></div></div>
+      <div class="muted" style="margin-bottom:1rem;">${graduated} / ${totalQs} graduated (${Math.round(gradPct)}%)</div>
 
-      <ul class="metric-list">
-        <li>📘 Due Reviews <b>${dueReviews}</b></li>
-        <li>🆕 New Available <b>${newAvailable}</b></li>
-        <li>🎓 Graduated <b>${s.graduated}</b></li>
-      </ul>
+      <h2 style="margin:0.3rem 0;">Today</h2>
+      <div class="progress-large"><div class="bar" style="width:${todayPct}%"></div></div>
+      <div class="muted">${todayA} / ${todayB} done</div>
+      ${aheadCount > 0 ? `<div class="ahead-badge">👍 × ${aheadCount} ahead</div>` : ''}
 
       <div class="dash-actions">
-        <button class="primary"${(dueReviews + newAvailable) === 0 ? ' disabled title="All done for today — come back tomorrow"' : ''} onclick="enterQuiz()">Quiz</button>
-        <button class="primary"${(dueReviews + newAvailable) === 0 ? ' disabled title="All done for today — come back tomorrow"' : ''} onclick="enterRiding()">Riding</button>
+        <button class="primary"${todayDisabled ? ' disabled title="All done for today — come back tomorrow"' : ''} onclick="enterQuiz()">Quiz</button>
+        <button class="primary"${todayDisabled ? ' disabled title="All done for today — come back tomorrow"' : ''} onclick="enterRiding()">Riding</button>
         <button class="ghost" onclick="location.hash='calendar'">📅 Calendar</button>
         <button class="ghost" onclick="location.hash='list'">📋 Question List</button>
         <button class="ghost" onclick="openSettings()">⚙ Settings</button>
@@ -517,22 +540,42 @@ function renderDashboard() {
 }
 
 // ---------- Shared cell-stats helper (keeps Calendar / Day / Date views aligned) ----------
-function computeCellStats(cellStartMs, day, state, todayStart) {
+// Map every question → epoch ms of its curriculum day's effective date (or null if unmapped).
+function homeDateByQid(curr, state) {
+  const map = {};
+  if (!curr || !curr.days) return map;
+  const todayStart = startOfToday();
+  const done = SRS.completedDays(curr, state);
+  const firstIncomplete = curr.days.find(d => !done.has(d.day));
+  let cursor = new Date(curr.start_date + 'T00:00:00').getTime();
+  for (const d of curr.days) {
+    if (!done.has(d.day)) {
+      if (firstIncomplete && d.day === firstIncomplete.day) cursor = Math.max(cursor, todayStart);
+    }
+    for (const qid of d.question_ids) map[qid] = cursor;
+    cursor += 86400000;
+  }
+  return map;
+}
+
+function computeCellStats(cellStartMs, day, state, todayStart, homeByQid) {
   const cellEnd = cellStartMs + 86400000;
   const counted = new Set();
   let answered = 0;
+  const home = homeByQid || {};
+  const homeIsAhead = (qid) => home[qid] != null && home[qid] > cellStartMs;
 
   if (cellStartMs < todayStart) {
-    // Past: count questions answered on D, plus unanswered-due-on-D only when no curriculum day.
+    // Past: count answered-on-D (questions whose home doesn't live in the future beyond today).
     for (const q of State.questions) {
       const r = state[q.id];
-      if (r && (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd) {
+      if (!r) continue;
+      if ((r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd) {
         counted.add(q.id);
         answered++;
       }
     }
     if (day) {
-      // For past curriculum days, the "bucket" of cards is the curriculum itself.
       for (const qid of day.question_ids) counted.add(qid);
     } else {
       for (const q of State.questions) {
@@ -540,7 +583,7 @@ function computeCellStats(cellStartMs, day, state, todayStart) {
         const r = state[q.id];
         if (!r) continue;
         const dueOnD = r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd;
-        if (dueOnD) counted.add(q.id);
+        if (dueOnD && !homeIsAhead(q.id)) counted.add(q.id);
       }
     }
     return { total: counted.size, answered, ids: [...counted] };
@@ -549,22 +592,22 @@ function computeCellStats(cellStartMs, day, state, todayStart) {
   if (cellStartMs === todayStart) {
     if (day) for (const qid of day.question_ids) { if (!state[qid]) counted.add(qid); }
     for (const q of State.questions) {
-      if (counted.has(q.id)) continue;
+      if (counted.has(q.id) || homeIsAhead(q.id)) continue;
       const r = state[q.id];
       if (r && r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd) counted.add(q.id);
     }
     for (const q of State.questions) {
-      if (counted.has(q.id)) continue;
+      if (counted.has(q.id) || homeIsAhead(q.id)) continue;
       const r = state[q.id];
       if (r && r.due_at != null && r.due_at < cellStartMs) counted.add(q.id);
     }
     for (const q of State.questions) {
-      if (counted.has(q.id)) continue;
+      if (counted.has(q.id) || homeIsAhead(q.id)) continue;
       const r = state[q.id];
       if (r && r.due_at == null) counted.add(q.id);
     }
-    for (const q of State.questions) {
-      const r = state[q.id];
+    for (const qid of counted) {
+      const r = state[qid];
       if (r && (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd) answered++;
     }
     return { total: counted.size, answered, ids: [...counted] };
@@ -641,6 +684,7 @@ function renderCalendar() {
     cells.push({ date: d, inMonth: d.getMonth() === viewMonth.getMonth(), dayN: dateToDay[ymd(d)] });
   }
   const monthLabel = viewMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  const homeMapCal = homeDateByQid(curr, state);
 
   $('#card').innerHTML = `
     <div class="cal-header">
@@ -659,7 +703,7 @@ function renderCalendar() {
         const cellStart = new Date(c.date); cellStart.setHours(0, 0, 0, 0);
         const cellStartMs = cellStart.getTime();
         const todayStart = startOfToday();
-        const stats = computeCellStats(cellStartMs, day, state, todayStart);
+        const stats = computeCellStats(cellStartMs, day, state, todayStart, homeMapCal);
         const total = stats.total, answered = stats.answered;
         const clickable = (cellStartMs >= todayStart) && (!!day || total > 0);
 
@@ -709,7 +753,7 @@ function renderDayPage(dayN) {
   // effective date (so header A/B, card count, and QL per-date sum agree).
   const eff = effectiveDateForDay(curr, state, dayN);
   const stats = eff != null
-    ? computeCellStats(eff, day, state, startOfToday())
+    ? computeCellStats(eff, day, state, startOfToday(), homeDateByQid(curr, state))
     : { total: day.question_ids.length, answered: 0, ids: day.question_ids.slice() };
   const items = stats.ids.map(id => ({ q: State.questions.find(qq => qq.id === id), r: state[id] })).filter(x => x.q);
   const graduated = items.filter(x => x.r && x.r.stage === 'graduated').length;
@@ -893,7 +937,7 @@ function renderDatePage(dateYmd) {
       <div class="sub">${items.length} question${items.length === 1 ? '' : 's'} scheduled</div>
       <div class="sub">${(() => {
         const cellStartMs = new Date(dateYmd + 'T00:00:00').getTime();
-        const s = computeCellStats(cellStartMs, null, state, startOfToday());
+        const s = computeCellStats(cellStartMs, null, state, startOfToday(), homeDateByQid(SrsStore.loadCurriculum(), state));
         return s.total > 0 ? `📅 ${dateYmd}: <b>${s.answered}/${s.total}</b>` : '';
       })()}</div>
     </div>
