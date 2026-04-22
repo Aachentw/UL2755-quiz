@@ -509,7 +509,10 @@ function renderDashboard() {
     if (eff != null && eff > todayStart) aheadCount++;
   }
 
-  const todayDisabled = todayB === 0;
+  // Mirror Day-page behaviour: disabled when today's curriculum day is completed,
+  // or when nothing is scheduled at all for today.
+  const todayDayCompleted = !!todayDayObj && doneDays.has(todayDayObj.day);
+  const todayDisabled = todayB === 0 || todayDayCompleted;
 
   $('#card').innerHTML = `
     <div class="dashboard">

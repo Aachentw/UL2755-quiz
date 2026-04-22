@@ -12,8 +12,8 @@
 | L1 Unit (`srs.test.html`) | 47 | 47 | 0 | srs.js 全分支 |
 | L2 Integration (SrsStore/migration/router) | 12 | 12 | 0 | SrsStore 7 fn、migration 3 分支、router 4 hash |
 | L3 DOM Render | 25 | 25 | 0 | Dashboard 7、Calendar 7、Day 6、Settings 5 |
-| L4 E2E（自動化子集） | 22 | 22 | 0 | Quiz 答對/答錯、Calendar→Day、Day→Quiz/Riding、Settings 雙向連動/Reset/Keep/Cancel、Riding Intro/Start/Speed/Stop/playMp3、**Home 共用導覽（TC-E-025~029）** |
-| **自動化合計** | **106** | **106** | **0** | — |
+| L4 E2E（自動化子集） | 26 | 26 | 0 | Quiz 答對/答錯、Calendar→Day、Day→Quiz/Riding、Settings 雙向連動/Reset/Keep/Cancel、Riding Intro/Start/Speed/Stop/playMp3、Home 共用導覽、**Dashboard ↔ Calendar ↔ Day ↔ QL 四方一致性、Ahead 徽章、Dashboard/Day 按鈕對齊（TC-E-043~046）** |
+| **自動化合計** | **110** | **110** | **0** | — |
 
 ## L1 Unit 清單（新增的 23 case 已標 ⭐）
 
@@ -60,6 +60,13 @@
 - **TC-E-027** day=1 → enterRidingDay → Home 返回 Dashboard
 - **TC-E-028** day=2 Day 頁 → Home 返回 Dashboard
 - **TC-E-029** Riding 播放中 → Home → sharedAudio.paused === true
+
+**Dashboard 重新設計 + 四方一致性 4 case**：
+- **TC-E-042** Mastery 進度條顯示 graduated/total 與百分比
+- **TC-E-043** Dashboard 今日 A/B = Calendar today = QL 今日加總
+- **TC-E-044** 超前作答 → 👍 × C 徽章；不膨脹今日 B
+- **TC-E-045** C=0 時徽章隱藏
+- **TC-E-046** Dashboard Quiz/Riding 按鈕與 Day 頁同步 disabled（today curriculum 完成時兩處皆灰）
 
 ## 尚未自動化（需手動驗證或擴充 runner）
 
