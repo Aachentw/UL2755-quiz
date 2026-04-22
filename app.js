@@ -516,6 +516,84 @@ function renderDashboard() {
   updateHeader();
 }
 
+// ---------- Shared cell-stats helper (keeps Calendar / Day / Date views aligned) ----------
+function computeCellStats(cellStartMs, day, state, todayStart) {
+  const cellEnd = cellStartMs + 86400000;
+  let total = 0, answered = 0;
+
+  if (cellStartMs < todayStart) {
+    for (const q of State.questions) {
+      const r = state[q.id];
+      if (r && (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd) answered++;
+    }
+    if (day) total = day.question_ids.length;
+    else {
+      total = answered;
+      for (const q of State.questions) {
+        const r = state[q.id];
+        if (!r) continue;
+        const answeredOnD = (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd;
+        const dueOnD = r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd;
+        if (!answeredOnD && dueOnD) total++;
+      }
+    }
+  } else if (cellStartMs === todayStart) {
+    const counted = new Set();
+    if (day) for (const qid of day.question_ids) {
+      if (!state[qid]) { total++; counted.add(qid); }
+    }
+    for (const q of State.questions) {
+      if (counted.has(q.id)) continue;
+      const r = state[q.id];
+      if (r && r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd) { total++; counted.add(q.id); }
+    }
+    for (const q of State.questions) {
+      if (counted.has(q.id)) continue;
+      const r = state[q.id];
+      if (r && r.due_at != null && r.due_at < cellStartMs) { total++; counted.add(q.id); }
+    }
+    for (const q of State.questions) {
+      if (counted.has(q.id)) continue;
+      const r = state[q.id];
+      if (r && r.due_at == null) { total++; counted.add(q.id); }
+    }
+    for (const q of State.questions) {
+      const r = state[q.id];
+      if (r && (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd) answered++;
+    }
+  } else {
+    const counted = new Set();
+    if (day) for (const qid of day.question_ids) {
+      if (!state[qid]) { total++; counted.add(qid); }
+    }
+    for (const q of State.questions) {
+      if (counted.has(q.id)) continue;
+      const r = state[q.id];
+      if (r && r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd) { total++; counted.add(q.id); }
+    }
+  }
+  return { total, answered };
+}
+
+function effectiveDateForDay(curr, state, dayN) {
+  if (!curr || !curr.days) return null;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const done = SRS.completedDays(curr, state);
+  const firstIncomplete = curr.days.find(d => !done.has(d.day));
+  let cursor = new Date(curr.start_date + 'T00:00:00').getTime();
+  for (const d of curr.days) {
+    let eff;
+    if (done.has(d.day)) { eff = cursor; }
+    else {
+      if (firstIncomplete && d.day === firstIncomplete.day) cursor = Math.max(cursor, today.getTime());
+      eff = cursor;
+    }
+    if (d.day === dayN) return eff;
+    cursor += 86400000;
+  }
+  return null;
+}
+
 // ---------- Calendar ----------
 function renderCalendar() {
   stopAudioCleanup();
@@ -573,82 +651,12 @@ function renderCalendar() {
         const isToday = ymd(c.date) === ymd(today);
         const isDone = day && done.has(day.day);
 
-        // Per-cell workload depends on whether the cell is past, today, or future.
         const cellStart = new Date(c.date); cellStart.setHours(0, 0, 0, 0);
         const cellStartMs = cellStart.getTime();
-        const cellEnd = cellStartMs + 86400000;
         const todayStart = startOfToday();
-
-        let total = 0, answered = 0;
-        let clickable = false;
-
-        if (cellStartMs < todayStart) {
-          // PAST: never clickable; show what actually happened that day vs what was scheduled.
-          for (const q of State.questions) {
-            const r = state[q.id];
-            if (r && (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd) answered++;
-          }
-          if (day) {
-            total = day.question_ids.length;
-          } else {
-            total = answered;
-            for (const q of State.questions) {
-              const r = state[q.id];
-              if (!r) continue;
-              const answeredOnD = (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd;
-              const dueOnD = r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd;
-              if (!answeredOnD && dueOnD) total++;
-            }
-          }
-        } else if (cellStartMs === todayStart) {
-          // TODAY: curriculum unseen + due today + overdue rollover + orphan records
-          // (records with state but no due_at — aligns with Question List's today fallback).
-          const counted = new Set();
-          if (day) for (const qid of day.question_ids) {
-            if (!state[qid]) { total++; counted.add(qid); }
-          }
-          for (const q of State.questions) {
-            if (counted.has(q.id)) continue;
-            const r = state[q.id];
-            if (r && r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd) {
-              total++; counted.add(q.id);
-            }
-          }
-          for (const q of State.questions) {
-            if (counted.has(q.id)) continue;
-            const r = state[q.id];
-            if (r && r.due_at != null && r.due_at < cellStartMs) {
-              total++; counted.add(q.id);
-            }
-          }
-          // Orphan records (state exists but due_at is null/undefined): count as today.
-          for (const q of State.questions) {
-            if (counted.has(q.id)) continue;
-            const r = state[q.id];
-            if (r && r.due_at == null) {
-              total++; counted.add(q.id);
-            }
-          }
-          for (const q of State.questions) {
-            const r = state[q.id];
-            if (r && (r.last_answered_at || 0) >= cellStartMs && r.last_answered_at < cellEnd) answered++;
-          }
-          clickable = !!day || total > 0;
-        } else {
-          // FUTURE: curriculum unseen + reviews scheduled on that day.
-          const counted = new Set();
-          if (day) for (const qid of day.question_ids) {
-            if (!state[qid]) { total++; counted.add(qid); }
-          }
-          for (const q of State.questions) {
-            if (counted.has(q.id)) continue;
-            const r = state[q.id];
-            if (r && r.due_at != null && r.due_at >= cellStartMs && r.due_at < cellEnd) {
-              total++; counted.add(q.id);
-            }
-          }
-          clickable = !!day || total > 0;
-        }
+        const stats = computeCellStats(cellStartMs, day, state, todayStart);
+        const total = stats.total, answered = stats.answered;
+        const clickable = (cellStartMs >= todayStart) && (!!day || total > 0);
 
         const hasReviewsOnly = !day && total > 0;
         const isSlipped = day && !isDone && c.date < today;
@@ -716,6 +724,13 @@ function renderDayPage(dayN) {
       </div>
       <div class="sub">${categories}</div>
       <div class="sub">${items.length} questions · ${graduated} graduated · ${items.length - graduated} to go</div>
+      <div class="sub">${(() => {
+        const eff = effectiveDateForDay(curr, state, dayN);
+        if (eff == null) return '';
+        const s = computeCellStats(eff, day, state, startOfToday());
+        const label = SRS.ymd(new Date(eff)) === SRS.ymd(new Date()) ? 'Today' : SRS.ymd(new Date(eff));
+        return s.total > 0 ? `📅 ${label}: <b>${s.answered}/${s.total}</b>` : '';
+      })()}</div>
     </div>
 
     ${items.map(({ q, r }) => `
@@ -866,6 +881,11 @@ function renderDatePage(dateYmd) {
       </div>
       <div class="sub">${categories}</div>
       <div class="sub">${items.length} question${items.length === 1 ? '' : 's'} scheduled</div>
+      <div class="sub">${(() => {
+        const cellStartMs = new Date(dateYmd + 'T00:00:00').getTime();
+        const s = computeCellStats(cellStartMs, null, state, startOfToday());
+        return s.total > 0 ? `📅 ${dateYmd}: <b>${s.answered}/${s.total}</b>` : '';
+      })()}</div>
     </div>
 
     ${items.map(({ q, r }) => `
