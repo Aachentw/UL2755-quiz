@@ -205,7 +205,6 @@ function renderDone() {
       <h2>🏆 Round Complete</h2>
       <p style="font-size:1.1rem;margin:0.5rem 0;">This session: <b>${sess.correct} / ${sess.total}</b> correct · ${pct}%</p>
       <p class="muted">📈 Today: ${todayAnswered} answered · 🔥 ${State.streak}-day streak</p>
-      <button class="ghost" onclick="renderDashboard()">Back to Dashboard</button>
     </div>
   `;
 }
@@ -741,7 +740,6 @@ function renderCalendar() {
         return `<div class="${cls.join(' ')}" ${clickAttr}>${inner}</div>`;
       }).join('')}
     </div>
-    <button class="ghost" style="margin-top:1rem;" onclick="location.hash='home'">‹ Back</button>
   `;
   updateHeader();
 }
@@ -987,10 +985,7 @@ function renderQuestionList() {
 
   $('#card').innerHTML = `
     <div class="day-header">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h2 style="margin:0;color:#f8fafc;">Question List</h2>
-        <button class="ghost" style="flex:0;padding:0.4rem 0.7rem;margin:0;" onclick="location.hash='home'">‹ Back</button>
-      </div>
+      <h2 style="margin:0;color:#f8fafc;">Question List</h2>
       <div class="sub">${list.length} questions · sorted by next review</div>
     </div>
 
