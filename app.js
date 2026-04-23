@@ -65,6 +65,35 @@ const SrsStore = {
     this.saveCurriculum(fresh);
     return fresh;
   },
+  loadStarred() {
+    try {
+      const arr = JSON.parse(localStorage.getItem('srs_starred') || '[]');
+      if (!Array.isArray(arr)) return new Set();
+      // soft-prune: drop ids no longer in questions.json.
+      // BUT: skip prune if State.questions is empty (not yet loaded) —
+      // otherwise every stored id would be treated as orphan on early calls
+      // and silently wipe the user's stars.
+      if (!State.questions || State.questions.length === 0) return new Set(arr);
+      const validIds = new Set(State.questions.map(q => q.id));
+      const kept = arr.filter(id => validIds.has(id));
+      if (kept.length !== arr.length) {
+        localStorage.setItem('srs_starred', JSON.stringify(kept.slice().sort()));
+      }
+      return new Set(kept);
+    } catch { return new Set(); }
+  },
+  saveStarred(set) {
+    const arr = [...set].sort();
+    localStorage.setItem('srs_starred', JSON.stringify(arr));
+  },
+  toggleStar(qid) {
+    const s = this.loadStarred();
+    if (s.has(qid)) s.delete(qid); else s.add(qid);
+    this.saveStarred(s);
+    return s.has(qid);
+  },
+  isStarred(qid) { return this.loadStarred().has(qid); },
+  clearStarred() { localStorage.removeItem('srs_starred'); },
 };
 
 function runMigration() {
