@@ -1020,7 +1020,12 @@ function renderQuestionList() {
   stopAudioCleanup();
   const state = SrsStore.loadState();
   const curr = SrsStore.loadCurriculum();
-  const list = SRS.questionList(State.questions, state, Date.now(), curr);
+  const starred = SrsStore.loadStarred();
+  const fullList = SRS.questionList(State.questions, state, Date.now(), curr);
+  const filter = State.qlFilter || 'all';
+  const list = filter === 'starred' ? fullList.filter(r => starred.has(r.id)) : fullList;
+  const emptyStarred = filter === 'starred' && list.length === 0;
+
   const offsets = [0, 1, 3, 7, 30, 90, 180];
   const fmtMd = (ms) => {
     const d = new Date(ms);
@@ -1030,17 +1035,35 @@ function renderQuestionList() {
   $('#card').innerHTML = `
     <div class="day-header">
       <h2 style="margin:0;color:#f8fafc;">Question List</h2>
-      <div class="sub">${list.length} questions · sorted by next review</div>
+      <div class="sub">${list.length} question${list.length === 1 ? '' : 's'}${filter === 'starred' ? ' starred' : ' · sorted by next review'}</div>
     </div>
 
-    <div class="offset-bar" id="offsetBar">
-      ${offsets.map(n => {
-        const label = n === 0 ? 'Today' : `+${n}`;
-        const matchIdx = list.findIndex(r => r.daysFromToday >= n);
-        const disabled = matchIdx < 0;
-        return `<button data-offset="${n}"${disabled ? ' disabled' : ''} onclick="jumpToOffset(${n})">${label}</button>`;
-      }).join('')}
+    <div class="ql-filter-bar">
+      <button class="${filter === 'all' ? 'active' : ''}" onclick="setQlFilter('all')">全部 ${fullList.length}</button>
+      <button class="${filter === 'starred' ? 'active' : ''}" onclick="setQlFilter('starred')">⭐ 只看星標 ${starred.size}</button>
     </div>
+
+    ${filter === 'starred' && list.length > 0 ? `
+      <div class="ql-starred-actions">
+        <button class="primary" onclick="enterQuizStarred()">📱 Quiz</button>
+        <button class="primary" onclick="enterRidingStarred()">🏍️ Riding</button>
+      </div>
+    ` : ''}
+
+    ${emptyStarred ? `
+      <div class="q-empty">目前沒有星標題目。<br>到 MCQ 或題目列表按 ⭐ 標一些吧。</div>
+    ` : ''}
+
+    ${!emptyStarred && filter === 'all' ? `
+      <div class="offset-bar" id="offsetBar">
+        ${offsets.map(n => {
+          const label = n === 0 ? 'Today' : `+${n}`;
+          const matchIdx = list.findIndex(r => r.daysFromToday >= n);
+          const disabled = matchIdx < 0;
+          return `<button data-offset="${n}"${disabled ? ' disabled' : ''} onclick="jumpToOffset(${n})">${label}</button>`;
+        }).join('')}
+      </div>
+    ` : ''}
 
     <div class="q-list">
       ${list.map((r, i) => {
@@ -1049,10 +1072,12 @@ function renderQuestionList() {
         else if (r.daysFromToday < 0) { cls = 'overdue'; label = `Overdue ${-r.daysFromToday}d`; }
         else if (r.daysFromToday === 0) { cls = 'today'; label = 'Today'; }
         else { label = `+${r.daysFromToday} day${r.daysFromToday === 1 ? '' : 's'}`; }
-        return `<div class="q-row" id="qrow-${i}" data-days="${r.daysFromToday}" onclick="openQuestionFromList('${r.id}')">
+        const on = starred.has(r.id);
+        return `<div class="q-row${on ? ' starred' : ''}" id="qrow-${i}" data-days="${r.daysFromToday}" onclick="openQuestionFromList('${r.id}')">
           <span class="q-text">${r.text}</span>
           <span class="q-date">${fmtMd(r.scheduledDateMs)}</span>
           <span class="q-days ${cls}">${label}</span>
+          <button class="star${on ? ' on' : ''}" onclick="toggleStarFromList(event, '${r.id}')" aria-label="${on ? 'Unstar' : 'Star'}">${on ? '★' : '☆'}</button>
         </div>`;
       }).join('')}
     </div>
@@ -1073,6 +1098,51 @@ window.openQuestionFromList = (qId) => {
   const curr = SrsStore.loadCurriculum();
   const dayN = SRS.getDayForQuestion(curr, qId);
   if (dayN != null) location.hash = 'day=' + dayN;
+};
+
+window.toggleStarFromList = (evt, qid) => {
+  if (evt) evt.stopPropagation();
+  const on = SrsStore.toggleStar(qid);
+  // If in starred-only view and user unstarred → re-render whole page (row removed)
+  if (State.qlFilter === 'starred' && !on) {
+    renderQuestionList();
+    return;
+  }
+  // Otherwise: in-place class toggle (preserves scroll position)
+  const row = evt && evt.currentTarget.closest('.q-row');
+  if (row) {
+    row.classList.toggle('starred', on);
+    const btn = evt.currentTarget;
+    btn.classList.toggle('on', on);
+    btn.textContent = on ? '★' : '☆';
+  }
+};
+
+window.setQlFilter = (which) => {
+  State.qlFilter = which;
+  renderQuestionList();
+};
+
+window.enterQuizStarred = () => {
+  const starred = SrsStore.loadStarred();
+  const ids = [...starred];
+  if (!ids.length) return;
+  State.order = ids.map(id => State.questions.findIndex(q => q.id === id)).filter(i => i >= 0);
+  State.idx = 0;
+  State.mode = 'mcq';
+  resetSession();
+  renderMCQ();
+};
+
+window.enterRidingStarred = () => {
+  const starred = SrsStore.loadStarred();
+  const ids = [...starred];
+  if (!ids.length) return;
+  State.order = ids.map(id => State.questions.findIndex(q => q.id === id)).filter(i => i >= 0);
+  State.idx = 0;
+  State.mode = 'audio';
+  stopAudioCleanup();
+  renderAudioIntro();
 };
 
 // ---------- Router ----------
