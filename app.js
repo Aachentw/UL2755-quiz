@@ -1280,7 +1280,8 @@ window.resetAllSrs = async () => {
   const answered = Object.keys(state).length;
   const curr = SrsStore.loadCurriculum();
   const dayStr = curr ? `Day ${SRS.completedDays(curr, state).size} of ${curr.days.length}` : '';
-  const body = `You'll lose:\n· ${answered} answered record${answered === 1 ? '' : 's'}\n· ${State.streak}-day streak\n· ${dayStr}`;
+  const starCount = SrsStore.loadStarred().size;
+  const body = `You'll lose:\n· ${answered} answered record${answered === 1 ? '' : 's'}\n· ${State.streak}-day streak\n· ${dayStr}\n\nStars kept (${starCount}) — use Clear stars to wipe.`;
   const choice = await confirmDialog({
     title: '⚠️ Reset all learning records?',
     body,
@@ -1295,6 +1296,30 @@ window.resetAllSrs = async () => {
   localStorage.removeItem('srs_new_today');
   localStorage.removeItem('srs_curriculum');
   SrsStore.ensureCurriculum(State.questions, SrsStore.loadSettings());
+  closeSettings();
+  renderDashboard();
+};
+
+window.clearAllStars = async () => {
+  const count = SrsStore.loadStarred().size;
+  if (count === 0) {
+    await confirmDialog({
+      title: 'No stars to clear',
+      body: 'You have no starred questions yet.',
+      actions: [{ label: 'OK', style: 'primary', value: null }],
+    });
+    return;
+  }
+  const choice = await confirmDialog({
+    title: `Clear all ${count} star${count === 1 ? '' : 's'}?`,
+    body: 'Learning records (SRS state) will be kept. Only the star marks are removed.',
+    actions: [
+      { label: 'Clear Stars', style: 'danger', value: 'yes' },
+      { label: 'Cancel', style: 'ghost', value: null },
+    ],
+  });
+  if (choice !== 'yes') return;
+  SrsStore.clearStarred();
   closeSettings();
   renderDashboard();
 };
