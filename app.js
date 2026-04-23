@@ -294,6 +294,7 @@ async function startAudio({ firstAlreadyPlaying = false } = {}) {
       <div id="audioOpts" class="audio-opts">${q ? q.options.map((o, i) =>
         `<div class="aopt"><span class="letter">${String.fromCharCode(65 + i)}</span><span>${o}</span></div>`).join('') : ''}</div>
       <div id="audioStage" class="stage">🎧 Question</div>
+      <div id="audioExpl" class="audio-expl" hidden></div>
       <div class="speed-row">
         <span class="speed-label">Speed</span>
         ${SPEEDS.map(v => `<button class="speed-btn ${v===s?'active':''}" data-s="${v}" onclick="setSpeed(${v})">${v}x</button>`).join('')}
@@ -324,6 +325,9 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
     $('#audioOpts').innerHTML = q.options.map((o, i) =>
       `<div class="aopt"><span class="letter">${String.fromCharCode(65 + i)}</span><span>${o}</span></div>`).join('');
 
+    // Clear explanation from previous answer (defense: do not rely only on post-ans hide)
+    const expl = document.querySelector('#audioExpl');
+    if (expl) { expl.hidden = true; expl.textContent = ''; }
     $('#audioStage').textContent = '🎧 Question';
     if (first) {
       await waitForCurrentEnd();
@@ -344,6 +348,10 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
 
     const ans = String.fromCharCode(65 + q.answer_index);
     $('#audioStage').textContent = `✅ Answer: ${ans}`;
+    if (expl && q.explanation) {
+      expl.textContent = `💡 ${q.explanation}`;
+      expl.hidden = false;
+    }
     await playMp3(`audio/${q.id}/ans.mp3`);
     await wait(1200);
     State.idx++;
