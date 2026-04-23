@@ -146,10 +146,14 @@ function renderMCQ() {
   const q = currentQuestion();
   if (!q) { renderDone(); return; }
 
+  const starOn = SrsStore.isStarred(q.id);
+  const starTxt = starOn ? '★' : '☆';
+  const starLbl = starOn ? 'Unstar' : 'Star';
   $('#card').innerHTML = `
     <div class="meta">
       <span class="tag">${q.category}</span>
       <span class="src">${q.source}</span>
+      <button class="meta-star${starOn ? ' on' : ''}" onclick="toggleStarFromCard(event, '${q.id}')" aria-label="${starLbl}">${starTxt}</button>
     </div>
     <h2 class="question">${q.question}</h2>
     <div class="options">
@@ -247,6 +251,17 @@ window.restart = () => {
     renderDashboard();
   } else {
     renderMCQ();
+  }
+};
+
+window.toggleStarFromCard = (evt, qid) => {
+  if (evt) evt.stopPropagation();
+  const on = SrsStore.toggleStar(qid);
+  const btn = evt && evt.currentTarget;
+  if (btn) {
+    btn.classList.toggle('on', on);
+    btn.textContent = on ? '★' : '☆';
+    btn.setAttribute('aria-label', on ? 'Unstar' : 'Star');
   }
 };
 

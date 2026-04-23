@@ -26,7 +26,10 @@
   .modes button.active { background: #c8102e; color: white; border-color: #c8102e; }
 
   .card { background: #1e293b; border-radius: 14px; padding: 1.2rem; margin-top: 0.8rem; }
-  .meta { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 0.7rem; }
+  .meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; margin-bottom: 0.7rem; gap: 0.5rem; }
+  .meta-star { background: transparent; border: none; color: #94a3b8; font-size: 1.25rem; cursor: pointer; padding: 0 0.2rem; line-height: 1; flex: 0 0 auto; transition: transform 0.08s; }
+  .meta-star:active { transform: scale(0.85); }
+  .meta-star.on { color: #fbbf24; text-shadow: 0 0 6px rgba(251, 191, 36, 0.45); }
   .tag { background: #334155; padding: 2px 8px; border-radius: 10px; color: #cbd5e1; }
   .src { color: #94a3b8; }
   .question { font-size: 1.15rem; line-height: 1.55; margin: 0.5rem 0 1.2rem; color: #f8fafc; }
