@@ -328,8 +328,11 @@ window.primeAndStart = () => {
 
 async function startAudio({ firstAlreadyPlaying = false } = {}) {
   State.audioStopped = false;
+  State.skipTo = null;
   requestWakeLock();
   const q = currentQuestion();
+  registerMediaSession();
+  updateMediaMetadata(q);
   const s = getSpeed();
   $('#card').innerHTML = `
     <div class="audio-view">
@@ -378,6 +381,7 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
       if (State.audioStopped) break;
     }
     const q = currentQuestion();
+    updateMediaMetadata(q);
     $('#audioQ').textContent = q.question;
     $('#audioOpts').innerHTML = q.options.map((o, i) =>
       `<div class="aopt"><span class="letter">${String.fromCharCode(65 + i)}</span><span>${o}</span></div>`).join('');
@@ -426,6 +430,58 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
     State.idx++;
     updateHeader();
   }
+}
+
+// ----- Media Session (lock screen / control center / bluetooth headset controls) -----
+function hasMediaSession() {
+  return 'mediaSession' in navigator
+      && typeof navigator.mediaSession.setActionHandler === 'function';
+}
+
+function updateMediaMetadata(q) {
+  if (!hasMediaSession()) return;
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: `Question ${State.idx + 1} / ${State.order.length}`,
+      artist: q ? q.source : 'UL2755 Sprint',
+      album: 'UL2755 Sprint · 🏍️ Riding',
+      // No artwork — iOS Safari does not render SVG data URLs in MediaMetadata.
+    });
+  } catch (_) { /* noop */ }
+}
+
+function registerMediaSession() {
+  if (!hasMediaSession()) return;
+  try {
+    navigator.mediaSession.playbackState = 'playing';
+    navigator.mediaSession.setActionHandler('play', () => {
+      if (sharedAudio) sharedAudio.play().catch(() => {});
+      navigator.mediaSession.playbackState = 'playing';
+    });
+    navigator.mediaSession.setActionHandler('pause', () => {
+      if (sharedAudio) sharedAudio.pause();
+      navigator.mediaSession.playbackState = 'paused';
+    });
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      State.skipTo = 'prev';
+      forceEndCurrentClip();
+    });
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+      State.skipTo = 'next';
+      forceEndCurrentClip();
+    });
+  } catch (_) { /* noop */ }
+}
+
+function clearMediaSession() {
+  if (!hasMediaSession()) return;
+  try {
+    navigator.mediaSession.metadata = null;
+    navigator.mediaSession.playbackState = 'none';
+    ['play', 'pause', 'previoustrack', 'nexttrack'].forEach(a => {
+      try { navigator.mediaSession.setActionHandler(a, null); } catch (_) {}
+    });
+  } catch (_) { /* noop */ }
 }
 
 // Play MP3 by swapping src on the single shared Audio element (iOS-safe)
@@ -488,10 +544,12 @@ function wait(ms) { return new Promise(r => State.audioTimer = setTimeout(r, ms)
 
 function stopAudioCleanup() {
   State.audioStopped = true;
+  State.skipTo = null;
   clearTimeout(State.audioTimer);
   if (sharedAudio) { try { sharedAudio.pause(); sharedAudio.src = ''; sharedAudio.removeAttribute('src'); } catch (_) {} }
   currentAudio = null;
   if ('speechSynthesis' in window) speechSynthesis.cancel();
+  clearMediaSession();
   releaseWakeLock();
 }
 
