@@ -412,12 +412,41 @@ function playMp3(url) {
     const applyRate = () => { a.playbackRate = getSpeed(); a.defaultPlaybackRate = getSpeed(); };
     a.onloadedmetadata = applyRate;
     a.onplay = applyRate;
-    a.onended = () => resolve();
-    a.onerror = () => { console.warn('MP3 error:', url); resolve(); };
+    // Critical: use addEventListener once — each playMp3 call binds its own
+    // handler, so skip handlers (forceEndCurrentClip) that dispatch 'ended'
+    // cannot accidentally resolve the wrong promise.
+    const onDone = () => {
+      a.removeEventListener('ended', onDone);
+      a.removeEventListener('error', onDone);
+      resolve();
+    };
+    a.addEventListener('ended', onDone, { once: true });
+    a.addEventListener('error', onDone, { once: true });
     applyRate();
     const p = a.play();
-    if (p && p.then) p.then(applyRate).catch(err => { console.warn('play() rejected:', err); resolve(); });
+    if (p && p.then) p.then(applyRate).catch(err => { console.warn('play() rejected:', err); onDone(); });
   });
+}
+
+// Force the currently playing clip to end, so the pending playMp3 promise resolves.
+// Used by Media Session prev/next actions.
+function forceEndCurrentClip() {
+  const a = sharedAudio;
+  if (!a) return;
+  // Guard: duration may be NaN when src just set and metadata not loaded yet.
+  if (!isFinite(a.duration) || a.duration <= 0) {
+    a.pause();
+    a.dispatchEvent(new Event('ended'));
+    return;
+  }
+  // Normal path: seek near end to trigger the 'ended' event reliably.
+  // iOS Safari sometimes ignores duration - 0.01; 0.05 is more reliable.
+  try {
+    a.currentTime = Math.max(0, a.duration - 0.05);
+  } catch (_) {
+    // readyState < 1 can throw on currentTime setter; fallback to manual dispatch.
+    a.dispatchEvent(new Event('ended'));
+  }
 }
 
 function waitForCurrentEnd() {
