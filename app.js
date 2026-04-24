@@ -23,6 +23,7 @@ const State = {
   wakeLock: null,
   audioTimer: null,
   audioStopped: false,
+  skipTo: null,
   session: { correct: 0, total: 0 },
 };
 
@@ -348,10 +349,23 @@ async function startAudio({ firstAlreadyPlaying = false } = {}) {
   playLoop({ firstAlreadyPlaying });
 }
 
+// Called from playLoop after each clip when State.skipTo was set by
+// Media Session prev/next handler (registered in Chunk 4).
+function advanceBySkip() {
+  if (State.skipTo === 'next') {
+    State.idx++;
+  } else if (State.skipTo === 'prev') {
+    State.idx = Math.max(0, State.idx - 1);
+  }
+  State.skipTo = null;  // reset for next loop iteration
+}
+
 async function playLoop({ firstAlreadyPlaying = false } = {}) {
   let first = firstAlreadyPlaying;
   let lap = 1;
   while (!State.audioStopped) {
+    State.skipTo = null;  // reset at top of each iteration
+
     if (State.idx >= State.order.length) {
       lap++;
       rebuildDeck();
@@ -360,7 +374,7 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
         State.order = shuffle([...State.questions.keys()]);
       }
       $('#audioStage').textContent = `🔄 Lap ${lap} — reshuffling…`;
-      await wait(2500);
+      await playMp3('audio/_silence/sil-25.mp3');
       if (State.audioStopped) break;
     }
     const q = currentQuestion();
@@ -379,15 +393,21 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
       await playMp3(`audio/${q.id}/q.mp3`);
     }
     if (State.audioStopped) break;
-    await wait(700);
+    if (State.skipTo) { advanceBySkip(); continue; }
+
+    await playMp3('audio/_silence/sil-10.mp3');
+    if (State.audioStopped) break;
+    if (State.skipTo) { advanceBySkip(); continue; }
 
     $('#audioStage').textContent = '🔢 Options';
     await playMp3(`audio/${q.id}/opts.mp3`);
     if (State.audioStopped) break;
+    if (State.skipTo) { advanceBySkip(); continue; }
 
     $('#audioStage').textContent = '⏳ Think 5 seconds…';
-    await wait(5000);
+    await playMp3('audio/_silence/sil-50.mp3');
     if (State.audioStopped) break;
+    if (State.skipTo) { advanceBySkip(); continue; }
 
     const ans = String.fromCharCode(65 + q.answer_index);
     $('#audioStage').textContent = `✅ Answer: ${ans}`;
@@ -396,7 +416,13 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
       expl.hidden = false;
     }
     await playMp3(`audio/${q.id}/ans.mp3`);
-    await wait(1200);
+    if (State.audioStopped) break;
+    if (State.skipTo) { advanceBySkip(); continue; }
+
+    await playMp3('audio/_silence/sil-12.mp3');
+    if (State.audioStopped) break;
+    if (State.skipTo) { advanceBySkip(); continue; }
+
     State.idx++;
     updateHeader();
   }
