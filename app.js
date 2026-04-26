@@ -331,8 +331,10 @@ async function startAudio({ firstAlreadyPlaying = false } = {}) {
   State.skipTo = null;
   requestWakeLock();
   const q = currentQuestion();
-  registerMediaSession();
-  updateMediaMetadata(q);
+  // NOTE: Media Session setup is deferred to playLoop after the first audio
+  // segment actually plays. On iOS, registering MediaSession metadata/handlers
+  // in the same sync chain as primeAndStart's gestural play() suppresses the
+  // first 'ended' event and hangs waitForCurrentEnd().
   const s = getSpeed();
   $('#card').innerHTML = `
     <div class="audio-view">
@@ -381,7 +383,11 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
       if (State.audioStopped) break;
     }
     const q = currentQuestion();
-    updateMediaMetadata(q);
+    // Skip MediaSession update on the very first iteration: doing it here in
+    // the same sync chain as primeAndStart's play() can suppress the first
+    // 'ended' event on iOS. Subsequent iterations are safe (audio context is
+    // already established).
+    if (!first) updateMediaMetadata(q);
     $('#audioQ').textContent = q.question;
     $('#audioOpts').innerHTML = q.options.map((o, i) =>
       `<div class="aopt"><span class="letter">${String.fromCharCode(65 + i)}</span><span>${o}</span></div>`).join('');
@@ -393,6 +399,10 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
     if (first) {
       await waitForCurrentEnd();
       first = false;
+      // First q.mp3 has finished playing — now safe to register Media Session
+      // (lock-screen controls + metadata) without iOS suppressing the audio.
+      registerMediaSession();
+      updateMediaMetadata(q);
     } else {
       await playMp3(`audio/${q.id}/q.mp3`);
     }
@@ -535,8 +545,21 @@ function waitForCurrentEnd() {
   return new Promise((resolve) => {
     const a = getAudio();
     if (a.paused || a.ended) return resolve();
-    const onEnd = () => { a.removeEventListener('ended', onEnd); resolve(); };
-    a.addEventListener('ended', onEnd);
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      a.removeEventListener('ended', finish);
+      a.removeEventListener('error', finish);
+      clearTimeout(timer);
+      resolve();
+    };
+    a.addEventListener('ended', finish);
+    a.addEventListener('error', finish);
+    // Safety net: if audio stalls or 'ended' never fires (iOS quirk under
+    // Media Session pressure, decode error, etc.), unstick playLoop after
+    // 30s — longer than any q.mp3 even at 0.5x speed.
+    const timer = setTimeout(finish, 30000);
   });
 }
 
