@@ -358,6 +358,16 @@ function getAudio() {
     sharedAudio = new Audio();
     sharedAudio.preload = 'auto';
     sharedAudio.playbackRate = getSpeed();
+    // Diagnostic: wrap pause() so we can identify WHO is calling it (key for
+    // debugging the "every clip aborts" iOS bug).
+    const realPause = sharedAudio.pause.bind(sharedAudio);
+    sharedAudio.pause = function() {
+      const stack = (new Error()).stack || '';
+      // Trim to last 4 frames (skip Error+pause itself)
+      const trimmed = stack.split('\n').slice(2, 6).map(s => s.trim()).join(' ← ');
+      audioLog('warn', `sharedAudio.pause() called from: ${trimmed}`);
+      return realPause();
+    };
     // Diagnostic: log every audio event so we can replay timeline post-mortem.
     ['loadstart','canplay','play','playing','pause','ended','error','stalled','waiting','suspend','abort','emptied'].forEach(evt => {
       sharedAudio.addEventListener(evt, (e) => {
@@ -370,6 +380,18 @@ function getAudio() {
   sharedAudio.playbackRate = getSpeed();
   return sharedAudio;
 }
+
+// Diagnostic: detect concurrent playLoop instances. Race conditions where two
+// loops share sharedAudio cause exactly the AbortError-on-every-clip pattern
+// reported on iPhone PWA.
+let _playLoopActive = 0;
+let _playLoopId = 0;
+
+// Mitigation: if 5+ consecutive playMp3 calls fail with play-rejected (e.g.,
+// iOS audio session interrupted, AbortError storm), bail out instead of
+// burning through the entire deck silently. Reset on any successful 'ended'.
+let _consecutiveRejects = 0;
+const REJECT_BAIL_THRESHOLD = 5;
 
 window.primeAndStart = () => {
   // CRITICAL: synchronous inside the click handler (iOS Chrome/Safari requirement)
@@ -440,7 +462,13 @@ function advanceBySkip() {
 async function playLoop({ firstAlreadyPlaying = false } = {}) {
   let first = firstAlreadyPlaying;
   let lap = 1;
-  audioLog('info', `playLoop start firstAlreadyPlaying=${firstAlreadyPlaying}`);
+  const myId = ++_playLoopId;
+  _playLoopActive++;
+  if (_playLoopActive > 1) {
+    audioLog('err', `WARN concurrent playLoop! id=${myId} active=${_playLoopActive} — this WILL cause AbortError on every clip`);
+  }
+  audioLog('info', `playLoop start id=${myId} active=${_playLoopActive} firstAlreadyPlaying=${firstAlreadyPlaying}`);
+  try {  // ensure _playLoopActive decrements on any exit path
   while (!State.audioStopped) {
     State.skipTo = null;  // reset at top of each iteration
 
@@ -515,6 +543,10 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
     State.idx++;
     updateHeader();
   }
+  } finally {
+    _playLoopActive = Math.max(0, _playLoopActive - 1);
+    audioLog('info', `playLoop exit id=${myId} active=${_playLoopActive} audioStopped=${State.audioStopped}`);
+  }
 }
 
 // ----- Media Session (lock screen / control center / bluetooth headset controls) -----
@@ -539,13 +571,14 @@ function registerMediaSession() {
   if (!hasMediaSession()) { audioLog('warn', 'registerMediaSession: API not available'); return; }
   try {
     navigator.mediaSession.playbackState = 'playing';
+    audioLog('ms', `playbackState→playing (was ${navigator.mediaSession.playbackState})`);
     navigator.mediaSession.setActionHandler('play', () => {
-      audioLog('ms', 'action: play');
+      audioLog('ms', 'action: play (state=' + navigator.mediaSession.playbackState + ')');
       if (sharedAudio) sharedAudio.play().catch(err => audioLog('err', `play action rejected: ${err && err.message}`));
       navigator.mediaSession.playbackState = 'playing';
     });
     navigator.mediaSession.setActionHandler('pause', () => {
-      audioLog('ms', 'action: pause');
+      audioLog('ms', 'action: pause (state=' + navigator.mediaSession.playbackState + ')');
       if (sharedAudio) sharedAudio.pause();
       navigator.mediaSession.playbackState = 'paused';
     });
@@ -597,6 +630,18 @@ function playMp3(url) {
       a.removeEventListener('error', onError);
       clearTimeout(timer);
       audioLog('info', `playMp3 done: ${reason} (${shortSrc(url)})`);
+      // Mitigation: track consecutive play-rejected to detect iOS audio session storm.
+      if (reason === 'play-rejected') {
+        _consecutiveRejects++;
+        if (_consecutiveRejects >= REJECT_BAIL_THRESHOLD) {
+          audioLog('err', `${_consecutiveRejects} consecutive play-rejected — bailing out (set audioStopped=true)`);
+          State.audioStopped = true;
+          const stage = document.querySelector('#audioStage');
+          if (stage) stage.textContent = '⚠️ Audio session lost — tap Stop, then Start again. Check silent switch / Bluetooth.';
+        }
+      } else if (reason === 'ended') {
+        _consecutiveRejects = 0;  // healthy clip resets the counter
+      }
       resolve();
     };
     const onEnded = () => finish('ended');
