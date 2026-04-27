@@ -1,4 +1,4 @@
-const CACHE = 'ul2755-v19';
+const CACHE = 'ul2755-v20';
 const SHELL = ['./', './index.html', './app.js', './srs.js', './manifest.webmanifest', './questions.json', './version.json'];
 
 self.addEventListener('install', (e) => {
@@ -12,11 +12,12 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Network-first for app shell & questions; cache-first for audio MP3s.
+// Network-first for app shell & questions; cache-first for audio (.mp3/.wav).
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
-  const isAudio = url.pathname.includes('/audio/') && url.pathname.endsWith('.mp3');
+  const isAudio = url.pathname.includes('/audio/')
+    && (url.pathname.endsWith('.mp3') || url.pathname.endsWith('.wav'));
 
   if (isAudio) {
     e.respondWith(

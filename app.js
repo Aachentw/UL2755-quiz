@@ -302,12 +302,70 @@ function renderAudioIntro() {
 window.setSpeed = setSpeed;
 
 // Single persistent Audio element — iOS needs .play() synchronously in gesture
+// ----- Diagnostic log (on-screen + console). Capture audio/MediaSession/playLoop
+// events so users can copy a trace when Riding hangs or skips silently. -----
+const AUDIO_LOG = [];
+const AUDIO_LOG_MAX = 200;
+function audioLog(level, msg) {
+  const t = new Date().toISOString().slice(11, 23);  // HH:MM:SS.mmm
+  const line = `${t} [${level}] ${msg}`;
+  AUDIO_LOG.push(line);
+  if (AUDIO_LOG.length > AUDIO_LOG_MAX) AUDIO_LOG.shift();
+  const body = document.querySelector('#audioLogBody');
+  if (body) {
+    const div = document.createElement('div');
+    div.className = `log-line log-${level}`;
+    div.textContent = line;
+    body.appendChild(div);
+    while (body.childElementCount > AUDIO_LOG_MAX) body.firstChild.remove();
+    body.scrollTop = body.scrollHeight;
+  }
+  try { console.log('[riding]', line); } catch (_) {}
+}
+window.copyAudioLog = async () => {
+  const text = AUDIO_LOG.join('\n') + '\n';
+  try {
+    await navigator.clipboard.writeText(text);
+    audioLog('ok', `copied ${AUDIO_LOG.length} lines to clipboard`);
+  } catch (e) {
+    audioLog('err', `clipboard write failed: ${e.message || e}`);
+    // Fallback: textarea select + execCommand
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); audioLog('ok', 'copied via fallback'); } catch (_) {}
+    ta.remove();
+  }
+};
+window.clearAudioLog = () => {
+  AUDIO_LOG.length = 0;
+  const body = document.querySelector('#audioLogBody');
+  if (body) body.innerHTML = '';
+  audioLog('info', 'log cleared');
+};
+function shortSrc(src) {
+  if (!src) return '(empty)';
+  try {
+    const u = new URL(src, location.href);
+    return u.pathname.split('/').slice(-2).join('/') + (u.search || '');
+  } catch { return src.slice(-30); }
+}
+
 let sharedAudio = null;
 function getAudio() {
   if (!sharedAudio) {
     sharedAudio = new Audio();
     sharedAudio.preload = 'auto';
     sharedAudio.playbackRate = getSpeed();
+    // Diagnostic: log every audio event so we can replay timeline post-mortem.
+    ['loadstart','canplay','play','playing','pause','ended','error','stalled','waiting','suspend','abort','emptied'].forEach(evt => {
+      sharedAudio.addEventListener(evt, (e) => {
+        const t = e.target;
+        const errCode = t.error ? `code=${t.error.code}` : '';
+        audioLog('audio', `${evt} ${shortSrc(t.src)} paused=${t.paused} ended=${t.ended} dur=${isFinite(t.duration) ? t.duration.toFixed(2) : 'NaN'} ${errCode}`);
+      });
+    });
   }
   sharedAudio.playbackRate = getSpeed();
   return sharedAudio;
@@ -317,11 +375,16 @@ window.primeAndStart = () => {
   // CRITICAL: synchronous inside the click handler (iOS Chrome/Safari requirement)
   ensureAudio();
   const q = currentQuestion();
-  if (!q) return;
+  if (!q) { audioLog('err', 'primeAndStart: no current question'); return; }
   const a = getAudio();
-  a.src = `audio/${q.id}/q.mp3?v=1`;
+  const url = `audio/${q.id}/q.mp3?v=1`;
+  a.src = url;
+  audioLog('info', `primeAndStart src=${shortSrc(url)} q=${q.id}`);
   const p = a.play();
-  if (p && p.catch) p.catch(err => console.warn('initial play rejected:', err));
+  if (p && p.then) {
+    p.then(() => audioLog('ok', 'primeAndStart play() promise resolved'))
+     .catch(err => audioLog('err', `primeAndStart play() rejected: ${err && err.name}: ${err && err.message}`));
+  }
   // Now async path takes over
   startAudio({ firstAlreadyPlaying: true });
 };
@@ -349,8 +412,17 @@ async function startAudio({ firstAlreadyPlaying = false } = {}) {
         ${SPEEDS.map(v => `<button class="speed-btn ${v===s?'active':''}" data-s="${v}" onclick="setSpeed(${v})">${v}x</button>`).join('')}
       </div>
       <button class="ghost" onclick="stopAudio()">⏹ Stop</button>
+      <details class="audio-log-container">
+        <summary>📋 Diagnostic log (tap to expand)</summary>
+        <div id="audioLogBody" class="audio-log-body"></div>
+        <div class="audio-log-actions">
+          <button class="ghost" onclick="copyAudioLog()">📋 Copy</button>
+          <button class="ghost" onclick="clearAudioLog()">🗑 Clear</button>
+        </div>
+      </details>
     </div>
   `;
+  audioLog('info', `startAudio entry firstAlreadyPlaying=${firstAlreadyPlaying} q=${q ? q.id : '(none)'} idx=${State.idx} order=${State.order.length}`);
   playLoop({ firstAlreadyPlaying });
 }
 
@@ -368,6 +440,7 @@ function advanceBySkip() {
 async function playLoop({ firstAlreadyPlaying = false } = {}) {
   let first = firstAlreadyPlaying;
   let lap = 1;
+  audioLog('info', `playLoop start firstAlreadyPlaying=${firstAlreadyPlaying}`);
   while (!State.audioStopped) {
     State.skipTo = null;  // reset at top of each iteration
 
@@ -379,10 +452,11 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
         State.order = shuffle([...State.questions.keys()]);
       }
       $('#audioStage').textContent = `🔄 Lap ${lap} — reshuffling…`;
-      await playMp3('audio/_silence/sil-25.mp3');
+      await playMp3('audio/_silence/sil-25.wav');
       if (State.audioStopped) break;
     }
     const q = currentQuestion();
+    audioLog('info', `iter idx=${State.idx} q=${q ? q.id : '(none)'} first=${first} lap=${lap}`);
     // Skip MediaSession update on the very first iteration: doing it here in
     // the same sync chain as primeAndStart's play() can suppress the first
     // 'ended' event on iOS. Subsequent iterations are safe (audio context is
@@ -401,6 +475,7 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
       first = false;
       // First q.mp3 has finished playing — now safe to register Media Session
       // (lock-screen controls + metadata) without iOS suppressing the audio.
+      audioLog('info', 'registering Media Session after first q.mp3');
       registerMediaSession();
       updateMediaMetadata(q);
     } else {
@@ -409,7 +484,7 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
     if (State.audioStopped) break;
     if (State.skipTo) { advanceBySkip(); continue; }
 
-    await playMp3('audio/_silence/sil-10.mp3');
+    await playMp3('audio/_silence/sil-10.wav');
     if (State.audioStopped) break;
     if (State.skipTo) { advanceBySkip(); continue; }
 
@@ -419,7 +494,7 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
     if (State.skipTo) { advanceBySkip(); continue; }
 
     $('#audioStage').textContent = '⏳ Think 5 seconds…';
-    await playMp3('audio/_silence/sil-50.mp3');
+    await playMp3('audio/_silence/sil-50.wav');
     if (State.audioStopped) break;
     if (State.skipTo) { advanceBySkip(); continue; }
 
@@ -433,7 +508,7 @@ async function playLoop({ firstAlreadyPlaying = false } = {}) {
     if (State.audioStopped) break;
     if (State.skipTo) { advanceBySkip(); continue; }
 
-    await playMp3('audio/_silence/sil-12.mp3');
+    await playMp3('audio/_silence/sil-12.wav');
     if (State.audioStopped) break;
     if (State.skipTo) { advanceBySkip(); continue; }
 
@@ -461,26 +536,31 @@ function updateMediaMetadata(q) {
 }
 
 function registerMediaSession() {
-  if (!hasMediaSession()) return;
+  if (!hasMediaSession()) { audioLog('warn', 'registerMediaSession: API not available'); return; }
   try {
     navigator.mediaSession.playbackState = 'playing';
     navigator.mediaSession.setActionHandler('play', () => {
-      if (sharedAudio) sharedAudio.play().catch(() => {});
+      audioLog('ms', 'action: play');
+      if (sharedAudio) sharedAudio.play().catch(err => audioLog('err', `play action rejected: ${err && err.message}`));
       navigator.mediaSession.playbackState = 'playing';
     });
     navigator.mediaSession.setActionHandler('pause', () => {
+      audioLog('ms', 'action: pause');
       if (sharedAudio) sharedAudio.pause();
       navigator.mediaSession.playbackState = 'paused';
     });
     navigator.mediaSession.setActionHandler('previoustrack', () => {
+      audioLog('ms', 'action: previoustrack');
       State.skipTo = 'prev';
       forceEndCurrentClip();
     });
     navigator.mediaSession.setActionHandler('nexttrack', () => {
+      audioLog('ms', 'action: nexttrack');
       State.skipTo = 'next';
       forceEndCurrentClip();
     });
-  } catch (_) { /* noop */ }
+    audioLog('ok', 'Media Session registered (4 handlers)');
+  } catch (e) { audioLog('err', `registerMediaSession threw: ${e && e.message}`); }
 }
 
 function clearMediaSession() {
@@ -491,7 +571,8 @@ function clearMediaSession() {
     ['play', 'pause', 'previoustrack', 'nexttrack'].forEach(a => {
       try { navigator.mediaSession.setActionHandler(a, null); } catch (_) {}
     });
-  } catch (_) { /* noop */ }
+    audioLog('info', 'clearMediaSession done');
+  } catch (e) { audioLog('err', `clearMediaSession threw: ${e && e.message}`); }
 }
 
 // Play MP3 by swapping src on the single shared Audio element (iOS-safe)
@@ -501,22 +582,39 @@ function playMp3(url) {
     const a = getAudio();
     currentAudio = a;
     a.src = url;
+    audioLog('info', `playMp3 ${shortSrc(url)} (rate=${getSpeed()})`);
     const applyRate = () => { a.playbackRate = getSpeed(); a.defaultPlaybackRate = getSpeed(); };
     a.onloadedmetadata = applyRate;
     a.onplay = applyRate;
     // Critical: use addEventListener once — each playMp3 call binds its own
     // handler, so skip handlers (forceEndCurrentClip) that dispatch 'ended'
     // cannot accidentally resolve the wrong promise.
-    const onDone = () => {
-      a.removeEventListener('ended', onDone);
-      a.removeEventListener('error', onDone);
+    let done = false;
+    const finish = (reason) => {
+      if (done) return;
+      done = true;
+      a.removeEventListener('ended', onEnded);
+      a.removeEventListener('error', onError);
+      clearTimeout(timer);
+      audioLog('info', `playMp3 done: ${reason} (${shortSrc(url)})`);
       resolve();
     };
-    a.addEventListener('ended', onDone, { once: true });
-    a.addEventListener('error', onDone, { once: true });
+    const onEnded = () => finish('ended');
+    const onError = () => finish('error');
+    a.addEventListener('ended', onEnded, { once: true });
+    a.addEventListener('error', onError, { once: true });
+    // Safety net: if iOS suppresses 'ended' AND no 'error' fires (audio stalls),
+    // unstick the loop after 30s. Longer than any clip even at 0.5x speed.
+    const timer = setTimeout(() => finish('timeout-30s'), 30000);
     applyRate();
     const p = a.play();
-    if (p && p.then) p.then(applyRate).catch(err => { console.warn('play() rejected:', err); onDone(); });
+    if (p && p.then) {
+      p.then(() => { applyRate(); /* don't log every play().then — too noisy */ })
+       .catch(err => {
+         audioLog('err', `play() rejected: ${err && err.name}: ${err && err.message} (${shortSrc(url)})`);
+         finish('play-rejected');
+       });
+    }
   });
 }
 
@@ -524,9 +622,10 @@ function playMp3(url) {
 // Used by Media Session prev/next actions.
 function forceEndCurrentClip() {
   const a = sharedAudio;
-  if (!a) return;
+  if (!a) { audioLog('warn', 'forceEndCurrentClip: no sharedAudio'); return; }
   // Guard: duration may be NaN when src just set and metadata not loaded yet.
   if (!isFinite(a.duration) || a.duration <= 0) {
+    audioLog('info', `forceEndCurrentClip: dur=${a.duration} → pause + dispatch ended`);
     a.pause();
     a.dispatchEvent(new Event('ended'));
     return;
@@ -535,7 +634,9 @@ function forceEndCurrentClip() {
   // iOS Safari sometimes ignores duration - 0.01; 0.05 is more reliable.
   try {
     a.currentTime = Math.max(0, a.duration - 0.05);
-  } catch (_) {
+    audioLog('info', `forceEndCurrentClip: seek to ${a.currentTime.toFixed(2)}/${a.duration.toFixed(2)}`);
+  } catch (e) {
+    audioLog('warn', `forceEndCurrentClip seek threw: ${e && e.message} → dispatch ended`);
     // readyState < 1 can throw on currentTime setter; fallback to manual dispatch.
     a.dispatchEvent(new Event('ended'));
   }
@@ -544,28 +645,36 @@ function forceEndCurrentClip() {
 function waitForCurrentEnd() {
   return new Promise((resolve) => {
     const a = getAudio();
-    if (a.paused || a.ended) return resolve();
+    audioLog('info', `waitForCurrentEnd entry paused=${a.paused} ended=${a.ended} src=${shortSrc(a.src)} dur=${isFinite(a.duration) ? a.duration.toFixed(2) : 'NaN'} ct=${a.currentTime.toFixed(2)}`);
+    if (a.paused || a.ended) {
+      audioLog('warn', `waitForCurrentEnd: paused/ended at entry — resolving immediately (paused=${a.paused} ended=${a.ended})`);
+      return resolve();
+    }
     let done = false;
-    const finish = () => {
+    const finish = (reason) => {
       if (done) return;
       done = true;
-      a.removeEventListener('ended', finish);
-      a.removeEventListener('error', finish);
+      a.removeEventListener('ended', onEnded);
+      a.removeEventListener('error', onError);
       clearTimeout(timer);
+      audioLog('info', `waitForCurrentEnd done: ${reason}`);
       resolve();
     };
-    a.addEventListener('ended', finish);
-    a.addEventListener('error', finish);
+    const onEnded = () => finish('ended');
+    const onError = () => finish('error');
+    a.addEventListener('ended', onEnded, { once: true });
+    a.addEventListener('error', onError, { once: true });
     // Safety net: if audio stalls or 'ended' never fires (iOS quirk under
     // Media Session pressure, decode error, etc.), unstick playLoop after
     // 30s — longer than any q.mp3 even at 0.5x speed.
-    const timer = setTimeout(finish, 30000);
+    const timer = setTimeout(() => finish('timeout-30s'), 30000);
   });
 }
 
 function wait(ms) { return new Promise(r => State.audioTimer = setTimeout(r, ms)); }
 
 function stopAudioCleanup() {
+  audioLog('info', `stopAudioCleanup audioStopped→true (was ${State.audioStopped})`);
   State.audioStopped = true;
   State.skipTo = null;
   clearTimeout(State.audioTimer);
